@@ -1,0 +1,23 @@
+raw_data_path: "/media/arnau/Crucial X9/20250616/20250616_dev3_250616_080115"
+save_path: "/mnt/Storage4/bme_processed/20250616"
+day_id: "20250607_dev5_250607_205637"
+is_npix: False
+
+additional_inputs:
+  block_channels: [7, 8]
+  probe_save_path: "/mnt/Storage4/bme_processed/20250531/probe_info.json"
+  filter: 
+    bandpass: [300, 3000]
+    common_reference: operator; medain
+  sorter_name: "mountainsort4"
+  sorting_parameters:
+    tempdir: "/mnt/Storage4/jongmin_tmp"
+    freq_min: 300
+    freq_max: 3000
+    num_workers: 20
+    adjacency_radius: 120
+    detect_interval: 25
+    detect_threshold: 4.0
+    clip_size: 61
+  curation: "VLM curation, zero shot without metrics"
+

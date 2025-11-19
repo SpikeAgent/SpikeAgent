@@ -1,0 +1,3511 @@
+API for module: spikeinterface.extractors
+
+Class: ALFSortingExtractor
+  Docstring:
+    Load ALF format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the ALF folder.
+    sampling_frequency : int, default: 30000
+        The sampling frequency.
+    
+    Returns
+    -------
+    extractor : ALFSortingExtractor
+        The loaded data.
+  __init__(self, folder_path, sampling_frequency=30000)
+
+Class: AlphaOmegaEventExtractor
+  Docstring:
+    Class for reading events from AlphaOmega MPX file format
+    
+    Parameters
+    ----------
+    folder_path : str or Path-like
+        The folder path to the AlphaOmega events.
+  __init__(self, folder_path)
+
+Class: AlphaOmegaRecordingExtractor
+  Docstring:
+    Class for reading from AlphaRS and AlphaLab SnR boards.
+    
+    Based on :py:class:`neo.rawio.AlphaOmegaRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str or Path-like
+        The folder path to the AlphaOmega recordings.
+    lsx_files : list of strings or None, default: None
+        A list of files that refers to mpx files to load.
+    stream_id : {"RAW", "LFP", "SPK", "ACC", "AI", "UD"}, default: "RAW"
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_alphaomega
+    >>> recording = read_alphaomega(folder_path="alphaomega_folder")
+  __init__(self, folder_path, lsx_files=None, stream_id='RAW', stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: AxonaRecordingExtractor
+  Docstring:
+    Class for reading Axona RAW format.
+    
+    Based on :py:class:`neo.rawio.AxonaRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_axona
+    >>> recording = read_axona(file_path=r'my_data.set')
+  __init__(self, file_path: 'str | Path', all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: BiocamRecordingExtractor
+  Docstring:
+    Class for reading data from a Biocam file from 3Brain.
+    
+    Based on :py:class:`neo.rawio.BiocamRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    mea_pitch : float, default: None
+        The inter-electrode distance (pitch) between electrodes.
+    electrode_width : float, default: None
+        Width of the electrodes in um.
+    fill_gaps_strategy: "zeros" | "synthetic_noise" | None, default: None
+        The strategy to fill the gaps in the data when using event-based
+        compression. If None and the file is event-based compressed,
+        you need to specify a fill gaps strategy:
+    
+        * "zeros": the gaps are filled with unsigned 0s (2048). This value is the "0" of the unsigned 12 bits
+                   representation of the data.
+        * "synthetic_noise": the gaps are filled with synthetic noise.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, mea_pitch=None, electrode_width=None, fill_gaps_strategy=None, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: BlackrockRecordingExtractor
+  Docstring:
+    Class for reading BlackRock data.
+    
+    Based on :py:class:`neo.rawio.BlackrockRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: BlackrockSortingExtractor
+  Docstring:
+    Class for reading BlackRock spiking data.
+    
+    Based on :py:class:`neo.rawio.BlackrockRawIO`
+    
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from
+    stream_id : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+    stream_name : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+    sampling_frequency : float, default: None
+        The sampling frequency for the sorting extractor. When the signal data is available (.ncs) those files will be
+        used to extract the frequency automatically. Otherwise, the sampling frequency needs to be specified for
+        this extractor to be initialized.
+    nsx_to_load : int | list | str, default: None
+        IDs of nsX file from which to load data, e.g., if set to 5 only data from the ns5 file are loaded.
+        If 'all', then all nsX will be loaded. If None, all nsX files will be loaded. If empty list, no nsX files will be loaded.
+  __init__(self, file_path, stream_id: 'Optional[str]' = None, stream_name: 'Optional[str]' = None, sampling_frequency: 'Optional[float]' = None, nsx_to_load: 'Optional[int | list | str]' = None)
+
+Class: CedRecordingExtractor
+  Docstring:
+    Class for reading smr/smrw CED file.
+    
+    Based on :py:class:`neo.rawio.CedRawIO` / sonpy
+    
+    Alternative to read_spike2 which does not handle smrx
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to the smr or smrx file.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_ced
+    >>> recording = read_ced(file_path=r'my_data.smr')
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: CellExplorerSortingExtractor
+  Docstring:
+    Extracts spiking information from `.mat` file stored in the CellExplorer format.
+    Spike times are stored in units of seconds so we transform them to units of samples.
+    
+    The newer version of the format is described here:
+    https://cellexplorer.org/data-structure/
+    
+    Whereas the old format is described here:
+    https://github.com/buzsakilab/buzcode/wiki/Data-Formatting-Standards
+    
+    Parameters
+    ----------
+    file_path: str | Path
+        Path to `.mat` file containing spikes. Usually named `session_id.spikes.cellinfo.mat`
+    sampling_frequency: float | None, default: None
+        The sampling frequency of the data. If None, it will be extracted from the files.
+    session_info_file_path: str | Path | None, default: None
+        Path to the `sessionInfo.mat` file. If None, it will be inferred from the file_path.
+  __init__(self, file_path: 'str | Path', sampling_frequency: 'float | None' = None, session_info_file_path: 'str | Path | None' = None)
+
+Class: CombinatoSortingExtractor
+  Docstring:
+    Load Combinato format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the Combinato folder.
+    sampling_frequency : int, default: 30000
+        The sampling frequency.
+    user : str, default: "simple"
+        The username that ran the sorting
+    det_sign : "both", "pos", "neg", default: "both"
+        Which sign was used for detection.
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+    
+    Returns
+    -------
+    extractor : CombinatoSortingExtractor
+        The loaded data.
+  __init__(self, folder_path, sampling_frequency=None, user='simple', det_sign='both', keep_good_only=True)
+
+Class: CompressedBinaryIblExtractor
+  Docstring:
+    Load IBL data as an extractor object.
+    
+    IBL have a custom format - compressed binary with spikeglx meta.
+    
+    The format is like spikeglx (have a meta file) but contains:
+    
+      * "cbin" file (instead of "bin")
+      * "ch" file used by mtscomp for compression info
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to ibl folder.
+    load_sync_channel : bool, default: False
+        Load or not the last channel (sync).
+        If not then the probe is loaded.
+    stream_name : {"ap", "lp"}, default: "ap".
+        Whether to load AP or LFP band, one
+        of "ap" or "lp".
+    cbin_file_path : str, Path or None, default None
+        The cbin file of the recording. If None, searches in `folder_path` for file.
+    cbin_file : str or None, default None
+        (deprecated) The cbin file of the recording. If None, searches in `folder_path` for file.
+    
+    Returns
+    -------
+    recording : CompressedBinaryIblExtractor
+        The loaded data.
+  __init__(self, folder_path=None, load_sync_channel=False, stream_name='ap', cbin_file_path=None, cbin_file=None)
+
+Class: EDFRecordingExtractor
+  Docstring:
+    Class for reading EDF (European data format) folder.
+    
+    Based on :py:class:`neo.rawio.EDFRawIO`
+    
+    Parameters
+    ----------
+    file_path: str
+        The file path to load the recordings from.
+    stream_id: str, default: None
+        If there are several streams, specify the stream id you want to load.
+        For this neo reader streams are defined by their sampling frequency.
+    stream_name: str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations: bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: HDSortSortingExtractor
+  Docstring:
+    Load HDSort format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to HDSort mat file.
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+    
+    Returns
+    -------
+    extractor : HDSortSortingExtractor
+        The loaded data.
+  __init__(self, file_path, keep_good_only=True)
+
+Class: HerdingspikesSortingExtractor
+  Docstring:
+    Load HerdingSpikes format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the ALF folder.
+    load_unit_info : bool, default: True
+        Whether to load the unit info from the file.
+    
+    Returns
+    -------
+    extractor : HerdingSpikesSortingExtractor
+        The loaded data.
+  __init__(self, file_path, load_unit_info=True)
+  Method: load_unit_info(self)
+    Docstring:
+      if 'centres' in self._rf.keys() and len(self._spike_times) > 0:
+          self._unit_locs = self._rf['centres'][()]  # cache for faster access
+          for u_i, unit_id in enumerate(self._unit_ids):
+              self.set_unit_property(unit_id, property_name='unit_location', value=self._unit_locs[u_i])
+      inds = []  # get these only once
+      for unit_id in self._unit_ids:
+          inds.append(np.where(self._cluster_id == unit_id)[0])
+      if 'data' in self._rf.keys() and len(self._spike_times) > 0:
+          d = self._rf['data'][()]
+          for i, unit_id in enumerate(self._unit_ids):
+              self.set_unit_spike_features(unit_id, 'spike_location', d[:, inds[i]].T)
+      if 'ch' in self._rf.keys() and len(self._spike_times) > 0:
+          d = self._rf['ch'][()]
+          for i, unit_id in enumerate(self._unit_ids):
+              self.set_unit_spike_features(unit_id, 'max_channel', d[inds[i]])
+
+Class: IblRecordingExtractor
+  Docstring:
+    Stream IBL data as an extractor object.
+    
+    Parameters
+    ----------
+    eid : str or None, default: None
+        The session ID to extract recordings for.
+        In ONE, this is sometimes referred to as the "eid".
+        When doing a session lookup such as
+    
+        >>> from one.api import ONE
+        >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+        >>> sessions = one.alyx.rest("sessions", "list", tag="2022_Q2_IBL_et_al_RepeatedSite")
+    
+        each returned value in `sessions` refers to it as the "id".
+    pid : str or None, default: None
+        Probe insertion UUID in Alyx. To retrieve the PID from a session (or eid), use the following code:
+    
+        >>> from one.api import ONE
+        >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+        >>> pids, _ = one.eid2pid("session_eid")
+        >>> pid = pids[0]
+    
+        Either `eid` or `pid` must be provided.
+    stream_name : str
+        The name of the stream to load for the session.
+        These can be retrieved from calling `StreamingIblExtractor.get_stream_names(session="<your session ID>")`.
+    load_sync_channel : bool, default: false
+        Load or not the last channel (sync).
+        If not then the probe is loaded.
+    cache_folder : str or None, default: None
+        The location to temporarily store chunks of data during streaming.
+        The default uses the folder designated by ONE.alyx._par.CACHE_DIR / "cache", which is typically the designated
+        "Downloads" folder on your operating system. As long as `remove_cached` is set to True, the only files that will
+        persist in this folder are the metadata header files and the chunk of data being actively streamed and used in RAM.
+    remove_cached : bool, default: True
+        Whether or not to remove streamed data from the cache immediately after it is read.
+        If you expect to reuse fetched data many times, and have the disk space available, it is recommended to set this to False.
+    stream : bool, default: True
+        Whether or not to stream the data.
+    one : one.api.OneAlyx, default: None
+        An instance of the ONE API to use for data loading.
+        If not provided, a default instance is created using the default parameters.
+        If you need to use a specific instance, you can create it using the ONE API and pass it here.
+    
+    Returns
+    -------
+    recording : IblStreamingRecordingExtractor
+        The recording extractor which allows access to the traces.
+  __init__(self, eid: 'str | None' = None, pid: 'str | None' = None, stream_name: 'str | None' = None, load_sync_channel: 'bool' = False, cache_folder: 'Optional[Path | str]' = None, remove_cached: 'bool' = True, stream: 'bool' = True, one: "'one.api.OneAlyx'" = None, stream_type: 'str | None' = None)
+  Method: get_stream_names(eid: 'str', cache_folder: 'Optional[Union[Path, str]]' = None, one=None) -> 'List[str]'
+    Docstring:
+      Convenient retrieval of available stream names.
+      
+      Parameters
+      ----------
+      eid : str
+          The experiment ID to extract recordings for.
+          In ONE, this is sometimes referred to as the "eid".
+          When doing a session lookup such as
+      
+          >>> from one.api import ONE
+          >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+          >>> eids = one.alyx.rest("sessions", "list", tag="2022_Q2_IBL_et_al_RepeatedSite")
+      
+          each returned value in `eids` refers to it as the experiment "id".
+      cache_folder : str or None, default: None
+          The location to temporarily store chunks of data during streaming.
+      one : one.api.OneAlyx, default: None
+          An instance of the ONE API to use for data loading.
+          If not provided, a default instance is created using the default parameters.
+          If you need to use a specific instance, you can create it using the ONE API and pass it here.
+      stream_type : "ap" | "lf" | None, default: None
+          The stream type to load, required when pid is provided and stream_name is not.
+      
+      Returns
+      -------
+      stream_names : list of str
+          List of stream names as expected by the `stream_name` argument for the class initialization.
+
+Class: IblSortingExtractor
+  Docstring:
+    Load IBL data as a sorting extractor.
+    
+    Parameters
+    ----------
+    pid: str
+        Probe insertion UUID in Alyx. To retrieve the PID from a session (or eid), use the following code:
+    
+        >>> from one.api import ONE
+        >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+        >>> pids, _ = one.eid2pid("session_eid")
+        >>> pid = pids[0]
+    one: One | dict, required
+        Instance of ONE.api or dict to use for data loading.
+        For multi-processing applications, this can also be a dictionary of ONE.api arguments
+        For example: one=dict(base_url='https://alyx.internationalbrainlab.org', mode='remote')
+    good_clusters_only: bool, default: False
+        If True, only load the good clusters
+    load_unit_properties: bool, default: True
+        If True, load the unit properties from the IBL database
+    kwargs: dict, optional
+        Additional keyword arguments to pass to the IBL SpikeSortingLoader constructor, such as `revision`.
+    Returns
+    -------
+    extractor : IBLSortingExtractor
+        The loaded data.
+  __init__(self, pid: 'str', good_clusters_only: 'bool' = False, load_unit_properties: 'bool' = True, one=None, **kwargs)
+
+Class: IntanRecordingExtractor
+  Docstring:
+    Class for reading data from a intan board. Supports rhd and rhs format.
+    
+    Based on :py:class:`neo.rawio.IntanRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    ignore_integrity_checks : bool, default: False.
+        If True, data that violates integrity assumptions will be loaded. At the moment the only integrity
+        check we perform is that timestamps are continuous. Setting this to True will ignore this check and set
+        the attribute `discontinuous_timestamps` to True in the underlying neo object.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+        In Intan the ids provided by NeoRawIO are the hardware channel ids while the names are custom names given by
+        the user
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_intan
+    # intan amplifier data is stored in stream_id = '0'
+    >>> recording = read_intan(file_path=r'my_data.rhd', stream_id='0')
+    # intan has multi-file formats as well, but in this case our path should point to the header file 'info.rhd'
+    >>> recording = read_intan(file_path=r'info.rhd', stream_id='0')
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations=False, use_names_as_ids=False, ignore_integrity_checks: 'bool' = False)
+
+Class: KiloSortSortingExtractor
+  Docstring:
+    Load Kilosort format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the output Phy folder (containing the params.py).
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+        If True, only Kilosort-labeled 'good' units are returned.
+    remove_empty_units : bool, default: True
+        If True, empty units are removed from the sorting extractor.
+    
+    Returns
+    -------
+    extractor : KiloSortSortingExtractor
+        The loaded Sorting object.
+  __init__(self, folder_path: 'Path | str', keep_good_only: 'bool' = False, remove_empty_units: 'bool' = True)
+
+Class: KlustaSortingExtractor
+  Docstring:
+    Load Klusta format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_or_folder_path : str or Path
+        Path to the ALF folder.
+    exclude_cluster_groups : list or str, default: None
+        Cluster groups to exclude (e.g. "noise" or ["noise", "mua"]).
+    
+    Returns
+    -------
+    extractor : KlustaSortingExtractor
+        The loaded data.
+  __init__(self, file_or_folder_path, exclude_cluster_groups=None)
+
+Class: MCSH5RecordingExtractor
+  Docstring:
+    Load a MCS H5 file as a recording extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        The path to the MCS h5 file.
+    stream_id : int, default: 0
+        The stream ID to load.
+    
+    Returns
+    -------
+    recording : MCSH5RecordingExtractor
+        The loaded data.
+  __init__(self, file_path, stream_id=0)
+
+Class: MCSRawRecordingExtractor
+  Docstring:
+    Class for reading data from "Raw" Multi Channel System (MCS) format.
+    This format is NOT the native MCS format (.mcd).
+    This format is a raw format with an internal binary header exported by the
+    "MC_DataTool binary conversion" with the option header selected.
+    
+    Based on :py:class:`neo.rawio.RawMCSRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    block_index : int, default: None
+        If there are several blocks, specify the block index you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, block_index=None, all_annotations=False, use_names_as_ids: 'bool' = False)
+
+Class: MClustSortingExtractor
+  Docstring:
+    Load MClust sorting solution as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to folder with t files.
+    sampling_frequency : sampling frequency
+        sampling frequency in Hz.
+    sampling_frequency_raw: float or None, default: None
+        Required to read files with raw formats. In that case, the samples are saved in the same
+        unit as the input data
+        Examples:
+            - If raw time is in tens of ms sampling_frequency_raw=10000
+            - If raw time is in samples sampling_frequency_raw=sampling_frequency
+    Returns
+    -------
+    extractor : MClustSortingExtractor
+        Loaded data.
+  __init__(self, folder_path, sampling_frequency, sampling_frequency_raw=None)
+
+Class: MEArecRecordingExtractor
+  Docstring:
+    Class for reading data from a MEArec simulated data.
+    
+    Based on :py:class:`neo.rawio.MEArecRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path: 'Union[str, Path]', all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: MEArecSortingExtractor
+  Docstring:
+    Abstract class representing several segment several units and relative spiketrains.
+  __init__(self, file_path: 'Union[str, Path]')
+  Method: read_sampling_frequency(self, file_path: 'Union[str, Path]') -> 'float'
+    Docstring:
+      None
+
+Class: MaxwellEventExtractor
+  Docstring:
+    Class for reading TTL events from Maxwell files.
+  __init__(self, file_path)
+
+Class: MaxwellRecordingExtractor
+  Docstring:
+    Class for reading data from Maxwell device.
+    It handles MaxOne (old and new format) and MaxTwo.
+    
+    Based on :py:class:`neo.rawio.MaxwellRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to the maxwell h5 file.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+        For MaxTwo when there are several wells at the same time you
+        need to specify stream_id='well000' or 'well0001', etc.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    rec_name : str, default: None
+        When the file contains several recordings you need to specify the one
+        you want to extract. (rec_name='rec0000').
+    install_maxwell_plugin : bool, default: False
+        If True, install the maxwell plugin for neo.
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load
+  __init__(self, file_path, stream_id=None, stream_name=None, block_index=None, all_annotations=False, rec_name=None, install_maxwell_plugin=False, use_names_as_ids: 'bool' = False)
+  Method: install_maxwell_plugin(self, force_download=False)
+    Docstring:
+      None
+
+Class: MdaRecordingExtractor
+  Docstring:
+    Load MDA format data as a recording extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the MDA folder.
+    raw_fname : str, default: "raw.mda"
+        File name of raw file
+    params_fname : str, default: "params.json"
+        File name of params file
+    geom_fname : str, default: "geom.csv"
+        File name of geom file
+    
+    Returns
+    -------
+    extractor : MdaRecordingExtractor
+        The loaded data.
+  __init__(self, folder_path, raw_fname='raw.mda', params_fname='params.json', geom_fname='geom.csv')
+  Method: write_recording(recording, save_path, params={}, raw_fname='raw.mda', params_fname='params.json', geom_fname='geom.csv', dtype=None, verbose=False, **job_kwargs)
+    Docstring:
+      Write a recording to file in MDA format.
+      
+      Parameters
+      ----------
+      recording : RecordingExtractor
+          The recording extractor to be saved.
+      save_path : str or Path
+          The folder to save the Mda files.
+      params : dictionary
+          Dictionary with optional parameters to save metadata.
+          Sampling frequency is appended to this dictionary.
+      raw_fname : str, default: "raw.mda"
+          File name of raw file
+      params_fname : str, default: "params.json"
+          File name of params file
+      geom_fname : str, default: "geom.csv"
+          File name of geom file
+      dtype : dtype or None, default: None
+          Data type to be used. If None dtype is same as recording traces.
+      verbose : bool
+          If True, shows progress bar when saving recording.
+      **job_kwargs:
+          Use by job_tools modules to set:
+      
+              * chunk_size or chunk_memory, or total_memory
+              * n_jobs
+              * progress_bar
+
+Class: MdaSortingExtractor
+  Docstring:
+    Load MDA format data as a sorting extractor.
+    
+    NOTE: As in the MDA format, the max_channel property indexes the channels that are given as input
+    to the sorter.
+    If sorting was run on a subset of channels of the recording, then the max_channel values are
+    based on that subset, so care must be taken when associating these values with a recording.
+    If additional sorting segments are added to this sorting extractor after initialization,
+    then max_channel will not be updated. The max_channel indices begin at 1.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the MDA file.
+    sampling_frequency : int
+        The sampling frequency.
+    
+    Returns
+    -------
+    extractor : MdaRecordingExtractor
+        The loaded data.
+  __init__(self, file_path, sampling_frequency)
+  Method: write_sorting(sorting, save_path, write_primary_channels=False)
+    Docstring:
+      None
+
+Class: NeuralynxRecordingExtractor
+  Docstring:
+    Class for reading neuralynx folder
+    
+    Based on :py:class:`neo.rawio.NeuralynxRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    exclude_filename : list[str], default: None
+        List of filename to exclude from the loading.
+        For example, use `exclude_filename=["events.nev"]` to skip loading the event file.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    strict_gap_mode : bool, default: False
+        See neo documentation.
+        Detect gaps using strict mode or not.
+        * strict_gap_mode = True then a gap is consider when timstamp difference between
+        two consecutive data packets is more than one sample interval.
+        * strict_gap_mode = False then a gap has an increased tolerance. Some new systems
+        with different clocks need this option otherwise, too many gaps are detected
+    
+        Note that here the default is False contrary to neo.
+  __init__(self, folder_path: 'str | Path', stream_id=None, stream_name=None, all_annotations=False, exclude_filename=None, strict_gap_mode=False, use_names_as_ids: 'bool' = False)
+
+Class: NeuralynxSortingExtractor
+  Docstring:
+    Class for reading spike data from a folder with neuralynx spiking data (i.e .nse and .ntt formats).
+    
+    Based on :py:class:`neo.rawio.NeuralynxRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+        The file path to load the recordings from.
+    sampling_frequency : float
+        The sampling frequency for the spiking channels. When the signal data is available (.ncs) those files will be
+        used to extract the frequency. Otherwise, the sampling frequency needs to be specified for this extractor.
+    stream_id : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+    stream_name : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+  __init__(self, folder_path: 'str', sampling_frequency: 'Optional[float]' = None, stream_id: 'Optional[str]' = None, stream_name: 'Optional[str]' = None)
+
+Class: NeuroExplorerRecordingExtractor
+  Docstring:
+    Class for reading NEX (NeuroExplorer data format) files.
+    
+    Based on :py:class:`neo.rawio.NeuroExplorerRawIO`
+    
+    Importantly, at the moment, this recorder only extracts one channel of the recording.
+    This is because the NeuroExplorerRawIO class does not support multi-channel recordings
+    as in the NeuroExplorer format they might have different sampling rates.
+    
+    Consider extracting all the channels and then concatenating them with the aggregate_channels function.
+    
+    >>> from spikeinterface.extractors.neoextractors.neuroexplorer import NeuroExplorerRecordingExtractor
+    >>> from spikeinterface.core import aggregate_channels
+    >>>
+    >>> file_path="/the/path/to/your/nex/file.nex"
+    >>>
+    >>> streams = NeuroExplorerRecordingExtractor.get_streams(file_path=file_path)
+    >>> stream_names = streams[0]
+    >>>
+    >>> your_signal_stream_names = "Here goes the logic to filter from stream names the ones that you know have the same sampling rate and you want to aggregate"
+    >>>
+    >>> recording_list = [NeuroExplorerRecordingExtractor(file_path=file_path, stream_name=stream_name) for stream_name in your_signal_stream_names]
+    >>> recording = aggregate_channels(recording_list)
+    
+    
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+        For this neo reader streams are defined by their sampling frequency.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: NeuroNexusRecordingExtractor
+  Docstring:
+    Class for reading data from NeuroNexus Allego.
+    
+    Based on :py:class:`neo.rawio.NeuronexusRawIO`
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        The file path to the metadata .xdat.json file of an Allego session
+    stream_id : str | None, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str | None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+        In Neuronexus the ids provided by NeoRawIO are the hardware channel ids stored as `ntv_chan_name` within
+        the metada and the names are the `chan_names`
+  __init__(self, file_path: 'str | Path', stream_id: 'str | None' = None, stream_name: 'str | None' = None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: NeuroScopeRecordingExtractor
+  Docstring:
+    Class for reading data from neuroscope
+    Ref: http://neuroscope.sourceforge.net
+    
+    Based on :py:class:`neo.rawio.NeuroScopeRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to the binary container usually a .dat, .lfp, .eeg extension.
+    xml_file_path : str, default: None
+        The path to the xml file. If None, the xml file is assumed to have the same name as the binary file.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, xml_file_path=None, stream_id=None, stream_name: 'bool' = None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: NeuroScopeSortingExtractor
+  Docstring:
+    Extracts spiking information from an arbitrary number of .res.%i and .clu.%i files in the general folder path.
+    
+    The .res is a text file with a sorted list of spiketimes from all units displayed in sample (integer "%i") units.
+    The .clu file is a file with one more row than the .res with the first row corresponding to the total number of
+    unique ids in the file (and may exclude 0 & 1 from this count)
+    with the rest of the rows indicating which unit id the corresponding entry in the .res file refers to.
+    The group id is loaded as unit property "group".
+    
+    In the original Neuroscope format:
+        Unit ID 0 is the cluster of unsorted spikes (noise).
+        Unit ID 1 is a cluster of multi-unit spikes.
+    
+    The function defaults to returning multi-unit activity as the first index, and ignoring unsorted noise.
+    To return only the fully sorted units, set keep_mua_units=False.
+    
+    The sorting extractor always returns unit IDs from 1, ..., number of chosen clusters.
+    
+    Parameters
+    ----------
+    folder_path : str
+        Optional. Path to the collection of .res and .clu text files. Will auto-detect format.
+    resfile_path : PathType
+        Optional. Path to a particular .res text file. If given, only the single .res file
+        (and the respective .clu file) are loaded
+    clufile_path : PathType
+        Optional. Path to a particular .clu text file. If given, only the single .clu file
+        (and the respective .res file) are loaded
+    keep_mua_units : bool, default: True
+        Optional. Whether or not to return sorted spikes from multi-unit activity
+    exclude_shanks : list
+        Optional. List of indices to ignore. The set of all possible indices is chosen by default, extracted as the
+        final integer of all the .res.%i and .clu.%i pairs.
+    xml_file_path : PathType, default: None
+        Path to the .xml file referenced by this sorting.
+  __init__(self, folder_path: 'OptionalPathType' = None, resfile_path: 'OptionalPathType' = None, clufile_path: 'OptionalPathType' = None, keep_mua_units: 'bool' = True, exclude_shanks: 'Optional[list]' = None, xml_file_path: 'OptionalPathType' = None)
+
+Class: NixRecordingExtractor
+  Docstring:
+    Class for reading Nix file
+    
+    Based on :py:class:`neo.rawio.NIXRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    block_index : int, default: None
+        If there are several blocks, specify the block index you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, block_index=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: NwbRecordingExtractor
+  Docstring:
+    Load an NWBFile as a RecordingExtractor.
+    
+    Parameters
+    ----------
+    file_path : str, Path, or None
+        Path to the NWB file or an s3 URL. Use this parameter to specify the file location
+        if not using the `file` parameter.
+    electrical_series_name : str or None, default: None
+        Deprecated, use `electrical_series_path` instead.
+    electrical_series_path : str or None, default: None
+        The name of the ElectricalSeries object within the NWB file. This parameter is crucial
+        when the NWB file contains multiple ElectricalSeries objects. It helps in identifying
+        which specific series to extract data from. If there is only one ElectricalSeries and
+        this parameter is not set, that unique series will be used by default.
+        If multiple ElectricalSeries are present and this parameter is not set, an error is raised.
+        The `electrical_series_path` corresponds to the path within the NWB file, e.g.,
+        'acquisition/MyElectricalSeries`.
+    load_time_vector : bool, default: False
+        If set to True, the time vector is also loaded into the recording object. Useful for
+        cases where precise timing information is required.
+    samples_for_rate_estimation : int, default: 1000
+        The number of timestamp samples used for estimating the sampling rate. This is relevant
+        when the 'rate' attribute is not available in the ElectricalSeries.
+    stream_mode : "fsspec" | "remfile" | "zarr" | None, default: None
+        Determines the streaming mode for reading the file. Use this for optimized reading from
+        different sources, such as local disk or remote servers.
+    load_channel_properties : bool, default: True
+        If True, all the channel properties are loaded from the NWB file and stored as properties.
+        For streaming purposes, it can be useful to set this to False to speed up streaming.
+    file : file-like object or None, default: None
+        A file-like object representing the NWB file. Use this parameter if you have an in-memory
+        representation of the NWB file instead of a file path.
+    cache : bool, default: False
+        Indicates whether to cache the file locally when using streaming. Caching can improve performance for
+        remote files.
+    stream_cache_path : str, Path, or None, default: None
+        Specifies the local path for caching the file. Relevant only if `cache` is True.
+    storage_options : dict | None = None,
+        These are the additional kwargs (e.g. AWS credentials) that are passed to the zarr.open convenience function.
+        This is only used on the "zarr" stream_mode.
+    use_pynwb : bool, default: False
+        Uses the pynwb library to read the NWB file. Setting this to False, the default, uses h5py
+        to read the file. Using h5py can improve performance by bypassing some of the PyNWB validations.
+    
+    Returns
+    -------
+    recording : NwbRecordingExtractor
+        The recording extractor for the NWB file.
+    
+    Examples
+    --------
+    Run on local file:
+    
+    >>> from spikeinterface.extractors.nwbextractors import NwbRecordingExtractor
+    >>> rec = NwbRecordingExtractor(filepath)
+    
+    Run on s3 URL from the DANDI Archive:
+    
+    >>> from spikeinterface.extractors.nwbextractors import NwbRecordingExtractor
+    >>> from dandi.dandiapi import DandiAPIClient
+    >>>
+    >>> # get s3 path
+    >>> dandiset_id = "001054"
+    >>> filepath = "sub-Dory/sub-Dory_ses-2020-09-14-004_ecephys.nwb"
+    >>> with DandiAPIClient() as client:
+    >>>     asset = client.get_dandiset(dandiset_id).get_asset_by_path(filepath)
+    >>>     s3_url = asset.get_content_url(follow_redirects=1, strip_query=True)
+    >>>
+    >>> rec = NwbRecordingExtractor(s3_url, stream_mode="remfile")
+  __init__(self, file_path: 'str | Path | None' = None, electrical_series_name: 'str | None' = None, load_time_vector: 'bool' = False, samples_for_rate_estimation: 'int' = 1000, stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, stream_cache_path: 'str | Path | None' = None, electrical_series_path: 'str | None' = None, load_channel_properties: 'bool' = True, *, file: 'BinaryIO | None' = None, cache: 'bool' = False, storage_options: 'dict | None' = None, use_pynwb: 'bool' = False)
+  Method: fetch_available_electrical_series_paths(file_path: 'str | Path', stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, storage_options: 'dict | None' = None) -> 'list[str]'
+    Docstring:
+      Retrieves the paths to all ElectricalSeries objects within a neurodata file.
+      
+      Parameters
+      ----------
+      file_path : str | Path
+          The path to the neurodata file to be analyzed.
+      stream_mode : "fsspec" | "remfile" | "zarr" | None, optional
+          Determines the streaming mode for reading the file. Use this for optimized reading from
+          different sources, such as local disk or remote servers.
+      storage_options : dict | None = None,
+          These are the additional kwargs (e.g. AWS credentials) that are passed to the zarr.open convenience function.
+          This is only used on the "zarr" stream_mode.
+      Returns
+      -------
+      list of str
+          A list of paths to all ElectricalSeries objects found in the file.
+      
+      
+      Notes
+      -----
+      The paths are returned as strings, and can be used to load the desired ElectricalSeries object.
+      Examples of paths are:
+          - "acquisition/ElectricalSeries1"
+          - "acquisition/ElectricalSeries2"
+          - "processing/ecephys/LFP/ElectricalSeries1"
+          - "processing/my_custom_module/MyContainer/ElectricalSeries2"
+
+Class: NwbSortingExtractor
+  Docstring:
+    Load an NWBFile as a SortingExtractor.
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to NWB file.
+    electrical_series_path : str or None, default: None
+        The name of the ElectricalSeries (if multiple ElectricalSeries are present).
+    sampling_frequency : float or None, default: None
+        The sampling frequency in Hz (required if no ElectricalSeries is available).
+    unit_table_path : str or None, default: "units"
+        The path of the unit table in the NWB file.
+    samples_for_rate_estimation : int, default: 100000
+        The number of timestamp samples to use to estimate the rate.
+        Used if "rate" is not specified in the ElectricalSeries.
+    stream_mode : "fsspec" | "remfile" | "zarr" | None, default: None
+        The streaming mode to use. If None it assumes the file is on the local disk.
+    stream_cache_path : str or Path or None, default: None
+        Local path for caching. If None it uses the system temporary directory.
+    load_unit_properties : bool, default: True
+        If True, all the unit properties are loaded from the NWB file and stored as properties.
+    t_start : float or None, default: None
+        This is the time at which the corresponding ElectricalSeries start. NWB stores its spikes as times
+        and the `t_start` is used to convert the times to seconds. Concrently, the returned frames are computed as:
+    
+        `frames = (times - t_start) * sampling_frequency`.
+    
+        As SpikeInterface always considers the first frame to be at the beginning of the recording independently
+        of the `t_start`.
+    
+        When a `t_start` is not provided it will be inferred from the corresponding ElectricalSeries with name equal
+        to `electrical_series_path`. The `t_start` then will be either the `ElectricalSeries.starting_time` or the
+        first timestamp in the `ElectricalSeries.timestamps`.
+    cache : bool, default: False
+        If True, the file is cached in the file passed to stream_cache_path
+        if False, the file is not cached.
+    storage_options : dict | None = None,
+        These are the additional kwargs (e.g. AWS credentials) that are passed to the zarr.open convenience function.
+        This is only used on the "zarr" stream_mode.
+    use_pynwb : bool, default: False
+        Uses the pynwb library to read the NWB file. Setting this to False, the default, uses h5py
+        to read the file. Using h5py can improve performance by bypassing some of the PyNWB validations.
+    
+    Returns
+    -------
+    sorting : NwbSortingExtractor
+        The sorting extractor for the NWB file.
+  __init__(self, file_path: 'str | Path', electrical_series_path: 'str | None' = None, sampling_frequency: 'float | None' = None, samples_for_rate_estimation: 'int' = 1000, stream_mode: 'str | None' = None, stream_cache_path: 'str | Path | None' = None, load_unit_properties: 'bool' = True, unit_table_path: 'str' = 'units', *, t_start: 'float | None' = None, cache: 'bool' = False, storage_options: 'dict | None' = None, use_pynwb: 'bool' = False)
+
+Class: NwbTimeSeriesExtractor
+  Docstring:
+    Load a TimeSeries from an NWBFile as a RecordingExtractor.
+    
+    Parameters
+    ----------
+    file_path : str | Path | None
+        Path to NWB file or an s3 URL. Use this parameter to specify the file location
+        if not using the `file` parameter.
+    timeseries_path : str | None
+        The path to the TimeSeries object within the NWB file. This parameter is required
+        when the NWB file contains multiple TimeSeries objects. The path corresponds to
+        the location within the NWB file hierarchy, e.g. 'acquisition/MyTimeSeries'.
+    load_time_vector : bool, default: False
+        If True, the time vector is loaded into the recording object. Useful when
+        precise timing information is needed.
+    samples_for_rate_estimation : int, default: 1000
+        The number of timestamps used for estimating the sampling rate when
+        timestamps are used instead of a fixed rate.
+    stream_mode : Literal["fsspec", "remfile", "zarr"] | None, default: None
+        Determines the streaming mode for reading the file.
+    file : BinaryIO | None, default: None
+        A file-like object representing the NWB file. Use this parameter if you have
+        an in-memory representation of the NWB file instead of a file path given by `file_path`.
+    cache : bool, default: False
+        If True, the file is cached locally when using streaming.
+    stream_cache_path : str | Path | None, default: None
+        Local path for caching. Only used if `cache` is True.
+    storage_options : dict | None, default: None
+        Additional kwargs (e.g. AWS credentials) passed to zarr.open. Only used with
+        "zarr" stream_mode.
+    use_pynwb : bool, default: False
+        If True, uses pynwb library to read the NWB file. Default False uses h5py/zarr
+        directly for better performance.
+    
+    Returns
+    -------
+    recording : NwbTimeSeriesExtractor
+        A recording extractor containing the TimeSeries data.
+  __init__(self, file_path: 'str | Path | None' = None, timeseries_path: 'str | None' = None, load_time_vector: 'bool' = False, samples_for_rate_estimation: 'int' = 1000, stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, stream_cache_path: 'str | Path | None' = None, *, file: 'BinaryIO | None' = None, cache: 'bool' = False, storage_options: 'dict | None' = None, use_pynwb: 'bool' = False)
+  Method: fetch_available_timeseries_paths(file_path: 'str | Path', stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, storage_options: 'dict | None' = None) -> 'list[str]'
+    Docstring:
+      Get paths to all TimeSeries objects in a neurodata file.
+      
+      Parameters
+      ----------
+      file_path : str | Path
+          Path to the NWB file.
+      stream_mode : str | None
+          Streaming mode for reading remote files.
+      storage_options : dict | None
+          Additional options for zarr storage.
+      
+      Returns
+      -------
+      list[str]
+          List of paths to TimeSeries objects.
+
+Class: OpenEphysBinaryEventExtractor
+  Docstring:
+    Class for reading events saved by the Open Ephys GUI
+    
+    This extractor works with the  Open Ephys "binary" format, which saves data using
+    one file per continuous stream.
+    
+    https://open-ephys.github.io/gui-docs/User-Manual/Recording-data/Binary-format.html
+    
+    Based on neo.rawio.OpenEphysBinaryRawIO
+    
+    Parameters
+    ----------
+    folder_path : str
+  __init__(self, folder_path, block_index=None)
+
+Class: OpenEphysBinaryRecordingExtractor
+  Docstring:
+    Class for reading data saved by the Open Ephys GUI.
+    
+    This extractor works with the  Open Ephys "binary" format, which saves data using
+    one file per continuous stream (.dat files).
+    
+    https://open-ephys.github.io/gui-docs/User-Manual/Recording-data/Binary-format.html
+    
+    Based on neo.rawio.OpenEphysBinaryRawIO
+    
+    Parameters
+    ----------
+    folder_path : str
+        The folder path to the root folder (containing the record node folders)
+    load_sync_channel : bool, default: False
+        If False (default) and a SYNC channel is present (e.g. Neuropixels), this is not loaded
+        If True, the SYNC channel is loaded and can be accessed in the analog signals.
+    load_sync_timestamps : bool, default: False
+        If True, the synchronized_timestamps are loaded and set as times to the recording.
+        If False (default), only the t_start and sampling rate are set, and timestamps are assumed
+        to be uniform and linearly increasing
+    experiment_names : str, list, or None, default: None
+        If multiple experiments are available, this argument allows users to select one
+        or more experiments. If None, all experiements are loaded as blocks.
+        E.g. `experiment_names="experiment2"`, `experiment_names=["experiment1", "experiment2"]`
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load
+    all_annotations : bool, default: False
+        Load exhaustively all annotation from neo
+    
+    Notes
+    -----
+    If no stream is explicitly specified and there are exactly two streams (neural data and
+    synchronization data), the neural data stream will be automatically selected.
+  __init__(self, folder_path: 'str | Path', load_sync_channel: 'bool' = False, load_sync_timestamps: 'bool' = False, experiment_names: 'str | list | None' = None, stream_id: 'str' = None, stream_name: 'str' = None, block_index: 'int' = None, all_annotations: 'bool' = False)
+
+Class: OpenEphysLegacyRecordingExtractor
+  Docstring:
+    Class for reading data saved by the Open Ephys GUI.
+    
+    This extractor works with the Open Ephys "legacy" format, which saves data using
+    one file per continuous channel (.continuous files).
+    
+    https://open-ephys.github.io/gui-docs/User-Manual/Recording-data/Open-Ephys-format.html
+    
+    Based on :py:class:`neo.rawio.OpenEphysRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+        The folder path to load the recordings from
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load
+    all_annotations : bool, default: False
+        Load exhaustively all annotation from neo
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    ignore_timestamps_errors : None
+        Deprecated keyword argument. This is now ignored.
+        neo.OpenEphysRawIO is now handling gaps directly but makes the read slower.
+  __init__(self, folder_path, stream_id=None, stream_name=None, block_index=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False, ignore_timestamps_errors: 'bool' = None)
+
+Class: PhySortingExtractor
+  Docstring:
+    Load Phy format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the output Phy folder (containing the params.py).
+    exclude_cluster_groups : list or str, default: None
+        Cluster groups to exclude (e.g. "noise" or ["noise", "mua"]).
+    load_all_cluster_properties : bool, default: True
+        If True, all cluster properties are loaded from the tsv/csv files.
+    
+    Returns
+    -------
+    extractor : PhySortingExtractor
+        The loaded Sorting object.
+  __init__(self, folder_path: 'Path | str', exclude_cluster_groups: 'Optional[list[str] | str]' = None, load_all_cluster_properties: 'bool' = True)
+
+Class: Plexon2EventExtractor
+  Docstring:
+    Class for reading plexon spiking data from .pl2 files.
+    
+    Based on :py:class:`neo.rawio.Plexon2RawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+  __init__(self, folder_path, block_index=None)
+
+Class: Plexon2RecordingExtractor
+  Docstring:
+    Class for reading plexon pl2 files.
+    
+    Based on :py:class:`neo.rawio.Plexon2RawIO`
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        The file path of the plexon2 file. It should have the .pl2 extension.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    use_names_as_ids : bool, default: True
+        If True, the names of the signals are used as channel ids. If False, the channel ids are a combination of the
+        source id and the channel index.
+    
+        Example for wideband signals:
+            names: ["WB01", "WB02", "WB03", "WB04"]
+            ids: ["source3.1" , "source3.2", "source3.3", "source3.4"]
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    reading_attempts : int, default: 25
+        Number of attempts to read the file before raising an error
+        This opening process is somewhat unreliable and might fail occasionally. Adjust this higher
+        if you encounter problems in opening the file.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_plexon2
+    >>> recording = read_plexon2(file_path=r'my_data.pl2')
+  __init__(self, file_path, stream_id=None, stream_name=None, use_names_as_ids=True, all_annotations=False, reading_attempts: 'int' = 25)
+
+Class: Plexon2SortingExtractor
+  Docstring:
+    Class for reading plexon spiking data from .pl2 files.
+    
+    Based on :py:class:`neo.rawio.Plexon2RawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    sampling_frequency : float, default: None
+        The sampling frequency of the sorting (required for multiple streams with different sampling frequencies).
+  __init__(self, file_path, sampling_frequency=None)
+
+Class: PlexonRecordingExtractor
+  Docstring:
+    Class for reading plexon plx files.
+    
+    Based on :py:class:`neo.rawio.PlexonRawIO`
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: True
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+        Example for wideband signals:
+            names: ["WB01", "WB02", "WB03", "WB04"]
+            ids: ["0" , "1", "2", "3"]
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_plexon
+    >>> recording = read_plexon(file_path=r'my_data.plx')
+  __init__(self, file_path: 'str | Path', stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = True)
+
+Class: PlexonSortingExtractor
+  Docstring:
+    Class for reading plexon spiking data (.plx files).
+    
+    Based on :py:class:`neo.rawio.PlexonRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+  __init__(self, file_path)
+
+Class: SHYBRIDRecordingExtractor
+  Docstring:
+    Load SHYBRID format data as a recording extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the SHYBRID file.
+    
+    Returns
+    -------
+    extractor : SHYBRIDRecordingExtractor
+        Loaded data.
+  __init__(self, file_path)
+  Method: write_recording(recording, save_path, initial_sorting_fn, dtype='float32', **job_kwargs)
+    Docstring:
+      Convert and save the recording extractor to SHYBRID format.
+      
+      Parameters
+      ----------
+      recording: RecordingExtractor
+          The recording extractor to be converted and saved
+      save_path: str
+          Full path to desired target folder
+      initial_sorting_fn: str
+          Full path to the initial sorting csv file (can also be generated
+          using write_sorting static method from the SHYBRIDSortingExtractor)
+      dtype: dtype, default: float32
+          Type of the saved data
+      **write_binary_kwargs: keyword arguments for write_to_binary_dat_format() function
+
+Class: SHYBRIDSortingExtractor
+  Docstring:
+    Load SHYBRID format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the SHYBRID file.
+    sampling_frequency : int
+        The sampling frequency.
+    delimiter : str
+        The delimiter to use for loading the file.
+    
+    Returns
+    -------
+    extractor : SHYBRIDSortingExtractor
+        Loaded data.
+  __init__(self, file_path, sampling_frequency, delimiter=',')
+  Method: write_sorting(sorting, save_path)
+    Docstring:
+      Convert and save the sorting extractor to SHYBRID CSV format.
+      
+      Parameters
+      ----------
+      sorting : SortingExtractor
+          The sorting extractor to be converted and saved.
+      save_path : str
+          Full path to the desired target folder.
+
+Class: SinapsResearchPlatformH5RecordingExtractor
+  Docstring:
+    Recording extractor for the SiNAPS research platform system saved in HDF5 format.
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        Path to the SiNAPS .h5 file.
+  __init__(self, file_path: 'str | Path')
+
+Class: SinapsResearchPlatformRecordingExtractor
+  Docstring:
+    Recording extractor for the SiNAPS research platform system saved in binary format.
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        Path to the SiNAPS .bin file.
+    stream_name : "filt" | "raw" | "aux", default: "filt"
+        The stream name to extract.
+        "filt" extracts the filtered data, "raw" extracts the raw data, and "aux" extracts the auxiliary data.
+  __init__(self, file_path: 'str | Path', stream_name: 'str' = 'filt')
+
+Class: Spike2RecordingExtractor
+  Docstring:
+    Class for reading spike2 smr files.
+    smrx are not supported with this, prefer CedRecordingExtractor instead.
+    
+    Based on :py:class:`neo.rawio.Spike2RawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations=False, use_names_as_ids: 'bool' = False)
+
+Class: SpikeGLXEventExtractor
+  Docstring:
+    Class for reading events saved on the event channel by SpikeGLX software.
+    
+    Parameters
+    ----------
+    folder_path: str
+  __init__(self, folder_path, block_index=None)
+
+Class: SpikeGLXRecordingExtractor
+  Docstring:
+    Class for reading data saved by SpikeGLX software.
+    See https://billkarsh.github.io/SpikeGLX/
+    
+    Based on :py:class:`neo.rawio.SpikeGLXRawIO`
+    
+    Contrary to older verions, this reader is folder-based.
+    If the folder contains several streams (e.g., "imec0.ap", "nidq" ,"imec0.lf"),
+    then the stream has to be specified with "stream_id" or "stream_name".
+    
+    Parameters
+    ----------
+    folder_path : str
+        The folder path to load the recordings from.
+    load_sync_channel : bool default: False
+        Whether or not to load the last channel in the stream, which is typically used for synchronization.
+        If True, then the probe is not loaded.
+    stream_id : str or None, default: None
+        If there are several streams, specify the stream id you want to load.
+        For example, "imec0.ap", "nidq", or "imec0.lf".
+    stream_name : str or None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_spikeglx
+    >>> recording = read_spikeglx(folder_path=r'path_to_folder_with_data', load_sync_channel=False)
+    # we can load the sync channel, but then the probe is not loaded
+    >>> recording = read_spikeglx(folder_path=r'pat_to_folder_with_data', load_sync_channel=True)
+  __init__(self, folder_path, load_sync_channel=False, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: SpikeGadgetsRecordingExtractor
+  Docstring:
+    Class for reading rec files from spikegadgets.
+    
+    Based on :py:class:`neo.rawio.SpikeGadgetsRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str or None, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str or None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_spikegadgets
+    >>> recording = read_spikegadgets(file_path=r'my_data.rec')
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: SpykingCircusSortingExtractor
+  Docstring:
+    Load SpykingCircus format data as a recording extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the SpykingCircus folder.
+    
+    Returns
+    -------
+    extractor : SpykingCircusSortingExtractor
+        Loaded data.
+  __init__(self, folder_path)
+
+Class: TdtRecordingExtractor
+  Docstring:
+    Class for reading TDT folder.
+    
+    Based on :py:class:`neo.rawio.TdTRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+        The folder path to the tdt folder.
+    stream_id : str or None, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str or None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load
+  __init__(self, folder_path, stream_id=None, stream_name=None, block_index=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: TridesclousSortingExtractor
+  Docstring:
+    Load Tridesclous format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the Tridesclous folder.
+    chan_grp : list or None, default: None
+        The channel group(s) to load.
+    
+    Returns
+    -------
+    extractor : TridesclousSortingExtractor
+        Loaded data.
+  __init__(self, folder_path, chan_grp=None)
+
+Class: WaveClusSnippetsExtractor
+  Docstring:
+    Abstract class representing several multichannel snippets.
+  __init__(self, file_path)
+  Method: write_snippets(snippets_extractor, save_file_path)
+    Docstring:
+      None
+
+Class: WaveClusSortingExtractor
+  Docstring:
+    Load WaveClus format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the WaveClus file.
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+    
+    Returns
+    -------
+    extractor : WaveClusSortingExtractor
+        Loaded data.
+  __init__(self, file_path, keep_good_only=True)
+
+Class: WhiteMatterRecordingExtractor
+  Docstring:
+    RecordingExtractor for the WhiteMatter binary format.
+    
+    The recording format is a raw binary file containing int16 data,
+    with an 8-byte header offset.
+    
+    Parameters
+    ----------
+    file_path : Path
+        Path to the binary file.
+    sampling_frequency : float
+        The sampling frequency.
+    num_channels : int
+        Number of channels in the recording.
+    channel_ids : list or None, default: None
+        A list of channel ids. If None, channel_ids = list(range(num_channels)).
+    is_filtered : bool or None, default: None
+        If True, the recording is assumed to be filtered. If None, `is_filtered` is not set.
+  __init__(self, file_path: Union[str, pathlib.Path], sampling_frequency: float, num_channels: int, channel_ids: Optional[List] = None, is_filtered: Optional[bool] = None)
+
+Class: YassSortingExtractor
+  Docstring:
+    Load YASS format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the ALF folder.
+    
+    Returns
+    -------
+    extractor : YassSortingExtractor
+        Loaded data.
+  __init__(self, folder_path)
+
+Class: event_class
+  Docstring:
+    Class for reading events saved on the event channel by SpikeGLX software.
+    
+    Parameters
+    ----------
+    folder_path: str
+  __init__(self, folder_path, block_index=None)
+
+Function: get_neo_num_blocks(extractor_name, *args, **kwargs) -> 'int'
+  Docstring:
+    Returns the number of NEO blocks.
+    For multi-block datasets, the `block_index` argument can be used to select
+    which bloack to read with the `read_**extractor_name**()` function.
+    
+    
+    Parameters
+    ----------
+    extractor_name : str
+        The extractor name (available through the se.recording_extractor_full_dict).
+    *args, **kwargs : arguments
+        Extractor specific arguments. You can check extractor specific arguments with:
+        `read_**extractor_name**?`
+    
+    Returns
+    -------
+    int
+        Number of NEO blocks
+    
+    Note
+    ----
+    Most datasets contain a single block.
+
+Function: get_neo_streams(extractor_name, *args, **kwargs)
+  Docstring:
+    Returns the NEO streams (stream names and stream ids) associated to a dataset.
+    For multi-stream datasets, the `stream_id` or `stream_name` arguments can be used
+    to select which stream to read with the `read_**extractor_name**()` function.
+    
+    Parameters
+    ----------
+    extractor_name : str
+        The extractor name (available through the se.recording_extractor_full_dict).
+    *args, **kwargs : arguments
+        Extractor specific arguments. You can check extractor specific arguments with:
+        `read_**extractor_name**?`
+    
+    
+    Returns
+    -------
+    list
+        List of NEO stream names
+    list
+        List of NEO stream ids
+
+Function: get_neuropixels_channel_groups(num_channels=384, num_channels_per_adc=12)
+  Docstring:
+    Returns groups of simultaneously sampled channels on a Neuropixels probe.
+    
+    The Neuropixels ADC sampling pattern is as follows:
+    
+    Channels:   ADCs:
+    |||         |||
+    ...         ...
+    26 27       2 3
+    24 25       2 3
+    22 23       0 1
+    ...         ...
+    2 3         0 1
+    0 1         0 1 <-- even and odd channels are digitized by separate ADCs
+    |||         |||
+     V           V
+    
+    This information is needed to perform the preprocessing.common_reference operation
+    on channels that are sampled synchronously.
+    
+    Parameters
+    ----------
+    num_channels : int, default: 384
+        The total number of channels in a recording.
+        All currently available Neuropixels variants have 384 channels.
+    num_channels_per_adc : int, default: 12
+        The number of channels per ADC on the probe.
+        Neuropixels 1.0 probes have 32 ADCs, each handling 12 channels.
+        Neuropixels 2.0 probes have 24 ADCs, each handling 16 channels.
+    
+    Returns
+    -------
+    groups : list
+        A list of lists of simultaneously sampled channel indices
+
+Function: get_neuropixels_sample_shifts(num_channels: 'int' = 384, num_channels_per_adc: 'int' = 12, num_cycles: 'Optional[int]' = None) -> 'np.ndarray'
+  Docstring:
+    Calculate the relative sampling phase (inter-sample shifts) for each channel
+    in Neuropixels probes due to ADC multiplexing.
+    
+    Neuropixels probes sample channels sequentially through multiple ADCs,
+    introducing slight temporal delays between channels within each sampling cycle.
+    These inter-sample shifts are fractions of the sampling period and are crucial
+    to consider during preprocessing steps, such as phase correction, to ensure
+    accurate alignment of the recorded signals.
+    
+    This function computes these relative phase shifts, returning an array where
+    each value represents the fractional delay (ranging from 0 to 1) for the
+    corresponding channel.
+    
+    Parameters
+    ----------
+    num_channels : int, default: 384
+        Total number of channels in the recording.
+        Neuropixels probes typically have 384 channels.
+    num_channels_per_adc : int, default: 12
+        Number of channels assigned to each ADC on the probe.
+        Neuropixels 1.0 probes have 32 ADCs, each handling 12 channels.
+        Neuropixels 2.0 probes have 24 ADCs, each handling 16 channels.
+    num_cycles : int or None, default: None
+        Number of cycles in the ADC sampling sequence.
+        Neuropixels 1.0 probes have 13 cycles for AP (action potential) signals
+        and 12 for LFP (local field potential) signals.
+        Neuropixels 2.0 probes have 16 cycles.
+        If None, defaults to the value of `num_channels_per_adc`.
+    
+    Returns
+    -------
+    sample_shifts : np.ndarray
+        Array of relative phase shifts for each channel, with values ranging from 0 to 1,
+        representing the fractional delay within the sampling period due to sequential ADC sampling.
+
+Class: read_alf_sorting
+  Docstring:
+    Load ALF format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the ALF folder.
+    sampling_frequency : int, default: 30000
+        The sampling frequency.
+    
+    Returns
+    -------
+    extractor : ALFSortingExtractor
+        The loaded data.
+  __init__(self, folder_path, sampling_frequency=30000)
+
+Class: read_alphaomega
+  Docstring:
+    Class for reading from AlphaRS and AlphaLab SnR boards.
+    
+    Based on :py:class:`neo.rawio.AlphaOmegaRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str or Path-like
+        The folder path to the AlphaOmega recordings.
+    lsx_files : list of strings or None, default: None
+        A list of files that refers to mpx files to load.
+    stream_id : {"RAW", "LFP", "SPK", "ACC", "AI", "UD"}, default: "RAW"
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_alphaomega
+    >>> recording = read_alphaomega(folder_path="alphaomega_folder")
+  __init__(self, folder_path, lsx_files=None, stream_id='RAW', stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_alphaomega_event
+  Docstring:
+    Class for reading events from AlphaOmega MPX file format
+    
+    Parameters
+    ----------
+    folder_path : str or Path-like
+        The folder path to the AlphaOmega events.
+  __init__(self, folder_path)
+
+Class: read_axona
+  Docstring:
+    Class for reading Axona RAW format.
+    
+    Based on :py:class:`neo.rawio.AxonaRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_axona
+    >>> recording = read_axona(file_path=r'my_data.set')
+  __init__(self, file_path: 'str | Path', all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Function: read_bids(folder_path)
+  Docstring:
+    Load a BIDS folder of data into extractor objects.
+    
+    The following files are considered:
+    
+      * _channels.tsv
+      * _contacts.tsv
+      * _ephys.nwb
+      * _probes.tsv
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the BIDS folder.
+    
+    Returns
+    -------
+    extractors : list of extractors
+        The loaded data, with attached Probes.
+
+Class: read_biocam
+  Docstring:
+    Class for reading data from a Biocam file from 3Brain.
+    
+    Based on :py:class:`neo.rawio.BiocamRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    mea_pitch : float, default: None
+        The inter-electrode distance (pitch) between electrodes.
+    electrode_width : float, default: None
+        Width of the electrodes in um.
+    fill_gaps_strategy: "zeros" | "synthetic_noise" | None, default: None
+        The strategy to fill the gaps in the data when using event-based
+        compression. If None and the file is event-based compressed,
+        you need to specify a fill gaps strategy:
+    
+        * "zeros": the gaps are filled with unsigned 0s (2048). This value is the "0" of the unsigned 12 bits
+                   representation of the data.
+        * "synthetic_noise": the gaps are filled with synthetic noise.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, mea_pitch=None, electrode_width=None, fill_gaps_strategy=None, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_blackrock
+  Docstring:
+    Class for reading BlackRock data.
+    
+    Based on :py:class:`neo.rawio.BlackrockRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_blackrock_sorting
+  Docstring:
+    Class for reading BlackRock spiking data.
+    
+    Based on :py:class:`neo.rawio.BlackrockRawIO`
+    
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from
+    stream_id : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+    stream_name : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+    sampling_frequency : float, default: None
+        The sampling frequency for the sorting extractor. When the signal data is available (.ncs) those files will be
+        used to extract the frequency automatically. Otherwise, the sampling frequency needs to be specified for
+        this extractor to be initialized.
+    nsx_to_load : int | list | str, default: None
+        IDs of nsX file from which to load data, e.g., if set to 5 only data from the ns5 file are loaded.
+        If 'all', then all nsX will be loaded. If None, all nsX files will be loaded. If empty list, no nsX files will be loaded.
+  __init__(self, file_path, stream_id: 'Optional[str]' = None, stream_name: 'Optional[str]' = None, sampling_frequency: 'Optional[float]' = None, nsx_to_load: 'Optional[int | list | str]' = None)
+
+Class: read_cbin_ibl
+  Docstring:
+    Load IBL data as an extractor object.
+    
+    IBL have a custom format - compressed binary with spikeglx meta.
+    
+    The format is like spikeglx (have a meta file) but contains:
+    
+      * "cbin" file (instead of "bin")
+      * "ch" file used by mtscomp for compression info
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to ibl folder.
+    load_sync_channel : bool, default: False
+        Load or not the last channel (sync).
+        If not then the probe is loaded.
+    stream_name : {"ap", "lp"}, default: "ap".
+        Whether to load AP or LFP band, one
+        of "ap" or "lp".
+    cbin_file_path : str, Path or None, default None
+        The cbin file of the recording. If None, searches in `folder_path` for file.
+    cbin_file : str or None, default None
+        (deprecated) The cbin file of the recording. If None, searches in `folder_path` for file.
+    
+    Returns
+    -------
+    recording : CompressedBinaryIblExtractor
+        The loaded data.
+  __init__(self, folder_path=None, load_sync_channel=False, stream_name='ap', cbin_file_path=None, cbin_file=None)
+
+Class: read_ced
+  Docstring:
+    Class for reading smr/smrw CED file.
+    
+    Based on :py:class:`neo.rawio.CedRawIO` / sonpy
+    
+    Alternative to read_spike2 which does not handle smrx
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to the smr or smrx file.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_ced
+    >>> recording = read_ced(file_path=r'my_data.smr')
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_cellexplorer
+  Docstring:
+    Extracts spiking information from `.mat` file stored in the CellExplorer format.
+    Spike times are stored in units of seconds so we transform them to units of samples.
+    
+    The newer version of the format is described here:
+    https://cellexplorer.org/data-structure/
+    
+    Whereas the old format is described here:
+    https://github.com/buzsakilab/buzcode/wiki/Data-Formatting-Standards
+    
+    Parameters
+    ----------
+    file_path: str | Path
+        Path to `.mat` file containing spikes. Usually named `session_id.spikes.cellinfo.mat`
+    sampling_frequency: float | None, default: None
+        The sampling frequency of the data. If None, it will be extracted from the files.
+    session_info_file_path: str | Path | None, default: None
+        Path to the `sessionInfo.mat` file. If None, it will be inferred from the file_path.
+  __init__(self, file_path: 'str | Path', sampling_frequency: 'float | None' = None, session_info_file_path: 'str | Path | None' = None)
+
+Class: read_combinato
+  Docstring:
+    Load Combinato format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the Combinato folder.
+    sampling_frequency : int, default: 30000
+        The sampling frequency.
+    user : str, default: "simple"
+        The username that ran the sorting
+    det_sign : "both", "pos", "neg", default: "both"
+        Which sign was used for detection.
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+    
+    Returns
+    -------
+    extractor : CombinatoSortingExtractor
+        The loaded data.
+  __init__(self, folder_path, sampling_frequency=None, user='simple', det_sign='both', keep_good_only=True)
+
+Class: read_edf
+  Docstring:
+    Class for reading EDF (European data format) folder.
+    
+    Based on :py:class:`neo.rawio.EDFRawIO`
+    
+    Parameters
+    ----------
+    file_path: str
+        The file path to load the recordings from.
+    stream_id: str, default: None
+        If there are several streams, specify the stream id you want to load.
+        For this neo reader streams are defined by their sampling frequency.
+    stream_name: str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations: bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_hdsort
+  Docstring:
+    Load HDSort format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to HDSort mat file.
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+    
+    Returns
+    -------
+    extractor : HDSortSortingExtractor
+        The loaded data.
+  __init__(self, file_path, keep_good_only=True)
+
+Class: read_herdingspikes
+  Docstring:
+    Load HerdingSpikes format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the ALF folder.
+    load_unit_info : bool, default: True
+        Whether to load the unit info from the file.
+    
+    Returns
+    -------
+    extractor : HerdingSpikesSortingExtractor
+        The loaded data.
+  __init__(self, file_path, load_unit_info=True)
+  Method: load_unit_info(self)
+    Docstring:
+      if 'centres' in self._rf.keys() and len(self._spike_times) > 0:
+          self._unit_locs = self._rf['centres'][()]  # cache for faster access
+          for u_i, unit_id in enumerate(self._unit_ids):
+              self.set_unit_property(unit_id, property_name='unit_location', value=self._unit_locs[u_i])
+      inds = []  # get these only once
+      for unit_id in self._unit_ids:
+          inds.append(np.where(self._cluster_id == unit_id)[0])
+      if 'data' in self._rf.keys() and len(self._spike_times) > 0:
+          d = self._rf['data'][()]
+          for i, unit_id in enumerate(self._unit_ids):
+              self.set_unit_spike_features(unit_id, 'spike_location', d[:, inds[i]].T)
+      if 'ch' in self._rf.keys() and len(self._spike_times) > 0:
+          d = self._rf['ch'][()]
+          for i, unit_id in enumerate(self._unit_ids):
+              self.set_unit_spike_features(unit_id, 'max_channel', d[inds[i]])
+
+Class: read_ibl_recording
+  Docstring:
+    Stream IBL data as an extractor object.
+    
+    Parameters
+    ----------
+    eid : str or None, default: None
+        The session ID to extract recordings for.
+        In ONE, this is sometimes referred to as the "eid".
+        When doing a session lookup such as
+    
+        >>> from one.api import ONE
+        >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+        >>> sessions = one.alyx.rest("sessions", "list", tag="2022_Q2_IBL_et_al_RepeatedSite")
+    
+        each returned value in `sessions` refers to it as the "id".
+    pid : str or None, default: None
+        Probe insertion UUID in Alyx. To retrieve the PID from a session (or eid), use the following code:
+    
+        >>> from one.api import ONE
+        >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+        >>> pids, _ = one.eid2pid("session_eid")
+        >>> pid = pids[0]
+    
+        Either `eid` or `pid` must be provided.
+    stream_name : str
+        The name of the stream to load for the session.
+        These can be retrieved from calling `StreamingIblExtractor.get_stream_names(session="<your session ID>")`.
+    load_sync_channel : bool, default: false
+        Load or not the last channel (sync).
+        If not then the probe is loaded.
+    cache_folder : str or None, default: None
+        The location to temporarily store chunks of data during streaming.
+        The default uses the folder designated by ONE.alyx._par.CACHE_DIR / "cache", which is typically the designated
+        "Downloads" folder on your operating system. As long as `remove_cached` is set to True, the only files that will
+        persist in this folder are the metadata header files and the chunk of data being actively streamed and used in RAM.
+    remove_cached : bool, default: True
+        Whether or not to remove streamed data from the cache immediately after it is read.
+        If you expect to reuse fetched data many times, and have the disk space available, it is recommended to set this to False.
+    stream : bool, default: True
+        Whether or not to stream the data.
+    one : one.api.OneAlyx, default: None
+        An instance of the ONE API to use for data loading.
+        If not provided, a default instance is created using the default parameters.
+        If you need to use a specific instance, you can create it using the ONE API and pass it here.
+    
+    Returns
+    -------
+    recording : IblStreamingRecordingExtractor
+        The recording extractor which allows access to the traces.
+  __init__(self, eid: 'str | None' = None, pid: 'str | None' = None, stream_name: 'str | None' = None, load_sync_channel: 'bool' = False, cache_folder: 'Optional[Path | str]' = None, remove_cached: 'bool' = True, stream: 'bool' = True, one: "'one.api.OneAlyx'" = None, stream_type: 'str | None' = None)
+  Method: get_stream_names(eid: 'str', cache_folder: 'Optional[Union[Path, str]]' = None, one=None) -> 'List[str]'
+    Docstring:
+      Convenient retrieval of available stream names.
+      
+      Parameters
+      ----------
+      eid : str
+          The experiment ID to extract recordings for.
+          In ONE, this is sometimes referred to as the "eid".
+          When doing a session lookup such as
+      
+          >>> from one.api import ONE
+          >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+          >>> eids = one.alyx.rest("sessions", "list", tag="2022_Q2_IBL_et_al_RepeatedSite")
+      
+          each returned value in `eids` refers to it as the experiment "id".
+      cache_folder : str or None, default: None
+          The location to temporarily store chunks of data during streaming.
+      one : one.api.OneAlyx, default: None
+          An instance of the ONE API to use for data loading.
+          If not provided, a default instance is created using the default parameters.
+          If you need to use a specific instance, you can create it using the ONE API and pass it here.
+      stream_type : "ap" | "lf" | None, default: None
+          The stream type to load, required when pid is provided and stream_name is not.
+      
+      Returns
+      -------
+      stream_names : list of str
+          List of stream names as expected by the `stream_name` argument for the class initialization.
+
+Class: read_ibl_sorting
+  Docstring:
+    Load IBL data as a sorting extractor.
+    
+    Parameters
+    ----------
+    pid: str
+        Probe insertion UUID in Alyx. To retrieve the PID from a session (or eid), use the following code:
+    
+        >>> from one.api import ONE
+        >>> one = ONE(base_url="https://openalyx.internationalbrainlab.org", password="international", silent=True)
+        >>> pids, _ = one.eid2pid("session_eid")
+        >>> pid = pids[0]
+    one: One | dict, required
+        Instance of ONE.api or dict to use for data loading.
+        For multi-processing applications, this can also be a dictionary of ONE.api arguments
+        For example: one=dict(base_url='https://alyx.internationalbrainlab.org', mode='remote')
+    good_clusters_only: bool, default: False
+        If True, only load the good clusters
+    load_unit_properties: bool, default: True
+        If True, load the unit properties from the IBL database
+    kwargs: dict, optional
+        Additional keyword arguments to pass to the IBL SpikeSortingLoader constructor, such as `revision`.
+    Returns
+    -------
+    extractor : IBLSortingExtractor
+        The loaded data.
+  __init__(self, pid: 'str', good_clusters_only: 'bool' = False, load_unit_properties: 'bool' = True, one=None, **kwargs)
+
+Class: read_intan
+  Docstring:
+    Class for reading data from a intan board. Supports rhd and rhs format.
+    
+    Based on :py:class:`neo.rawio.IntanRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    ignore_integrity_checks : bool, default: False.
+        If True, data that violates integrity assumptions will be loaded. At the moment the only integrity
+        check we perform is that timestamps are continuous. Setting this to True will ignore this check and set
+        the attribute `discontinuous_timestamps` to True in the underlying neo object.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+        In Intan the ids provided by NeoRawIO are the hardware channel ids while the names are custom names given by
+        the user
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_intan
+    # intan amplifier data is stored in stream_id = '0'
+    >>> recording = read_intan(file_path=r'my_data.rhd', stream_id='0')
+    # intan has multi-file formats as well, but in this case our path should point to the header file 'info.rhd'
+    >>> recording = read_intan(file_path=r'info.rhd', stream_id='0')
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations=False, use_names_as_ids=False, ignore_integrity_checks: 'bool' = False)
+
+Class: read_kilosort
+  Docstring:
+    Load Kilosort format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the output Phy folder (containing the params.py).
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+        If True, only Kilosort-labeled 'good' units are returned.
+    remove_empty_units : bool, default: True
+        If True, empty units are removed from the sorting extractor.
+    
+    Returns
+    -------
+    extractor : KiloSortSortingExtractor
+        The loaded Sorting object.
+  __init__(self, folder_path: 'Path | str', keep_good_only: 'bool' = False, remove_empty_units: 'bool' = True)
+
+Class: read_klusta
+  Docstring:
+    Load Klusta format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_or_folder_path : str or Path
+        Path to the ALF folder.
+    exclude_cluster_groups : list or str, default: None
+        Cluster groups to exclude (e.g. "noise" or ["noise", "mua"]).
+    
+    Returns
+    -------
+    extractor : KlustaSortingExtractor
+        The loaded data.
+  __init__(self, file_or_folder_path, exclude_cluster_groups=None)
+
+Class: read_maxwell
+  Docstring:
+    Class for reading data from Maxwell device.
+    It handles MaxOne (old and new format) and MaxTwo.
+    
+    Based on :py:class:`neo.rawio.MaxwellRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to the maxwell h5 file.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+        For MaxTwo when there are several wells at the same time you
+        need to specify stream_id='well000' or 'well0001', etc.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    rec_name : str, default: None
+        When the file contains several recordings you need to specify the one
+        you want to extract. (rec_name='rec0000').
+    install_maxwell_plugin : bool, default: False
+        If True, install the maxwell plugin for neo.
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load
+  __init__(self, file_path, stream_id=None, stream_name=None, block_index=None, all_annotations=False, rec_name=None, install_maxwell_plugin=False, use_names_as_ids: 'bool' = False)
+  Method: install_maxwell_plugin(self, force_download=False)
+    Docstring:
+      None
+
+Class: read_maxwell_event
+  Docstring:
+    Class for reading TTL events from Maxwell files.
+  __init__(self, file_path)
+
+Class: read_mclust
+  Docstring:
+    Load MClust sorting solution as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to folder with t files.
+    sampling_frequency : sampling frequency
+        sampling frequency in Hz.
+    sampling_frequency_raw: float or None, default: None
+        Required to read files with raw formats. In that case, the samples are saved in the same
+        unit as the input data
+        Examples:
+            - If raw time is in tens of ms sampling_frequency_raw=10000
+            - If raw time is in samples sampling_frequency_raw=sampling_frequency
+    Returns
+    -------
+    extractor : MClustSortingExtractor
+        Loaded data.
+  __init__(self, folder_path, sampling_frequency, sampling_frequency_raw=None)
+
+Class: read_mcsh5
+  Docstring:
+    Load a MCS H5 file as a recording extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        The path to the MCS h5 file.
+    stream_id : int, default: 0
+        The stream ID to load.
+    
+    Returns
+    -------
+    recording : MCSH5RecordingExtractor
+        The loaded data.
+  __init__(self, file_path, stream_id=0)
+
+Class: read_mcsraw
+  Docstring:
+    Class for reading data from "Raw" Multi Channel System (MCS) format.
+    This format is NOT the native MCS format (.mcd).
+    This format is a raw format with an internal binary header exported by the
+    "MC_DataTool binary conversion" with the option header selected.
+    
+    Based on :py:class:`neo.rawio.RawMCSRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    block_index : int, default: None
+        If there are several blocks, specify the block index you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, block_index=None, all_annotations=False, use_names_as_ids: 'bool' = False)
+
+Class: read_mda_recording
+  Docstring:
+    Load MDA format data as a recording extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the MDA folder.
+    raw_fname : str, default: "raw.mda"
+        File name of raw file
+    params_fname : str, default: "params.json"
+        File name of params file
+    geom_fname : str, default: "geom.csv"
+        File name of geom file
+    
+    Returns
+    -------
+    extractor : MdaRecordingExtractor
+        The loaded data.
+  __init__(self, folder_path, raw_fname='raw.mda', params_fname='params.json', geom_fname='geom.csv')
+  Method: write_recording(recording, save_path, params={}, raw_fname='raw.mda', params_fname='params.json', geom_fname='geom.csv', dtype=None, verbose=False, **job_kwargs)
+    Docstring:
+      Write a recording to file in MDA format.
+      
+      Parameters
+      ----------
+      recording : RecordingExtractor
+          The recording extractor to be saved.
+      save_path : str or Path
+          The folder to save the Mda files.
+      params : dictionary
+          Dictionary with optional parameters to save metadata.
+          Sampling frequency is appended to this dictionary.
+      raw_fname : str, default: "raw.mda"
+          File name of raw file
+      params_fname : str, default: "params.json"
+          File name of params file
+      geom_fname : str, default: "geom.csv"
+          File name of geom file
+      dtype : dtype or None, default: None
+          Data type to be used. If None dtype is same as recording traces.
+      verbose : bool
+          If True, shows progress bar when saving recording.
+      **job_kwargs:
+          Use by job_tools modules to set:
+      
+              * chunk_size or chunk_memory, or total_memory
+              * n_jobs
+              * progress_bar
+
+Class: read_mda_sorting
+  Docstring:
+    Load MDA format data as a sorting extractor.
+    
+    NOTE: As in the MDA format, the max_channel property indexes the channels that are given as input
+    to the sorter.
+    If sorting was run on a subset of channels of the recording, then the max_channel values are
+    based on that subset, so care must be taken when associating these values with a recording.
+    If additional sorting segments are added to this sorting extractor after initialization,
+    then max_channel will not be updated. The max_channel indices begin at 1.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the MDA file.
+    sampling_frequency : int
+        The sampling frequency.
+    
+    Returns
+    -------
+    extractor : MdaRecordingExtractor
+        The loaded data.
+  __init__(self, file_path, sampling_frequency)
+  Method: write_sorting(sorting, save_path, write_primary_channels=False)
+    Docstring:
+      None
+
+Function: read_mearec(file_path)
+  Docstring:
+    Read a MEArec file.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to MEArec h5 file
+    
+    Returns
+    -------
+    recording : MEArecRecordingExtractor
+        The recording extractor object
+    sorting : MEArecSortingExtractor
+        The sorting extractor object
+
+Class: read_neuralynx
+  Docstring:
+    Class for reading neuralynx folder
+    
+    Based on :py:class:`neo.rawio.NeuralynxRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    exclude_filename : list[str], default: None
+        List of filename to exclude from the loading.
+        For example, use `exclude_filename=["events.nev"]` to skip loading the event file.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    strict_gap_mode : bool, default: False
+        See neo documentation.
+        Detect gaps using strict mode or not.
+        * strict_gap_mode = True then a gap is consider when timstamp difference between
+        two consecutive data packets is more than one sample interval.
+        * strict_gap_mode = False then a gap has an increased tolerance. Some new systems
+        with different clocks need this option otherwise, too many gaps are detected
+    
+        Note that here the default is False contrary to neo.
+  __init__(self, folder_path: 'str | Path', stream_id=None, stream_name=None, all_annotations=False, exclude_filename=None, strict_gap_mode=False, use_names_as_ids: 'bool' = False)
+
+Class: read_neuralynx_sorting
+  Docstring:
+    Class for reading spike data from a folder with neuralynx spiking data (i.e .nse and .ntt formats).
+    
+    Based on :py:class:`neo.rawio.NeuralynxRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+        The file path to load the recordings from.
+    sampling_frequency : float
+        The sampling frequency for the spiking channels. When the signal data is available (.ncs) those files will be
+        used to extract the frequency. Otherwise, the sampling frequency needs to be specified for this extractor.
+    stream_id : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+    stream_name : str, default: None
+        Used to extract information about the sampling frequency and t_start from the analog signal if provided.
+  __init__(self, folder_path: 'str', sampling_frequency: 'Optional[float]' = None, stream_id: 'Optional[str]' = None, stream_name: 'Optional[str]' = None)
+
+Class: read_neuroexplorer
+  Docstring:
+    Class for reading NEX (NeuroExplorer data format) files.
+    
+    Based on :py:class:`neo.rawio.NeuroExplorerRawIO`
+    
+    Importantly, at the moment, this recorder only extracts one channel of the recording.
+    This is because the NeuroExplorerRawIO class does not support multi-channel recordings
+    as in the NeuroExplorer format they might have different sampling rates.
+    
+    Consider extracting all the channels and then concatenating them with the aggregate_channels function.
+    
+    >>> from spikeinterface.extractors.neoextractors.neuroexplorer import NeuroExplorerRecordingExtractor
+    >>> from spikeinterface.core import aggregate_channels
+    >>>
+    >>> file_path="/the/path/to/your/nex/file.nex"
+    >>>
+    >>> streams = NeuroExplorerRecordingExtractor.get_streams(file_path=file_path)
+    >>> stream_names = streams[0]
+    >>>
+    >>> your_signal_stream_names = "Here goes the logic to filter from stream names the ones that you know have the same sampling rate and you want to aggregate"
+    >>>
+    >>> recording_list = [NeuroExplorerRecordingExtractor(file_path=file_path, stream_name=stream_name) for stream_name in your_signal_stream_names]
+    >>> recording = aggregate_channels(recording_list)
+    
+    
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+        For this neo reader streams are defined by their sampling frequency.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_neuronexus
+  Docstring:
+    Class for reading data from NeuroNexus Allego.
+    
+    Based on :py:class:`neo.rawio.NeuronexusRawIO`
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        The file path to the metadata .xdat.json file of an Allego session
+    stream_id : str | None, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str | None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+        In Neuronexus the ids provided by NeoRawIO are the hardware channel ids stored as `ntv_chan_name` within
+        the metada and the names are the `chan_names`
+  __init__(self, file_path: 'str | Path', stream_id: 'str | None' = None, stream_name: 'str | None' = None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Function: read_neuroscope(file_path, stream_id=None, keep_mua_units=False, exclude_shanks=None, load_recording=True, load_sorting=False)
+  Docstring:
+    Read neuroscope recording and sorting.
+    This function assumses that all .res and .clu files are in the same folder as
+    the .xml file.
+    
+    Parameters
+    ----------
+    file_path : str
+        The xml file.
+    stream_id : str or None
+        The stream id to load. If None, the first stream is loaded
+    keep_mua_units : bool, default: False
+        Optional. Whether or not to return sorted spikes from multi-unit activity
+    exclude_shanks : list
+        Optional. List of indices to ignore. The set of all possible indices is chosen by default, extracted as the
+        final integer of all the .res. % i and .clu. % i pairs.
+    load_recording : bool, default: True
+        If True, the recording is loaded
+    load_sorting : bool, default: False
+        If True, the sorting is loaded
+
+Class: read_neuroscope_recording
+  Docstring:
+    Class for reading data from neuroscope
+    Ref: http://neuroscope.sourceforge.net
+    
+    Based on :py:class:`neo.rawio.NeuroScopeRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to the binary container usually a .dat, .lfp, .eeg extension.
+    xml_file_path : str, default: None
+        The path to the xml file. If None, the xml file is assumed to have the same name as the binary file.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, xml_file_path=None, stream_id=None, stream_name: 'bool' = None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_neuroscope_sorting
+  Docstring:
+    Extracts spiking information from an arbitrary number of .res.%i and .clu.%i files in the general folder path.
+    
+    The .res is a text file with a sorted list of spiketimes from all units displayed in sample (integer "%i") units.
+    The .clu file is a file with one more row than the .res with the first row corresponding to the total number of
+    unique ids in the file (and may exclude 0 & 1 from this count)
+    with the rest of the rows indicating which unit id the corresponding entry in the .res file refers to.
+    The group id is loaded as unit property "group".
+    
+    In the original Neuroscope format:
+        Unit ID 0 is the cluster of unsorted spikes (noise).
+        Unit ID 1 is a cluster of multi-unit spikes.
+    
+    The function defaults to returning multi-unit activity as the first index, and ignoring unsorted noise.
+    To return only the fully sorted units, set keep_mua_units=False.
+    
+    The sorting extractor always returns unit IDs from 1, ..., number of chosen clusters.
+    
+    Parameters
+    ----------
+    folder_path : str
+        Optional. Path to the collection of .res and .clu text files. Will auto-detect format.
+    resfile_path : PathType
+        Optional. Path to a particular .res text file. If given, only the single .res file
+        (and the respective .clu file) are loaded
+    clufile_path : PathType
+        Optional. Path to a particular .clu text file. If given, only the single .clu file
+        (and the respective .res file) are loaded
+    keep_mua_units : bool, default: True
+        Optional. Whether or not to return sorted spikes from multi-unit activity
+    exclude_shanks : list
+        Optional. List of indices to ignore. The set of all possible indices is chosen by default, extracted as the
+        final integer of all the .res.%i and .clu.%i pairs.
+    xml_file_path : PathType, default: None
+        Path to the .xml file referenced by this sorting.
+  __init__(self, folder_path: 'OptionalPathType' = None, resfile_path: 'OptionalPathType' = None, clufile_path: 'OptionalPathType' = None, keep_mua_units: 'bool' = True, exclude_shanks: 'Optional[list]' = None, xml_file_path: 'OptionalPathType' = None)
+
+Class: read_nix
+  Docstring:
+    Class for reading Nix file
+    
+    Based on :py:class:`neo.rawio.NIXRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    block_index : int, default: None
+        If there are several blocks, specify the block index you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, block_index=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Function: read_nwb(file_path, load_recording=True, load_sorting=False, electrical_series_path=None)
+  Docstring:
+    Reads NWB file into SpikeInterface extractors.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to NWB file.
+    load_recording : bool, default: True
+        If True, the recording object is loaded.
+    load_sorting : bool, default: False
+        If True, the recording object is loaded.
+    electrical_series_path : str or None, default: None
+        The name of the ElectricalSeries (if multiple ElectricalSeries are present)
+    
+    Returns
+    -------
+    extractors : extractor or tuple
+        Single RecordingExtractor/SortingExtractor or tuple with both
+        (depending on "load_recording"/"load_sorting") arguments.
+
+Class: read_nwb_recording
+  Docstring:
+    Load an NWBFile as a RecordingExtractor.
+    
+    Parameters
+    ----------
+    file_path : str, Path, or None
+        Path to the NWB file or an s3 URL. Use this parameter to specify the file location
+        if not using the `file` parameter.
+    electrical_series_name : str or None, default: None
+        Deprecated, use `electrical_series_path` instead.
+    electrical_series_path : str or None, default: None
+        The name of the ElectricalSeries object within the NWB file. This parameter is crucial
+        when the NWB file contains multiple ElectricalSeries objects. It helps in identifying
+        which specific series to extract data from. If there is only one ElectricalSeries and
+        this parameter is not set, that unique series will be used by default.
+        If multiple ElectricalSeries are present and this parameter is not set, an error is raised.
+        The `electrical_series_path` corresponds to the path within the NWB file, e.g.,
+        'acquisition/MyElectricalSeries`.
+    load_time_vector : bool, default: False
+        If set to True, the time vector is also loaded into the recording object. Useful for
+        cases where precise timing information is required.
+    samples_for_rate_estimation : int, default: 1000
+        The number of timestamp samples used for estimating the sampling rate. This is relevant
+        when the 'rate' attribute is not available in the ElectricalSeries.
+    stream_mode : "fsspec" | "remfile" | "zarr" | None, default: None
+        Determines the streaming mode for reading the file. Use this for optimized reading from
+        different sources, such as local disk or remote servers.
+    load_channel_properties : bool, default: True
+        If True, all the channel properties are loaded from the NWB file and stored as properties.
+        For streaming purposes, it can be useful to set this to False to speed up streaming.
+    file : file-like object or None, default: None
+        A file-like object representing the NWB file. Use this parameter if you have an in-memory
+        representation of the NWB file instead of a file path.
+    cache : bool, default: False
+        Indicates whether to cache the file locally when using streaming. Caching can improve performance for
+        remote files.
+    stream_cache_path : str, Path, or None, default: None
+        Specifies the local path for caching the file. Relevant only if `cache` is True.
+    storage_options : dict | None = None,
+        These are the additional kwargs (e.g. AWS credentials) that are passed to the zarr.open convenience function.
+        This is only used on the "zarr" stream_mode.
+    use_pynwb : bool, default: False
+        Uses the pynwb library to read the NWB file. Setting this to False, the default, uses h5py
+        to read the file. Using h5py can improve performance by bypassing some of the PyNWB validations.
+    
+    Returns
+    -------
+    recording : NwbRecordingExtractor
+        The recording extractor for the NWB file.
+    
+    Examples
+    --------
+    Run on local file:
+    
+    >>> from spikeinterface.extractors.nwbextractors import NwbRecordingExtractor
+    >>> rec = NwbRecordingExtractor(filepath)
+    
+    Run on s3 URL from the DANDI Archive:
+    
+    >>> from spikeinterface.extractors.nwbextractors import NwbRecordingExtractor
+    >>> from dandi.dandiapi import DandiAPIClient
+    >>>
+    >>> # get s3 path
+    >>> dandiset_id = "001054"
+    >>> filepath = "sub-Dory/sub-Dory_ses-2020-09-14-004_ecephys.nwb"
+    >>> with DandiAPIClient() as client:
+    >>>     asset = client.get_dandiset(dandiset_id).get_asset_by_path(filepath)
+    >>>     s3_url = asset.get_content_url(follow_redirects=1, strip_query=True)
+    >>>
+    >>> rec = NwbRecordingExtractor(s3_url, stream_mode="remfile")
+  __init__(self, file_path: 'str | Path | None' = None, electrical_series_name: 'str | None' = None, load_time_vector: 'bool' = False, samples_for_rate_estimation: 'int' = 1000, stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, stream_cache_path: 'str | Path | None' = None, electrical_series_path: 'str | None' = None, load_channel_properties: 'bool' = True, *, file: 'BinaryIO | None' = None, cache: 'bool' = False, storage_options: 'dict | None' = None, use_pynwb: 'bool' = False)
+  Method: fetch_available_electrical_series_paths(file_path: 'str | Path', stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, storage_options: 'dict | None' = None) -> 'list[str]'
+    Docstring:
+      Retrieves the paths to all ElectricalSeries objects within a neurodata file.
+      
+      Parameters
+      ----------
+      file_path : str | Path
+          The path to the neurodata file to be analyzed.
+      stream_mode : "fsspec" | "remfile" | "zarr" | None, optional
+          Determines the streaming mode for reading the file. Use this for optimized reading from
+          different sources, such as local disk or remote servers.
+      storage_options : dict | None = None,
+          These are the additional kwargs (e.g. AWS credentials) that are passed to the zarr.open convenience function.
+          This is only used on the "zarr" stream_mode.
+      Returns
+      -------
+      list of str
+          A list of paths to all ElectricalSeries objects found in the file.
+      
+      
+      Notes
+      -----
+      The paths are returned as strings, and can be used to load the desired ElectricalSeries object.
+      Examples of paths are:
+          - "acquisition/ElectricalSeries1"
+          - "acquisition/ElectricalSeries2"
+          - "processing/ecephys/LFP/ElectricalSeries1"
+          - "processing/my_custom_module/MyContainer/ElectricalSeries2"
+
+Class: read_nwb_sorting
+  Docstring:
+    Load an NWBFile as a SortingExtractor.
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to NWB file.
+    electrical_series_path : str or None, default: None
+        The name of the ElectricalSeries (if multiple ElectricalSeries are present).
+    sampling_frequency : float or None, default: None
+        The sampling frequency in Hz (required if no ElectricalSeries is available).
+    unit_table_path : str or None, default: "units"
+        The path of the unit table in the NWB file.
+    samples_for_rate_estimation : int, default: 100000
+        The number of timestamp samples to use to estimate the rate.
+        Used if "rate" is not specified in the ElectricalSeries.
+    stream_mode : "fsspec" | "remfile" | "zarr" | None, default: None
+        The streaming mode to use. If None it assumes the file is on the local disk.
+    stream_cache_path : str or Path or None, default: None
+        Local path for caching. If None it uses the system temporary directory.
+    load_unit_properties : bool, default: True
+        If True, all the unit properties are loaded from the NWB file and stored as properties.
+    t_start : float or None, default: None
+        This is the time at which the corresponding ElectricalSeries start. NWB stores its spikes as times
+        and the `t_start` is used to convert the times to seconds. Concrently, the returned frames are computed as:
+    
+        `frames = (times - t_start) * sampling_frequency`.
+    
+        As SpikeInterface always considers the first frame to be at the beginning of the recording independently
+        of the `t_start`.
+    
+        When a `t_start` is not provided it will be inferred from the corresponding ElectricalSeries with name equal
+        to `electrical_series_path`. The `t_start` then will be either the `ElectricalSeries.starting_time` or the
+        first timestamp in the `ElectricalSeries.timestamps`.
+    cache : bool, default: False
+        If True, the file is cached in the file passed to stream_cache_path
+        if False, the file is not cached.
+    storage_options : dict | None = None,
+        These are the additional kwargs (e.g. AWS credentials) that are passed to the zarr.open convenience function.
+        This is only used on the "zarr" stream_mode.
+    use_pynwb : bool, default: False
+        Uses the pynwb library to read the NWB file. Setting this to False, the default, uses h5py
+        to read the file. Using h5py can improve performance by bypassing some of the PyNWB validations.
+    
+    Returns
+    -------
+    sorting : NwbSortingExtractor
+        The sorting extractor for the NWB file.
+  __init__(self, file_path: 'str | Path', electrical_series_path: 'str | None' = None, sampling_frequency: 'float | None' = None, samples_for_rate_estimation: 'int' = 1000, stream_mode: 'str | None' = None, stream_cache_path: 'str | Path | None' = None, load_unit_properties: 'bool' = True, unit_table_path: 'str' = 'units', *, t_start: 'float | None' = None, cache: 'bool' = False, storage_options: 'dict | None' = None, use_pynwb: 'bool' = False)
+
+Class: read_nwb_timeseries
+  Docstring:
+    Load a TimeSeries from an NWBFile as a RecordingExtractor.
+    
+    Parameters
+    ----------
+    file_path : str | Path | None
+        Path to NWB file or an s3 URL. Use this parameter to specify the file location
+        if not using the `file` parameter.
+    timeseries_path : str | None
+        The path to the TimeSeries object within the NWB file. This parameter is required
+        when the NWB file contains multiple TimeSeries objects. The path corresponds to
+        the location within the NWB file hierarchy, e.g. 'acquisition/MyTimeSeries'.
+    load_time_vector : bool, default: False
+        If True, the time vector is loaded into the recording object. Useful when
+        precise timing information is needed.
+    samples_for_rate_estimation : int, default: 1000
+        The number of timestamps used for estimating the sampling rate when
+        timestamps are used instead of a fixed rate.
+    stream_mode : Literal["fsspec", "remfile", "zarr"] | None, default: None
+        Determines the streaming mode for reading the file.
+    file : BinaryIO | None, default: None
+        A file-like object representing the NWB file. Use this parameter if you have
+        an in-memory representation of the NWB file instead of a file path given by `file_path`.
+    cache : bool, default: False
+        If True, the file is cached locally when using streaming.
+    stream_cache_path : str | Path | None, default: None
+        Local path for caching. Only used if `cache` is True.
+    storage_options : dict | None, default: None
+        Additional kwargs (e.g. AWS credentials) passed to zarr.open. Only used with
+        "zarr" stream_mode.
+    use_pynwb : bool, default: False
+        If True, uses pynwb library to read the NWB file. Default False uses h5py/zarr
+        directly for better performance.
+    
+    Returns
+    -------
+    recording : NwbTimeSeriesExtractor
+        A recording extractor containing the TimeSeries data.
+  __init__(self, file_path: 'str | Path | None' = None, timeseries_path: 'str | None' = None, load_time_vector: 'bool' = False, samples_for_rate_estimation: 'int' = 1000, stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, stream_cache_path: 'str | Path | None' = None, *, file: 'BinaryIO | None' = None, cache: 'bool' = False, storage_options: 'dict | None' = None, use_pynwb: 'bool' = False)
+  Method: fetch_available_timeseries_paths(file_path: 'str | Path', stream_mode: "Optional[Literal['fsspec', 'remfile', 'zarr']]" = None, storage_options: 'dict | None' = None) -> 'list[str]'
+    Docstring:
+      Get paths to all TimeSeries objects in a neurodata file.
+      
+      Parameters
+      ----------
+      file_path : str | Path
+          Path to the NWB file.
+      stream_mode : str | None
+          Streaming mode for reading remote files.
+      storage_options : dict | None
+          Additional options for zarr storage.
+      
+      Returns
+      -------
+      list[str]
+          List of paths to TimeSeries objects.
+
+Function: read_openephys(folder_path, **kwargs)
+  Docstring:
+    Read "legacy" or "binary" Open Ephys formats
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to openephys folder
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load
+    all_annotations : bool, default: False
+        Load exhaustively all annotation from neo
+    load_sync_channel : bool, default: False
+        If False (default) and a SYNC channel is present (e.g. Neuropixels), this is not loaded.
+        If True, the SYNC channel is loaded and can be accessed in the analog signals.
+        For open ephsy binary format only
+    load_sync_timestamps : bool, default: False
+        If True, the synchronized_timestamps are loaded and set as times to the recording.
+        If False (default), only the t_start and sampling rate are set, and timestamps are assumed
+        to be uniform and linearly increasing.
+        For open ephsy binary format only
+    experiment_names : str, list, or None, default: None
+        If multiple experiments are available, this argument allows users to select one
+        or more experiments. If None, all experiements are loaded as blocks.
+        E.g. `experiment_names="experiment2"`, `experiment_names=["experiment1", "experiment2"]`
+        For open ephsy binary format only
+    ignore_timestamps_errors : bool, default: False
+        Ignore the discontinuous timestamps errors in neo
+        For open ephsy legacy format only
+    
+    
+    Returns
+    -------
+    recording : OpenEphysLegacyRecordingExtractor or OpenEphysBinaryExtractor
+
+Function: read_openephys_event(folder_path, block_index=None)
+  Docstring:
+    Read Open Ephys events from "binary" format.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to openephys folder
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load.
+    
+    Returns
+    -------
+    event : OpenEphysBinaryEventExtractor
+
+Class: read_phy
+  Docstring:
+    Load Phy format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the output Phy folder (containing the params.py).
+    exclude_cluster_groups : list or str, default: None
+        Cluster groups to exclude (e.g. "noise" or ["noise", "mua"]).
+    load_all_cluster_properties : bool, default: True
+        If True, all cluster properties are loaded from the tsv/csv files.
+    
+    Returns
+    -------
+    extractor : PhySortingExtractor
+        The loaded Sorting object.
+  __init__(self, folder_path: 'Path | str', exclude_cluster_groups: 'Optional[list[str] | str]' = None, load_all_cluster_properties: 'bool' = True)
+
+Class: read_plexon
+  Docstring:
+    Class for reading plexon plx files.
+    
+    Based on :py:class:`neo.rawio.PlexonRawIO`
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: True
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+        Example for wideband signals:
+            names: ["WB01", "WB02", "WB03", "WB04"]
+            ids: ["0" , "1", "2", "3"]
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_plexon
+    >>> recording = read_plexon(file_path=r'my_data.plx')
+  __init__(self, file_path: 'str | Path', stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = True)
+
+Class: read_plexon2
+  Docstring:
+    Class for reading plexon pl2 files.
+    
+    Based on :py:class:`neo.rawio.Plexon2RawIO`
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        The file path of the plexon2 file. It should have the .pl2 extension.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    use_names_as_ids : bool, default: True
+        If True, the names of the signals are used as channel ids. If False, the channel ids are a combination of the
+        source id and the channel index.
+    
+        Example for wideband signals:
+            names: ["WB01", "WB02", "WB03", "WB04"]
+            ids: ["source3.1" , "source3.2", "source3.3", "source3.4"]
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    reading_attempts : int, default: 25
+        Number of attempts to read the file before raising an error
+        This opening process is somewhat unreliable and might fail occasionally. Adjust this higher
+        if you encounter problems in opening the file.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_plexon2
+    >>> recording = read_plexon2(file_path=r'my_data.pl2')
+  __init__(self, file_path, stream_id=None, stream_name=None, use_names_as_ids=True, all_annotations=False, reading_attempts: 'int' = 25)
+
+Class: read_plexon2_event
+  Docstring:
+    Class for reading plexon spiking data from .pl2 files.
+    
+    Based on :py:class:`neo.rawio.Plexon2RawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+  __init__(self, folder_path, block_index=None)
+
+Class: read_plexon2_sorting
+  Docstring:
+    Class for reading plexon spiking data from .pl2 files.
+    
+    Based on :py:class:`neo.rawio.Plexon2RawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    sampling_frequency : float, default: None
+        The sampling frequency of the sorting (required for multiple streams with different sampling frequencies).
+  __init__(self, file_path, sampling_frequency=None)
+
+Class: read_plexon_sorting
+  Docstring:
+    Class for reading plexon spiking data (.plx files).
+    
+    Based on :py:class:`neo.rawio.PlexonRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+  __init__(self, file_path)
+
+Class: read_shybrid_recording
+  Docstring:
+    Load SHYBRID format data as a recording extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the SHYBRID file.
+    
+    Returns
+    -------
+    extractor : SHYBRIDRecordingExtractor
+        Loaded data.
+  __init__(self, file_path)
+  Method: write_recording(recording, save_path, initial_sorting_fn, dtype='float32', **job_kwargs)
+    Docstring:
+      Convert and save the recording extractor to SHYBRID format.
+      
+      Parameters
+      ----------
+      recording: RecordingExtractor
+          The recording extractor to be converted and saved
+      save_path: str
+          Full path to desired target folder
+      initial_sorting_fn: str
+          Full path to the initial sorting csv file (can also be generated
+          using write_sorting static method from the SHYBRIDSortingExtractor)
+      dtype: dtype, default: float32
+          Type of the saved data
+      **write_binary_kwargs: keyword arguments for write_to_binary_dat_format() function
+
+Class: read_shybrid_sorting
+  Docstring:
+    Load SHYBRID format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the SHYBRID file.
+    sampling_frequency : int
+        The sampling frequency.
+    delimiter : str
+        The delimiter to use for loading the file.
+    
+    Returns
+    -------
+    extractor : SHYBRIDSortingExtractor
+        Loaded data.
+  __init__(self, file_path, sampling_frequency, delimiter=',')
+  Method: write_sorting(sorting, save_path)
+    Docstring:
+      Convert and save the sorting extractor to SHYBRID CSV format.
+      
+      Parameters
+      ----------
+      sorting : SortingExtractor
+          The sorting extractor to be converted and saved.
+      save_path : str
+          Full path to the desired target folder.
+
+Class: read_sinaps_research_platform
+  Docstring:
+    Recording extractor for the SiNAPS research platform system saved in binary format.
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        Path to the SiNAPS .bin file.
+    stream_name : "filt" | "raw" | "aux", default: "filt"
+        The stream name to extract.
+        "filt" extracts the filtered data, "raw" extracts the raw data, and "aux" extracts the auxiliary data.
+  __init__(self, file_path: 'str | Path', stream_name: 'str' = 'filt')
+
+Class: read_sinaps_research_platform_h5
+  Docstring:
+    Recording extractor for the SiNAPS research platform system saved in HDF5 format.
+    
+    Parameters
+    ----------
+    file_path : str | Path
+        Path to the SiNAPS .h5 file.
+  __init__(self, file_path: 'str | Path')
+
+Class: read_spike2
+  Docstring:
+    Class for reading spike2 smr files.
+    smrx are not supported with this, prefer CedRecordingExtractor instead.
+    
+    Based on :py:class:`neo.rawio.Spike2RawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations=False, use_names_as_ids: 'bool' = False)
+
+Class: read_spikegadgets
+  Docstring:
+    Class for reading rec files from spikegadgets.
+    
+    Based on :py:class:`neo.rawio.SpikeGadgetsRawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str or None, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str or None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_spikegadgets
+    >>> recording = read_spikegadgets(file_path=r'my_data.rec')
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_spikeglx
+  Docstring:
+    Class for reading data saved by SpikeGLX software.
+    See https://billkarsh.github.io/SpikeGLX/
+    
+    Based on :py:class:`neo.rawio.SpikeGLXRawIO`
+    
+    Contrary to older verions, this reader is folder-based.
+    If the folder contains several streams (e.g., "imec0.ap", "nidq" ,"imec0.lf"),
+    then the stream has to be specified with "stream_id" or "stream_name".
+    
+    Parameters
+    ----------
+    folder_path : str
+        The folder path to load the recordings from.
+    load_sync_channel : bool default: False
+        Whether or not to load the last channel in the stream, which is typically used for synchronization.
+        If True, then the probe is not loaded.
+    stream_id : str or None, default: None
+        If there are several streams, specify the stream id you want to load.
+        For example, "imec0.ap", "nidq", or "imec0.lf".
+    stream_name : str or None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    
+    Examples
+    --------
+    >>> from spikeinterface.extractors import read_spikeglx
+    >>> recording = read_spikeglx(folder_path=r'path_to_folder_with_data', load_sync_channel=False)
+    # we can load the sync channel, but then the probe is not loaded
+    >>> recording = read_spikeglx(folder_path=r'pat_to_folder_with_data', load_sync_channel=True)
+  __init__(self, folder_path, load_sync_channel=False, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Function: read_spikeglx_event(folder_path, block_index=None)
+  Docstring:
+    Read SpikeGLX events
+    
+    Parameters
+    ----------
+    folder_path: str or Path
+        Path to openephys folder
+    block_index: int, default: None
+        If there are several blocks (experiments), specify the block index you want to load.
+    
+    Returns
+    -------
+    event: SpikeGLXEventExtractor
+
+Class: read_spykingcircus
+  Docstring:
+    Load SpykingCircus format data as a recording extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the SpykingCircus folder.
+    
+    Returns
+    -------
+    extractor : SpykingCircusSortingExtractor
+        Loaded data.
+  __init__(self, folder_path)
+
+Class: read_tdt
+  Docstring:
+    Class for reading TDT folder.
+    
+    Based on :py:class:`neo.rawio.TdTRawIO`
+    
+    Parameters
+    ----------
+    folder_path : str
+        The folder path to the tdt folder.
+    stream_id : str or None, default: None
+        If there are several streams, specify the stream id you want to load.
+    stream_name : str or None, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+    block_index : int, default: None
+        If there are several blocks (experiments), specify the block index you want to load
+  __init__(self, folder_path, stream_id=None, stream_name=None, block_index=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: read_tridesclous
+  Docstring:
+    Load Tridesclous format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the Tridesclous folder.
+    chan_grp : list or None, default: None
+        The channel group(s) to load.
+    
+    Returns
+    -------
+    extractor : TridesclousSortingExtractor
+        Loaded data.
+  __init__(self, folder_path, chan_grp=None)
+
+Class: read_waveclus
+  Docstring:
+    Load WaveClus format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    file_path : str or Path
+        Path to the WaveClus file.
+    keep_good_only : bool, default: True
+        Whether to only keep good units.
+    
+    Returns
+    -------
+    extractor : WaveClusSortingExtractor
+        Loaded data.
+  __init__(self, file_path, keep_good_only=True)
+
+Class: read_waveclus_snippets
+  Docstring:
+    Abstract class representing several multichannel snippets.
+  __init__(self, file_path)
+  Method: write_snippets(snippets_extractor, save_file_path)
+    Docstring:
+      None
+
+Class: read_yass
+  Docstring:
+    Load YASS format data as a sorting extractor.
+    
+    Parameters
+    ----------
+    folder_path : str or Path
+        Path to the ALF folder.
+    
+    Returns
+    -------
+    extractor : YassSortingExtractor
+        Loaded data.
+  __init__(self, folder_path)
+
+Class: rec_class
+  Docstring:
+    Class for reading NEX (NeuroExplorer data format) files.
+    
+    Based on :py:class:`neo.rawio.NeuroExplorerRawIO`
+    
+    Importantly, at the moment, this recorder only extracts one channel of the recording.
+    This is because the NeuroExplorerRawIO class does not support multi-channel recordings
+    as in the NeuroExplorer format they might have different sampling rates.
+    
+    Consider extracting all the channels and then concatenating them with the aggregate_channels function.
+    
+    >>> from spikeinterface.extractors.neoextractors.neuroexplorer import NeuroExplorerRecordingExtractor
+    >>> from spikeinterface.core import aggregate_channels
+    >>>
+    >>> file_path="/the/path/to/your/nex/file.nex"
+    >>>
+    >>> streams = NeuroExplorerRecordingExtractor.get_streams(file_path=file_path)
+    >>> stream_names = streams[0]
+    >>>
+    >>> your_signal_stream_names = "Here goes the logic to filter from stream names the ones that you know have the same sampling rate and you want to aggregate"
+    >>>
+    >>> recording_list = [NeuroExplorerRecordingExtractor(file_path=file_path, stream_name=stream_name) for stream_name in your_signal_stream_names]
+    >>> recording = aggregate_channels(recording_list)
+    
+    
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    stream_id : str, default: None
+        If there are several streams, specify the stream id you want to load.
+        For this neo reader streams are defined by their sampling frequency.
+    stream_name : str, default: None
+        If there are several streams, specify the stream name you want to load.
+    all_annotations : bool, default: False
+        Load exhaustively all annotations from neo.
+    use_names_as_ids : bool, default: False
+        Determines the format of the channel IDs used by the extractor. If set to True, the channel IDs will be the
+        names from NeoRawIO. If set to False, the channel IDs will be the ids provided by NeoRawIO.
+  __init__(self, file_path, stream_id=None, stream_name=None, all_annotations: 'bool' = False, use_names_as_ids: 'bool' = False)
+
+Class: sort_class
+  Docstring:
+    Class for reading plexon spiking data from .pl2 files.
+    
+    Based on :py:class:`neo.rawio.Plexon2RawIO`
+    
+    Parameters
+    ----------
+    file_path : str
+        The file path to load the recordings from.
+    sampling_frequency : float, default: None
+        The sampling frequency of the sorting (required for multiple streams with different sampling frequencies).
+  __init__(self, file_path, sampling_frequency=None)
+
+Function: toy_example(duration=10, num_channels=4, num_units=10, sampling_frequency=30000.0, num_segments=2, average_peak_amplitude=-100, upsample_factor=None, contact_spacing_um=40.0, num_columns=1, spike_times=None, spike_labels=None, firing_rate=3.0, seed=None)
+  Docstring:
+    Returns a generated dataset with "toy" units and spikes on top on white noise.
+    This is useful to test api, algos, postprocessing and visualization without any downloading.
+    
+    This a rewrite (with the lazy approach) of the old spikeinterface.extractor.toy_example() which itself was also
+    a rewrite from the very old spikeextractor.toy_example() (from Jeremy Magland).
+    In this new version, the recording is totally lazy and so it does not use disk space or memory.
+    It internally uses NoiseGeneratorRecording + generate_templates + InjectTemplatesRecording.
+    
+    For better control, you should use the  `generate_ground_truth_recording()`, but provides better control over
+    the parameters.
+    
+    Parameters
+    ----------
+    duration : float or list[float], default: 10
+        Duration in seconds. If a list is provided, it will be the duration of each segment.
+    num_channels : int, default: 4
+        Number of channels
+    num_units : int, default: 10
+        Number of units
+    sampling_frequency : float, default: 30000
+        Sampling frequency
+    num_segments : int, default: 2
+        Number of segments.
+    spike_times : np.array or list[nparray] or None, default: None
+        Spike time in the recording
+    spike_labels : np.array or list[nparray] or None, default: None
+        Cluster label for each spike time (needs to specified both together).
+    firing_rate : float, default: 3.0
+        The firing rate for the units (in Hz)
+    seed : int or None, default: None
+        Seed for random initialization.
+    upsample_factor : None or int, default: None
+        An upsampling factor, used only when templates are not provided.
+    num_columns : int, default:  1
+        Number of columns in probe.
+    average_peak_amplitude : float, default: -100
+        Average peak amplitude of generated templates.
+    contact_spacing_um : float, default: 40.0
+        Spacing between probe contacts in micrometers.
+    
+    Returns
+    -------
+    recording : RecordingExtractor
+        The output recording extractor.
+    sorting : SortingExtractor
+        The output sorting extractor.

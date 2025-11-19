@@ -1,0 +1,11 @@
+You are given multi-channel templates on the probe for several units.  
+They might be detected by different channels, which doesn't matter. Only care about their shapes.
+These templates have already passed a similarity threshold, so most of them will look quite similar.
+
+Your task is to identify only clear outliers — units whose waveform shape or timing is visibly inconsistent with the others.
+
+Minor differences in amplitude or noise should be ignored.
+
+If all units appear similar, approve merge. Else not merge.
+
+Begin your response with a clear heading indicating the modality: [Waveform Template Report]  

@@ -1,0 +1,41 @@
+You are given multiple AI-generated reports analyzing whether spike-sorted units should be merged.
+
+Each report provides evidence from different modalities with merge recommendations and detailed reasoning.
+
+**Your task**: Make a final merge decision using a hierarchical strategy that prioritizes neurophysiological validity.
+
+## Decision Strategy
+
+### 🔴 **IMMEDIATE REJECTION CRITERIA** (Override everything)
+**Reject merge immediately if:**
+- **CCG report**: Clear spikes in refractory period (±1.5ms) indicating units are from different neurons
+- **Waveform report**: Systematic morphological differences (different peak timing, shape, kinetics) [If waveform report available]
+- **Amplitude report**: Completely non-overlapping amplitude distributions [If amplitude plot report available]
+
+
+### 🟡 **HIERARCHICAL ASSESSMENT** (If no immediate rejection)
+
+**1. Cross-Correlogram (CCG) - PRIMARY EVIDENCE**
+- **Strong merge support**: Clear refractory dip or peak at 0ms (duplication)
+- **Ambiguous**: Some structure but unclear refractory pattern
+- **Weak/no support**: Flat distribution, unclear patterns
+
+**2. Secondary Evidence Integration** [Depending on the available other modality reports]
+When CCG is ambiguous or weakly supportive, consider:
+- **Amplitude consistency**: Similar distributions strengthen merge case [If amplitude plot report available]
+- **Waveform alignment**: Morphological consistency supports merge [If waveform report available]
+- **PCA continuity**: Continuous distribution in PCA space supports merge [If PCA clustering report available]
+
+
+
+### ⚖️ **Conflict Resolution**
+- **CCG vs Others**: If CCG clearly supports merge but one other modality has concerns, investigate carefully
+- **Multiple concerns**: If more than 1 modalities raise issues, favor NOT merging
+- **Borderline cases**: Default to NOT merge
+
+## Output Format
+
+Return your decision in this structured format:
+
+"reasoning": "Start with CCG assessment, then discuss supporting/contradicting evidence from other modalities, explain final decision logic"
+"merge_type": "merge" | "not merge"

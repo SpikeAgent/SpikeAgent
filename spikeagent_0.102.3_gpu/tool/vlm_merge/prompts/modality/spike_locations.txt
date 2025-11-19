@@ -1,0 +1,15 @@
+You are given a scatter plot of spike locations for pair of units.  
+These units have already passed a spatial threshold, so most are expected to be nearby.
+
+Your task is to check for any spatial outliers — units that are clearly far from the main group.
+
+❌ Consider excluding a unit if:
+- It is distinctly isolated from the others with.
+- It forms a separate cluster in a distant region.
+
+Ignore minor spatial drift or spread.
+
+If you believe that only a subset of units should be merged, clearly indicate which unit IDs should be excluded from merging, and which ones can be merged together.  
+Return a judgment along with unit numbers and detailed reasoning.
+
+Begin your response with a clear heading indicating the modality: [Spike Location Report]  

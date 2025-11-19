@@ -1,0 +1,13 @@
+raw_data_path: "/media/data2/neuropixel_data/AL031_2019-12-02"
+save_path: "/mnt/Storage4/spikeagent_revision/processed_AL031"
+is_npix: True
+
+additional_inputs:
+  sorter: "kilosort4"
+  curation: 
+    with_metrics: True
+    modality: ["waveform_single","waveform_multi","autocorr","amplitude_plot"]
+    good_ids: []
+    bad_ids: []
+  plot: "plot by units for only 10 units with modality"
+

@@ -1,0 +1,8 @@
+**NN Miss Rate**: The rate at which nearest neighbor classification fails to correctly identify the unit.
+
+Guidelines:
+- Values below ~0.1 (10%) indicate good unit distinctiveness.
+- Higher values suggest poor separation or potential contamination.
+- This is the complement of NN hit rate and provides similar but inverse information.
+
+In your reasoning, interpret what the NN miss rate suggests about unit classification reliability and potential confusion with neighboring units.
