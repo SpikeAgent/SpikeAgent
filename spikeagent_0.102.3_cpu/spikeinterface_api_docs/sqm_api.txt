@@ -1,0 +1,787 @@
+API for module: spikeinterface.qualitymetrics
+
+Class: ComputeQualityMetrics
+  Docstring:
+    Compute quality metrics on a `sorting_analyzer`.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    metric_names : list or None
+        List of quality metrics to compute.
+    metric_params : dict of dicts or None
+        Dictionary with parameters for quality metrics calculation.
+        Default parameters can be obtained with: `si.qualitymetrics.get_default_qm_params()`
+    skip_pc_metrics : bool, default: False
+        If True, PC metrics computation is skipped.
+    delete_existing_metrics : bool, default: False
+        If True, any quality metrics attached to the `sorting_analyzer` are deleted. If False, any metrics which were previously calculated but are not included in `metric_names` are kept.
+    
+    Returns
+    -------
+    metrics: pandas.DataFrame
+        Data frame with the computed metrics.
+    
+    Notes
+    -----
+    principal_components are loaded automatically if already computed.
+  __init__(self, sorting_analyzer)
+
+Function: calculate_pc_metrics(sorting_analyzer, metric_names=None, metric_params=None, unit_ids=None, seed=None, n_jobs=1, progress_bar=False)
+  Docstring:
+    None
+
+Function: compute_amplitude_cutoffs(sorting_analyzer, peak_sign='neg', num_histogram_bins=500, histogram_smoothing_value=3, amplitudes_bins_min_ratio=5, unit_ids=None)
+  Docstring:
+    Calculate approximate fraction of spikes missing from a distribution of amplitudes.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    peak_sign : "neg" | "pos" | "both", default: "neg"
+        The sign of the peaks.
+    num_histogram_bins : int, default: 100
+        The number of bins to use to compute the amplitude histogram.
+    histogram_smoothing_value : int, default: 3
+        Controls the smoothing applied to the amplitude histogram.
+    amplitudes_bins_min_ratio : int, default: 5
+        The minimum ratio between number of amplitudes for a unit and the number of bins.
+        If the ratio is less than this threshold, the amplitude_cutoff for the unit is set
+        to NaN.
+    unit_ids : list or None
+        List of unit ids to compute the amplitude cutoffs. If None, all units are used.
+    
+    Returns
+    -------
+    all_fraction_missing : dict of floats
+        Estimated fraction of missing spikes, based on the amplitude distribution, for each unit ID.
+    
+    
+    Notes
+    -----
+    This approach assumes the amplitude histogram is symmetric (not valid in the presence of drift).
+    If available, amplitudes are extracted from the "spike_amplitude" extension (recommended).
+    If the "spike_amplitude" extension is not available, the amplitudes are extracted from the SortingAnalyzer,
+    which usually has waveforms for a small subset of spikes (500 by default).
+    
+    References
+    ----------
+    Inspired by metric described in [Hill]_
+    
+    This code was adapted from:
+    https://github.com/AllenInstitute/ecephys_spike_sorting/tree/master/ecephys_spike_sorting/modules/quality_metrics
+
+Function: compute_amplitude_cv_metrics(sorting_analyzer, average_num_spikes_per_bin=50, percentiles=(5, 95), min_num_bins=10, amplitude_extension='spike_amplitudes', unit_ids=None)
+  Docstring:
+    Calculate coefficient of variation of spike amplitudes within defined temporal bins.
+    From the distribution of coefficient of variations, both the median and the "range" (the distance between the
+    percentiles defined by `percentiles` parameter) are returned.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    average_num_spikes_per_bin : int, default: 50
+        The average number of spikes per bin. This is used to estimate a temporal bin size using the firing rate
+        of each unit. For example, if a unit has a firing rate of 10 Hz, amd the average number of spikes per bin is
+        100, then the temporal bin size will be 100/10 Hz = 10 s.
+    percentiles : tuple, default: (5, 95)
+        The percentile values from which to calculate the range.
+    min_num_bins : int, default: 10
+        The minimum number of bins to compute the median and range. If the number of bins is less than this then
+        the median and range are set to NaN.
+    amplitude_extension : str, default: "spike_amplitudes"
+        The name of the extension to load the amplitudes from. "spike_amplitudes" or "amplitude_scalings".
+    unit_ids : list or None
+        List of unit ids to compute the amplitude spread. If None, all units are used.
+    
+    Returns
+    -------
+    amplitude_cv_median : dict
+        The median of the CV
+    amplitude_cv_range : dict
+        The range of the CV, computed as the distance between the percentiles.
+    
+    Notes
+    -----
+    Designed by Simon Musall and Alessio Buccino.
+
+Function: compute_amplitude_medians(sorting_analyzer, peak_sign='neg', unit_ids=None)
+  Docstring:
+    Compute median of the amplitude distributions (in absolute value).
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    peak_sign : "neg" | "pos" | "both", default: "neg"
+        The sign of the peaks.
+    unit_ids : list or None
+        List of unit ids to compute the amplitude medians. If None, all units are used.
+    
+    Returns
+    -------
+    all_amplitude_medians : dict
+        Estimated amplitude median for each unit ID.
+    
+    References
+    ----------
+    Inspired by metric described in [IBL]_
+    This code is ported from:
+    https://github.com/int-brain-lab/ibllib/blob/master/brainbox/metrics/single_units.py
+
+Function: compute_drift_metrics(sorting_analyzer, interval_s=60, min_spikes_per_interval=100, direction='y', min_fraction_valid_intervals=0.5, min_num_bins=2, return_positions=False, unit_ids=None)
+  Docstring:
+    Compute drifts metrics using estimated spike locations.
+    Over the duration of the recording, the drift signal for each unit is calculated as the median
+    position in an interval with respect to the overall median positions over the entire duration
+    (reference position).
+    
+    The following metrics are computed for each unit (in um):
+    
+    * drift_ptp: peak-to-peak of the drift signal
+    * drift_std: standard deviation of the drift signal
+    * drift_mad: median absolute deviation of the drift signal
+    
+    Requires "spike_locations" extension. If this is not present, metrics are set to NaN.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    interval_s : int, default: 60
+        Interval length is seconds for computing spike depth.
+    min_spikes_per_interval : int, default: 100
+        Minimum number of spikes for computing depth in an interval.
+    direction : "x" | "y" | "z", default: "y"
+        The direction along which drift metrics are estimated.
+    min_fraction_valid_intervals : float, default: 0.5
+        The fraction of valid (not NaN) position estimates to estimate drifts.
+        E.g., if 0.5 at least 50% of estimated positions in the intervals need to be valid,
+        otherwise drift metrics are set to None.
+    min_num_bins : int, default: 2
+        Minimum number of bins required to return a valid metric value. In case there are
+        less bins, the metric values are set to NaN.
+    return_positions : bool, default: False
+        If True, median positions are returned (for debugging).
+    unit_ids : list or None, default: None
+        List of unit ids to compute the drift metrics. If None, all units are used.
+    
+    Returns
+    -------
+    drift_ptp : dict
+        The drift signal peak-to-peak in um.
+    drift_std : dict
+        The drift signal standard deviation in um.
+    drift_mad : dict
+        The drift signal median absolute deviation in um.
+    median_positions : np.array (optional)
+        The median positions of each unit over time (only returned if return_positions=True).
+    
+    Notes
+    -----
+    For multi-segment object, segments are concatenated before the computation. This means that if
+    there are large displacements in between segments, the resulting metric values will be very high.
+
+Function: compute_firing_ranges(sorting_analyzer, bin_size_s=5, percentiles=(5, 95), unit_ids=None)
+  Docstring:
+    Calculate firing range, the range between the 5th and 95th percentiles of the firing rates distribution
+    computed in non-overlapping time bins.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object
+    bin_size_s : float, default: 5
+        The size of the bin in seconds.
+    percentiles : tuple, default: (5, 95)
+        The percentiles to compute.
+    unit_ids : list or None
+        List of unit ids to compute the firing range. If None, all units are used.
+    
+    Returns
+    -------
+    firing_ranges : dict
+        The firing range for each unit.
+    
+    Notes
+    -----
+    Designed by Simon Musall and ported to SpikeInterface by Alessio Buccino.
+
+Function: compute_firing_rates(sorting_analyzer, unit_ids=None)
+  Docstring:
+    Compute the firing rate across segments.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    unit_ids : list or None
+        The list of unit ids to compute the firing rate. If None, all units are used.
+    
+    Returns
+    -------
+    firing_rates : dict of floats
+        The firing rate, across all segments, for each unit ID.
+
+Function: compute_isi_violations(sorting_analyzer, isi_threshold_ms=1.5, min_isi_ms=0, unit_ids=None)
+  Docstring:
+    Calculate Inter-Spike Interval (ISI) violations.
+    
+    It computes several metrics related to isi violations:
+        * isi_violations_ratio: the relative firing rate of the hypothetical neurons that are
+                                generating the ISI violations. See Notes.
+        * isi_violation_count: number of ISI violations
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        The SortingAnalyzer object.
+    isi_threshold_ms : float, default: 1.5
+        Threshold for classifying adjacent spikes as an ISI violation, in ms.
+        This is the biophysical refractory period.
+    min_isi_ms : float, default: 0
+        Minimum possible inter-spike interval, in ms.
+        This is the artificial refractory period enforced.
+        by the data acquisition system or post-processing algorithms.
+    unit_ids : list or None
+        List of unit ids to compute the ISI violations. If None, all units are used.
+    
+    Returns
+    -------
+    isi_violations_ratio : dict
+        The isi violation ratio.
+    isi_violation_count : dict
+        Number of violations.
+    
+    Notes
+    -----
+    The returned ISI violations ratio approximates the fraction of spikes in each
+    unit which are contaminted. The formulation assumes that the contaminating spikes
+    are statistically independent from the other spikes in that cluster. This
+    approximation can break down in reality, especially for highly contaminated units.
+    See the discussion in Section 4.1 of [Llobet]_ for more details.
+    
+    This method counts the number of spikes whose isi is violated. If there are three
+    spikes within `isi_threshold_ms`, the first and second are violated. Hence there are two
+    spikes which have been violated.  This is is contrast to `compute_refrac_period_violations`,
+    which counts the number of violations.
+    
+    References
+    ----------
+    Based on metrics originally implemented in Ultra Mega Sort [UMS]_.
+    
+    This implementation is based on one of the original implementations written in Matlab by Nick Steinmetz
+    (https://github.com/cortex-lab/sortingQuality) and converted to Python by Daniel Denman.
+
+Function: compute_num_spikes(sorting_analyzer, unit_ids=None, **kwargs)
+  Docstring:
+    Compute the number of spike across segments.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    unit_ids : list or None
+        The list of unit ids to compute the number of spikes. If None, all units are used.
+    
+    Returns
+    -------
+    num_spikes : dict
+        The number of spikes, across all segments, for each unit ID.
+
+Function: compute_pc_metrics(sorting_analyzer, metric_names=None, metric_params=None, qm_params=None, unit_ids=None, seed=None, n_jobs=1, progress_bar=False, mp_context=None, max_threads_per_worker=None) -> 'dict'
+  Docstring:
+    Calculate principal component derived metrics.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    metric_names : list of str, default: None
+        The list of PC metrics to compute.
+        If not provided, defaults to all PC metrics.
+    metric_params : dict or None
+        Dictionary with parameters for each PC metric function.
+    unit_ids : list of int or None
+        List of unit ids to compute metrics for.
+    seed : int, default: None
+        Random seed value.
+    n_jobs : int
+        Number of jobs to parallelize metric computations.
+    progress_bar : bool
+        If True, progress bar is shown.
+    
+    Returns
+    -------
+    pc_metrics : dict
+        The computed PC metrics.
+
+Function: compute_presence_ratios(sorting_analyzer, bin_duration_s=60.0, mean_fr_ratio_thresh=0.0, unit_ids=None)
+  Docstring:
+    Calculate the presence ratio, the fraction of time the unit is firing above a certain threshold.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    bin_duration_s : float, default: 60
+        The duration of each bin in seconds. If the duration is less than this value,
+        presence_ratio is set to NaN.
+    mean_fr_ratio_thresh : float, default: 0
+        The unit is considered active in a bin if its firing rate during that bin.
+        is strictly above `mean_fr_ratio_thresh` times its mean firing rate throughout the recording.
+    unit_ids : list or None
+        The list of unit ids to compute the presence ratio. If None, all units are used.
+    
+    Returns
+    -------
+    presence_ratio : dict of floats
+        The presence ratio for each unit ID.
+    
+    Notes
+    -----
+    The total duration, across all segments, is divided into "num_bins".
+    To do so, spike trains across segments are concatenated to mimic a continuous segment.
+
+Function: compute_refrac_period_violations(sorting_analyzer, refractory_period_ms: 'float' = 1.0, censored_period_ms: 'float' = 0.0, unit_ids=None)
+  Docstring:
+    Calculate the number of refractory period violations.
+    
+    This is similar (but slightly different) to the ISI violations.
+    
+    This is required for some formulas (e.g. the ones from Llobet & Wyngaard 2022).
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        The SortingAnalyzer object.
+    refractory_period_ms : float, default: 1.0
+        The period (in ms) where no 2 good spikes can occur.
+    censored_period_ms : float, default: 0.0
+        The period (in ms) where no 2 spikes can occur (because they are not detected, or
+        because they were removed by another mean).
+    unit_ids : list or None
+        List of unit ids to compute the refractory period violations. If None, all units are used.
+    
+    Returns
+    -------
+    rp_contamination : dict
+        The refactory period contamination described in [Llobet]_.
+    rp_violations : dict
+        Number of refractory period violations.
+    
+    Notes
+    -----
+    Requires "numba" package
+    
+    This method counts the number of violations which occur during the refactory period.
+    For example, if there are three spikes within `refractory_period_ms`, the second and third spikes
+    violate the first spike and the third spike violates the second spike. Hence there
+    are three violations. This is in contrast to `compute_isi_violations`, which
+    computes the number of spikes which have been violated.
+    
+    References
+    ----------
+    Based on metrics described in [Llobet]_
+
+Function: compute_sd_ratio(sorting_analyzer: 'SortingAnalyzer', censored_period_ms: 'float' = 4.0, correct_for_drift: 'bool' = True, correct_for_template_itself: 'bool' = True, unit_ids=None, **kwargs)
+  Docstring:
+    Computes the SD (Standard Deviation) of each unit's spike amplitudes, and compare it to the SD of noise.
+    In this case, noise refers to the global voltage trace on the same channel as the best channel of the unit.
+    (ideally (not implemented yet), the noise would be computed outside of spikes from the unit itself).
+    
+    TODO: Take jitter into account.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    censored_period_ms : float, default: 4.0
+        The censored period in milliseconds. This is to remove any potential bursts that could affect the SD.
+    correct_for_drift : bool, default: True
+        If True, will subtract the amplitudes sequentiially to significantly reduce the impact of drift.
+    correct_for_template_itself : bool, default:  True
+        If true, will take into account that the template itself impacts the standard deviation of the noise,
+        and will make a rough estimation of what that impact is (and remove it).
+    unit_ids : list or None, default: None
+        The list of unit ids to compute this metric. If None, all units are used.
+    **kwargs : dict, default: {}
+        Keyword arguments for computing spike amplitudes and extremum channel.
+    
+    Returns
+    -------
+    num_spikes : dict
+        The number of spikes, across all segments, for each unit ID.
+
+Function: compute_sliding_rp_violations(sorting_analyzer, min_spikes=0, bin_size_ms=0.25, window_size_s=1, exclude_ref_period_below_ms=0.5, max_ref_period_ms=10, contamination_values=None, unit_ids=None)
+  Docstring:
+    Compute sliding refractory period violations, a metric developed by IBL which computes
+    contamination by using a sliding refractory period.
+    This metric computes the minimum contamination with at least 90% confidence.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    min_spikes : int, default: 0
+        Contamination  is set to np.nan if the unit has less than this many
+        spikes across all segments.
+    bin_size_ms : float, default: 0.25
+        The size of binning for the autocorrelogram in ms.
+    window_size_s : float, default: 1
+        Window in seconds to compute correlogram.
+    exclude_ref_period_below_ms : float, default: 0.5
+        Refractory periods below this value are excluded.
+    max_ref_period_ms : float, default: 10
+        Maximum refractory period to test in ms.
+    contamination_values : 1d array or None, default: None
+        The contamination values to test, If None, it is set to np.arange(0.5, 35, 0.5).
+    unit_ids : list or None
+        List of unit ids to compute the sliding RP violations. If None, all units are used.
+    
+    Returns
+    -------
+    contamination : dict of floats
+        The minimum contamination at 90% confidence.
+    
+    References
+    ----------
+    Based on metrics described in [IBL]_
+    This code was adapted from:
+    https://github.com/SteinmetzLab/slidingRefractory/blob/1.0.0/python/slidingRP/metrics.py
+
+Function: compute_snrs(sorting_analyzer, peak_sign: 'str' = 'neg', peak_mode: 'str' = 'extremum', unit_ids=None)
+  Docstring:
+    Compute signal to noise ratio.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    peak_sign : "neg" | "pos" | "both", default: "neg"
+        The sign of the template to compute best channels.
+    peak_mode : "extremum" | "at_index" | "peak_to_peak", default: "extremum"
+        How to compute the amplitude.
+        Extremum takes the maxima/minima
+        At_index takes the value at t=sorting_analyzer.nbefore.
+    unit_ids : list or None
+        The list of unit ids to compute the SNR. If None, all units are used.
+    
+    Returns
+    -------
+    snrs : dict
+        Computed signal to noise ratio for each unit.
+
+Function: compute_synchrony_metrics(sorting_analyzer, unit_ids=None, synchrony_sizes=None)
+  Docstring:
+    Compute synchrony metrics. Synchrony metrics represent the rate of occurrences of
+    spikes at the exact same sample index, with synchrony sizes 2, 4 and 8.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    unit_ids : list or None, default: None
+        List of unit ids to compute the synchrony metrics. If None, all units are used.
+    synchrony_sizes: None, default: None
+        Deprecated argument. Please use private `_get_synchrony_counts` if you need finer control over number of synchronous spikes.
+    
+    Returns
+    -------
+    sync_spike_{X} : dict
+        The synchrony metric for synchrony size X.
+    
+    References
+    ----------
+    Based on concepts described in [Grün]_
+    This code was adapted from `Elephant - Electrophysiology Analysis Toolkit <https://github.com/NeuralEnsemble/elephant/blob/master/elephant/spike_train_synchrony.py#L245>`_
+
+Function: get_default_qm_params()
+  Docstring:
+    Return default dictionary of quality metrics parameters.
+    
+    Returns
+    -------
+    dict
+        Default qm parameters with metric name as key and parameter dictionary as values.
+
+Function: get_quality_metric_list()
+  Docstring:
+    Return a list of the available quality metrics.
+
+Function: get_quality_pca_metric_list()
+  Docstring:
+    Get a list of the available PCA-based quality metrics.
+
+Function: lda_metrics(all_pcs, all_labels, this_unit_id) -> 'float'
+  Docstring:
+    Calculate d-prime based on Linear Discriminant Analysis.
+    
+    Parameters
+    ----------
+    all_pcs : 2d array
+        The PCs for all spikes, organized as [num_spikes, PCs].
+    all_labels : 1d array
+        The cluster labels for all spikes. Must have length of number of spikes.
+    this_unit_id : int
+        The ID for the unit to calculate these metrics for.
+    
+    Returns
+    -------
+    d_prime : float
+        D prime measure of this unit.
+    
+    References
+    ----------
+    Based on metric described in [Hill]_
+
+Function: mahalanobis_metrics(all_pcs, all_labels, this_unit_id)
+  Docstring:
+    Calculate isolation distance and L-ratio (metrics computed from Mahalanobis distance).
+    
+    Parameters
+    ----------
+    all_pcs : 2d array
+        The PCs for all spikes, organized as [num_spikes, PCs].
+    all_labels : 1d array
+        The cluster labels for all spikes. Must have length of number of spikes.
+    this_unit_id : int
+        The ID for the unit to calculate these metrics for.
+    
+    Returns
+    -------
+    isolation_distance : float
+        Isolation distance of this unit.
+    l_ratio : float
+        L-ratio for this unit.
+    
+    References
+    ----------
+    Based on metrics described in [Schmitzer-Torbert]_
+
+Function: nearest_neighbors_isolation(sorting_analyzer, this_unit_id: 'int | str', n_spikes_all_units: 'dict' = None, fr_all_units: 'dict' = None, max_spikes: 'int' = 1000, min_spikes: 'int' = 10, min_fr: 'float' = 0.0, n_neighbors: 'int' = 5, n_components: 'int' = 10, radius_um: 'float' = 100, peak_sign: 'str' = 'neg', min_spatial_overlap: 'float' = 0.5, seed=None)
+  Docstring:
+    Calculate unit isolation based on NearestNeighbors search in PCA space.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    this_unit_id : int | str
+        The ID for the unit to calculate these metrics for.
+    n_spikes_all_units : dict, default: None
+        Dictionary of the form ``{<unit_id>: <n_spikes>}`` for the waveform extractor.
+        Recomputed if None.
+    fr_all_units : dict, default: None
+        Dictionary of the form ``{<unit_id>: <firing_rate>}`` for the waveform extractor.
+        Recomputed if None.
+    max_spikes : int, default: 1000
+        Max number of spikes to use per unit.
+    min_spikes : int, default: 10
+        Min number of spikes a unit must have to go through with metric computation.
+        Units with spikes < min_spikes gets numpy.NaN as the quality metric,
+        and are ignored when selecting other units' neighbors.
+    min_fr : float, default: 0.0
+        Min firing rate a unit must have to go through with metric computation.
+        Units with firing rate < min_fr gets numpy.NaN as the quality metric,
+        and are ignored when selecting other units' neighbors.
+    n_neighbors : int, default: 5
+        Number of neighbors to check membership of.
+    n_components : int, default: 10
+        The number of PC components to use to project the snippets to.
+    radius_um : float, default: 100
+        The radius, in um, that channels need to be within the peak channel to be included.
+    peak_sign : "neg" | "pos" | "both", default: "neg"
+        The peak_sign used to compute sparsity and neighbor units. Used if sorting_analyzer
+        is not sparse already.
+    min_spatial_overlap : float, default: 100
+        In case sorting_analyzer is sparse, other units are selected if they share at least
+        `min_spatial_overlap` times `n_target_unit_channels` with the target unit.
+    seed : int, default: None
+        Seed for random subsampling of spikes.
+    
+    Returns
+    -------
+    nn_isolation : float
+        The calculation nearest neighbor isolation metric for `this_unit_id`.
+        If the unit has fewer than `min_spikes`, returns numpy.NaN instead.
+    nn_unit_id : np.int16
+        Id of the "nearest neighbor" unit (unit with lowest isolation score from `this_unit_id`).
+    
+    Notes
+    -----
+    The overall logic of this approach is:
+    
+    #. Choose a cluster
+    #. Compute the isolation score with every other cluster
+    #. Isolation score is defined as the min of 2. (i.e. 'worst-case measure')
+    
+    The implementation of this approach is:
+    
+    Let A and B be two clusters from sorting.
+    
+    We set \|A\| = \|B\|:
+    
+        * | If max_spikes < \|A\| and max_spikes < \|B\|:
+          |     Then randomly subsample max_spikes samples from A and B.
+        * | If max_spikes > min(\|A\|, \|B\|) (e.g. \|A\| > max_spikes > \|B\|):
+          |     Then randomly subsample min(\|A\|, \|B\|) samples from A and B.
+    
+    This is because the metric is affected by the size of the clusters being compared
+    independently of how well-isolated they are.
+    
+    We also restrict the waveforms to channels with significant signal.
+    
+    See docstring for `_compute_isolation` for the definition of isolation score.
+    
+    References
+    ----------
+    Based on isolation metric described in [Chung]_
+
+Function: nearest_neighbors_metrics(all_pcs, all_labels, this_unit_id, max_spikes, n_neighbors)
+  Docstring:
+    Calculate unit contamination based on NearestNeighbors search in PCA space.
+    
+    Parameters
+    ----------
+    all_pcs : 2d array
+        The PCs for all spikes, organized as [num_spikes, PCs].
+    all_labels : 1d array
+        The cluster labels for all spikes. Must have length of number of spikes.
+    this_unit_id : int
+        The ID for the unit to calculate these metrics for.
+    max_spikes : int
+        The number of spikes to use, per cluster.
+        Note that the calculation can be very slow when this number is >20000.
+    n_neighbors : int
+        The number of neighbors to use.
+    
+    Returns
+    -------
+    hit_rate : float
+        Fraction of neighbors for target cluster that are also in target cluster.
+    miss_rate : float
+        Fraction of neighbors outside target cluster that are in target cluster.
+    
+    Notes
+    -----
+    A is a (hopefully) representative subset of cluster X
+    
+    .. math::
+    
+        NN_hit(X) = 1/k \sum_i=1^k |{{x in A such that ith closest neighbor is in X}}| / \|A\|
+    
+    References
+    ----------
+    Based on metrics described in [Chung]_
+
+Function: nearest_neighbors_noise_overlap(sorting_analyzer, this_unit_id: 'int | str', n_spikes_all_units: 'dict' = None, fr_all_units: 'dict' = None, max_spikes: 'int' = 1000, min_spikes: 'int' = 10, min_fr: 'float' = 0.0, n_neighbors: 'int' = 5, n_components: 'int' = 10, radius_um: 'float' = 100, peak_sign: 'str' = 'neg', seed=None)
+  Docstring:
+    Calculate unit noise overlap based on NearestNeighbors search in PCA space.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object.
+    this_unit_id : int | str
+        The ID of the unit to calculate this metric on.
+    n_spikes_all_units : dict, default: None
+        Dictionary of the form ``{<unit_id>: <n_spikes>}`` for the waveform extractor.
+        Recomputed if None.
+    fr_all_units : dict, default: None
+        Dictionary of the form ``{<unit_id>: <firing_rate>}`` for the waveform extractor.
+        Recomputed if None.
+    max_spikes : int, default: 1000
+        The max number of spikes to use per cluster.
+    min_spikes : int, default: 10
+        Min number of spikes a unit must have to go through with metric computation.
+        Units with spikes < min_spikes gets numpy.NaN as the quality metric.
+    min_fr : float, default: 0.0
+        Min firing rate a unit must have to go through with metric computation.
+        Units with firing rate < min_fr gets numpy.NaN as the quality metric.
+    n_neighbors : int, default: 5
+        The number of neighbors to check membership.
+    n_components : int, default: 10
+        The number of PC components to use to project the snippets to.
+    radius_um : float, default: 100
+        The radius, in um, that channels need to be within the peak channel to be included.
+    peak_sign : "neg" | "pos" | "both", default: "neg"
+        The peak_sign used to compute sparsity and neighbor units. Used if sorting_analyzer
+        is not sparse already.
+    seed : int, default: 0
+        Random seed for subsampling spikes.
+    
+    Returns
+    -------
+    nn_noise_overlap : float
+        The computed nearest neighbor noise estimate.
+        If the unit has fewer than `min_spikes`, returns numpy.NaN instead.
+    
+    Notes
+    -----
+    The general logic of this measure is:
+    
+    1. Generate a noise cluster by randomly sampling voltage snippets from recording.
+    2. Subtract projection onto the weighted average of noise snippets
+       of both the target and noise clusters to correct for bias in sampling.
+    3. Compute the isolation score between the noise cluster and the target cluster.
+    
+    As with nn_isolation, the clusters that are compared (target and noise clusters)
+    have the same number of spikes.
+    
+    See docstring for `_compute_isolation` for the definition of isolation score.
+    
+    References
+    ----------
+    Based on noise overlap metric described in [Chung]_
+
+Function: silhouette_score(all_pcs, all_labels, this_unit_id)
+  Docstring:
+    Calculate the silhouette score which is a marker of cluster quality ranging from
+    -1 (bad clustering) to 1 (good clustering). Distances are all calculated as pairwise
+    comparisons of all data points.
+    
+    Parameters
+    ----------
+    all_pcs : 2d array
+        The PCs for all spikes, organized as [num_spikes, PCs].
+    all_labels : 1d array
+        The cluster labels for all spikes. Must have length of number of spikes.
+    this_unit_id : int
+        The ID for the unit to calculate this metric for.
+    
+    Returns
+    -------
+    unit_silhouette_score : float
+        Silhouette Score for this unit.
+    
+    References
+    ----------
+    Based on [Rousseeuw]_
+
+Function: simplified_silhouette_score(all_pcs, all_labels, this_unit_id)
+  Docstring:
+    Calculate the simplified silhouette score for each cluster. The value ranges
+    from -1 (bad clustering) to 1 (good clustering). The simplified silhoutte score
+    utilizes the centroids for distance calculations rather than pairwise calculations.
+    
+    Parameters
+    ----------
+    all_pcs : 2d array
+        The PCs for all spikes, organized as [num_spikes, PCs].
+    all_labels : 1d array
+        The cluster labels for all spikes. Must have length of number of spikes.
+    this_unit_id : int
+        The ID for the unit to calculate this metric for.
+    
+    Returns
+    -------
+    unit_silhouette_score : float
+        Simplified Silhouette Score for this unit.
+    
+    References
+    ----------
+    Based on simplified silhouette score suggested by [Hruschka]_

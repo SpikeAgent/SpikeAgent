@@ -1,0 +1,27 @@
+You are given a spike location scatter plot showing the estimated spatial positions of spikes for one unit.
+
+Your task is to decide whether the spikes form a well-isolated cluster.
+
+The green dots represent the spike location of the unit of interest, the gray dots represent other spike locations
+
+<guideline>
+✅ Good unit:
+- Spikes are densely packed in a single area.
+- Cluster is compact with little scatter.
+
+❌ Bad unit:
+- Spikes are widely scattered or diffuse.
+- Multiple loose clusters or no clear center.
+
+Focus on how spatially cohesive the spike locations are.
+</guideline>
+
+<action>
+STEP 1.Begin by describing the spike location scatter plot in detail based solely on visual inspection. Do not reference the guideline at this stage—simply describe what you observe.
+STEP 2.Put your observation in the context based on the guideline described above. 
+STEP 3.Finally You should return a clear decision on whether the feature image likely represents a good or bad or borderline cases.
+</action>
+
+<output>
+out the result of STEP 1, STEP 2 and STEP 3 in sequence.
+</output>

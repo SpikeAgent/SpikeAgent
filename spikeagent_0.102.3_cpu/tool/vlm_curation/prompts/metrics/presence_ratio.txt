@@ -1,0 +1,8 @@
+**Presence Ratio**: The fraction of time bins in which the unit was detected, indicating temporal consistency.
+
+Guidelines:
+- Values above ~0.9 (90%) indicate consistent presence throughout the recording.
+- Lower values may suggest intermittent detection or unit instability over time.
+- This metric assesses the temporal stability and consistency of the unit.
+
+In your reasoning, interpret what the presence ratio suggests about unit stability and temporal consistency throughout the recording session.

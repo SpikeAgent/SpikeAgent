@@ -1,0 +1,498 @@
+API for module: spikeinterface.sorters
+
+Class: BaseSorter
+  Docstring:
+    Base Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: get_result(self)
+    Docstring:
+      None
+  Method: run(self, raise_error=True)
+    Docstring:
+      Main function kept for backward compatibility.
+      This should not be used anymore but still works.
+  Method: set_params(self, sorter_params)
+    Docstring:
+      Mimic the old API
+      This should not be used anymore but still works.
+
+Class: CombinatoSorter
+  Docstring:
+    Combinato Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: get_sorter_version()
+    Docstring:
+      None
+  Method: set_combinato_path(combinato_path: 'PathType')
+    Docstring:
+      None
+
+Class: ContainerClient
+  Docstring:
+    Small abstraction class to run commands in:
+      * docker with "docker" python package
+      * singularity with  "spython" python package
+  __init__(self, mode, container_image, volumes, py_user_base, extra_kwargs)
+  Method: run_command(self, command)
+    Docstring:
+      None
+  Method: start(self)
+    Docstring:
+      None
+  Method: stop(self)
+    Docstring:
+      None
+
+Class: HDSortSorter
+  Docstring:
+    HDSort Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: set_hdsort_path(hdsort_path: 'PathType')
+    Docstring:
+      None
+
+Class: HerdingspikesSorter
+  Docstring:
+    HerdingSpikes Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: IronClustSorter
+  Docstring:
+    IronClust Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: set_ironclust_path(ironclust_path: 'PathType')
+    Docstring:
+      None
+
+Class: Kilosort2Sorter
+  Docstring:
+    Kilosort2 Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: Kilosort2_5Sorter
+  Docstring:
+    Kilosort2.5 Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: set_kilosort2_5_path(kilosort2_5_path: 'PathType')
+    Docstring:
+      None
+
+Class: Kilosort3Sorter
+  Docstring:
+    Kilosort3 Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: set_kilosort3_path(kilosort3_path: 'PathType')
+    Docstring:
+      None
+
+Class: Kilosort4Sorter
+  Docstring:
+    Kilosort4 Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: KilosortSorter
+  Docstring:
+    Kilosort Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: KlustaSorter
+  Docstring:
+    Klusta Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: Mountainsort4Sorter
+  Docstring:
+    Mountainsort4 Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: get_sorter_version()
+    Docstring:
+      None
+
+Class: Mountainsort5Sorter
+  Docstring:
+    Mountainsort5 Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: get_sorter_version()
+    Docstring:
+      None
+
+Class: PyKilosortSorter
+  Docstring:
+    Pykilosort Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: SimpleSorter
+  Docstring:
+    Implementation of a very simple sorter usefull for teaching.
+    The idea is quite old school:
+      * detect peaks
+      * project waveforms with SVD or PCA
+      * apply a well known clustering algos from scikit-learn
+    
+      No template matching. No auto cleaning.
+    
+      Mainly usefull for few channels (1 to 8), teaching and testing.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: Spykingcircus2Sorter
+  Docstring:
+    This is a based class for sorter based on spikeinterface.sortingcomponents
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: SpykingcircusSorter
+  Docstring:
+    SpykingCircus Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+  Method: get_sorter_version()
+    Docstring:
+      None
+
+Class: Tridesclous2Sorter
+  Docstring:
+    This is a based class for sorter based on spikeinterface.sortingcomponents
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: TridesclousSorter
+  Docstring:
+    Tridesclous Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: WaveClusSnippetsSorter
+  Docstring:
+    WaveClus Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: WaveClusSorter
+  Docstring:
+    WaveClus Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Class: YassSorter
+  Docstring:
+    YASS Sorter object.
+  __init__(self, recording=None, output_folder=None, verbose=False, remove_existing_folder=False, delete_output_folder=False)
+
+Function: available_sorters()
+  Docstring:
+    Lists available sorters.
+
+Function: get_default_sorter_params(sorter_name_or_class) -> 'dict'
+  Docstring:
+    Returns default parameters for the specified sorter.
+    
+    Parameters
+    ----------
+    sorter_name_or_class : str or SorterClass
+        The sorter to retrieve default parameters from.
+    
+    Returns
+    -------
+    default_params : dict
+        Dictionary with default params for the specified sorter.
+
+Function: get_sorter_description(sorter_name_or_class) -> 'dict'
+  Docstring:
+    Returns a brief description for the specified sorter.
+    
+    Parameters
+    ----------
+    sorter_name_or_class : str or SorterClass
+        The sorter to retrieve description from.
+    
+    Returns
+    -------
+    params_description : dict
+        Dictionary with parameter description.
+
+Function: get_sorter_params_description(sorter_name_or_class) -> 'dict'
+  Docstring:
+    Returns a description of the parameters for the specified sorter.
+    
+    Parameters
+    ----------
+    sorter_name_or_class : str or SorterClass
+        The sorter to retrieve parameters description from.
+    
+    Returns
+    -------
+    params_description : dict
+        Dictionary with parameter description
+
+Function: install_package_in_container(container_client, package_name, installation_mode='pypi', extra=None, version=None, tag=None, github_url=None, container_folder_source=None, verbose=False)
+  Docstring:
+    Install a package in a container with different modes:
+    
+    * pypi: pip install package_name
+    * github: pip install {github_url}/archive/{tag/version}.tar.gz#egg=package_name
+    * folder: pip install folder
+    
+    Parameters
+    ----------
+    container_client : ContainerClient
+        The container client
+    package_name : str
+        The package name
+    installation_mode : str
+        The installation mode
+    extra : str
+        Extra pip install arguments, e.g. [full]
+    version : str
+        The package version to install
+    tag : str
+        The github tag to install
+    github_url : str
+        The github url to install (needed for github mode)
+    container_folder_source : str
+        The container folder source (needed for folder mode)
+    verbose : bool
+        If True, print output of pip install command
+    
+    Returns
+    -------
+    res_output : str
+        The output of the pip install command
+
+Function: installed_sorters()
+  Docstring:
+    Lists installed sorters.
+
+Function: print_sorter_versions()
+  Docstring:
+    "Prints the versions of the installed sorters.
+
+Function: read_sorter_folder(folder, register_recording=True, sorting_info=True, raise_error=True)
+  Docstring:
+    Load a sorting object from a spike sorting output folder.
+    The 'folder' must contain a valid 'spikeinterface_log.json' file
+    
+    
+    Parameters
+    ----------
+    folder : Pth or str
+        The sorter folder
+    register_recording : bool, default: True
+        Attach recording (when json or pickle) to the sorting
+    sorting_info : bool, default: True
+        Attach sorting info to the sorting
+    raise_error : bool, detault: True
+        Raise an error if the spike sorting failed
+
+Function: run_sorter(sorter_name: 'str', recording: 'BaseRecording', folder: 'Optional[str]' = None, remove_existing_folder: 'bool' = False, delete_output_folder: 'bool' = False, verbose: 'bool' = False, raise_error: 'bool' = True, docker_image: 'Optional[Union[bool, str]]' = False, singularity_image: 'Optional[Union[bool, str]]' = False, delete_container_files: 'bool' = True, with_output: 'bool' = True, output_folder: 'None' = None, **sorter_params)
+  Docstring:
+    Generic function to run a sorter via function approach.
+    
+    
+    Parameters
+    ----------
+    sorter_name : str
+        The sorter name
+    recording : RecordingExtractor
+        The recording extractor to be spike sorted
+    folder : str or Path
+        Path to output folder
+    remove_existing_folder : bool
+        If True and folder exists then delete.
+    delete_output_folder : bool, default: False
+        If True, output folder is deleted
+    verbose : bool, default: False
+        If True, output is verbose
+    raise_error : bool, default: True
+        If True, an error is raised if spike sorting fails
+        If False, the process continues and the error is logged in the log file.
+    docker_image : bool or str, default: False
+        If True, pull the default docker container for the sorter and run the sorter in that container using docker.
+        Use a str to specify a non-default container. If that container is not local it will be pulled from docker hub.
+        If False, the sorter is run locally
+    singularity_image : bool or str, default: False
+        If True, pull the default docker container for the sorter and run the sorter in that container using
+        singularity. Use a str to specify a non-default container. If that container is not local it will be pulled
+        from Docker Hub. If False, the sorter is run locally
+    with_output : bool, default: True
+        If True, the output Sorting is returned as a Sorting
+    delete_container_files : bool, default: True
+        If True, the container temporary files are deleted after the sorting is done
+    output_folder : None, default: None
+        Do not use. Deprecated output function to be removed in 0.103.
+    **sorter_params : keyword args
+        Spike sorter specific arguments (they can be retrieved with `get_default_sorter_params(sorter_name_or_class)`)
+    
+    Returns
+    -------
+    BaseSorting | None
+        The spike sorted data (it `with_output` is True) or None (if `with_output` is False)
+    
+    
+    Examples
+    --------
+    >>> sorting = run_sorter("tridesclous", recording)
+
+Function: run_sorter_by_property(sorter_name, recording, grouping_property, folder, mode_if_folder_exists=None, engine='loop', engine_kwargs={}, verbose=False, docker_image=None, singularity_image=None, working_folder: 'None' = None, **sorter_params)
+  Docstring:
+    Generic function to run a sorter on a recording after splitting by a "grouping_property" (e.g. "group").
+    
+    Internally, the function works as follows:
+        * the recording is split based on the provided "grouping_property" (using the "split_by" function)
+        * the "run_sorters" function is run on the split recordings
+        * sorting outputs are aggregated using the "aggregate_units" function
+        * the "grouping_property" is added as a property to the SortingExtractor
+    
+    Parameters
+    ----------
+    sorter_name : str
+        The sorter name
+    recording : BaseRecording
+        The recording to be sorted
+    grouping_property : object
+        Property to split by before sorting
+    folder : str | Path
+        The working directory.
+    mode_if_folder_exists : bool or None, default: None
+        Must be None. This is deprecated.
+        If not None then a warning is raise.
+        Will be removed in next release.
+    engine : "loop" | "joblib" | "dask", default: "loop"
+        Which engine to use to run sorter.
+    engine_kwargs : dict
+        This contains kwargs specific to the launcher engine:
+            * "loop" : no kwargs
+            * "joblib" : {"n_jobs" : } number of processes
+            * "dask" : {"client":} the dask client for submitting task
+    verbose : bool, default: False
+        Controls sorter verboseness
+    docker_image : None or str, default: None
+        If str run the sorter inside a container (docker) using the docker package
+    singularity_image : None or str, default: None
+        If str run the sorter inside a container (singularity) using the docker package
+    **sorter_params : keyword args
+        Spike sorter specific arguments (they can be retrieved with `get_default_sorter_params(sorter_name_or_class)`)
+    
+    Returns
+    -------
+    sorting : UnitsAggregationSorting
+        The aggregated SortingExtractor.
+    
+    Examples
+    --------
+    This example shows how to run spike sorting split by group using the "joblib" backend with 4 jobs for parallel
+    processing.
+    
+    >>> sorting = si.run_sorter_by_property("tridesclous", recording, grouping_property="group",
+                                            folder="sort_by_group", engine="joblib",
+                                            engine_kwargs={"n_jobs": 4})
+
+Function: run_sorter_container(sorter_name: 'str', recording: 'BaseRecording', mode: 'str', container_image: 'Optional[str]' = None, folder: 'Optional[str]' = None, remove_existing_folder: 'bool' = True, delete_output_folder: 'bool' = False, verbose: 'bool' = False, raise_error: 'bool' = True, with_output: 'bool' = True, delete_container_files: 'bool' = True, extra_requirements=None, installation_mode='auto', spikeinterface_version=None, spikeinterface_folder_source=None, output_folder: 'None' = None, **sorter_params)
+  Docstring:
+    Parameters
+    ----------
+    sorter_name : str
+        The sorter name
+    recording : BaseRecording
+        The recording extractor to be spike sorted
+    mode : str
+        The container mode : "docker" or "singularity"
+    container_image : str, default: None
+        The container image name and tag. If None, the default container image is used
+    output_folder : str, default: None
+        Path to output folder
+    remove_existing_folder : bool, default: True
+        If True and output_folder exists yet then delete
+    delete_output_folder : bool, default: False
+        If True, output folder is deleted
+    verbose : bool, default: False
+        If True, output is verbose
+    raise_error : bool, default: True
+        If True, an error is raised if spike sorting fails
+    with_output : bool, default: True
+        If True, the output Sorting is returned as a Sorting
+    delete_container_files : bool, default: True
+        If True, the container temporary files are deleted after the sorting is done
+    extra_requirements : list, default: None
+        List of extra requirements to install in the container
+    installation_mode : "auto" | "pypi" | "github" | "folder" | "dev" | "no-install", default: "auto"
+        How spikeinterface is installed in the container:
+          * "auto" : if host installation is a pip release then use "github" with tag
+                    if host installation is DEV_MODE=True then use "dev"
+          * "pypi" : use pypi with pip install spikeinterface
+          * "github" : use github with `pip install git+https`
+          * "folder" : mount a folder in container and install from this one.
+                      So the version in the container is a different spikeinterface version from host, useful for
+                      cross checks
+          * "dev" : same as "folder", but the folder is the spikeinterface.__file__ to ensure same version as host
+          * "no-install" : do not install spikeinterface in the container because it is already installed
+    spikeinterface_version : str, default: None
+        The spikeinterface version to install in the container. If None, the current version is used
+    spikeinterface_folder_source : Path or None, default: None
+        In case of installation_mode="folder", the spikeinterface folder source to use to install in the container
+    **sorter_params : keyword args for the sorter
+
+Function: run_sorter_jobs(job_list, engine='loop', engine_kwargs={}, return_output=False)
+  Docstring:
+    Run several :py:func:`run_sorter()` sequentially or in parallel given a list of jobs.
+    
+    For **engine="loop"** this is equivalent to:
+    
+    ..code::
+    
+        for job in job_list:
+            run_sorter(**job)
+    
+    The following engines block the I/O:
+      * "loop"
+      * "joblib"
+      * "multiprocessing"
+      * "dask"
+    
+    The following engines are *asynchronous*:
+      * "slurm"
+    
+    Where *blocking* means that this function is blocking until the results are returned.
+    This is in opposition to *asynchronous*, where the function returns `None` almost immediately (aka non-blocking),
+    but the results must be retrieved by hand when jobs are finished. No mechanisim is provided here to be know
+    when jobs are finish.
+    In this *asynchronous* case, the :py:func:`~spikeinterface.sorters.read_sorter_folder()` helps to retrieve individual results.
+    
+    
+    Parameters
+    ----------
+    job_list : list of dict
+        A list a dict that are propagated to run_sorter(...)
+    engine : str "loop", "joblib", "dask", "slurm"
+        The engine to run the list.
+        * "loop" : a simple loop. This engine is
+    engine_kwargs : dict
+    
+    return_output : bool, dfault False
+        Return a sortings or None.
+        This also overwrite kwargs in  in run_sorter(with_sorting=True/False)
+    
+    Returns
+    -------
+    sortings : None or list of sorting
+        With engine="loop" or "joblib" you can optional get directly the list of sorting result if return_output=True.
+
+Function: run_sorter_local(sorter_name, recording, folder=None, remove_existing_folder=True, delete_output_folder=False, verbose=False, raise_error=True, with_output=True, output_folder=None, **sorter_params)
+  Docstring:
+    Runs a sorter locally.
+    
+    Parameters
+    ----------
+    sorter_name : str
+        The sorter name
+    recording : RecordingExtractor
+        The recording extractor to be spike sorted
+    folder : str or Path
+        Path to output folder. If None, a folder is created in the current directory
+    remove_existing_folder : bool, default: True
+        If True and output_folder exists yet then delete
+    delete_output_folder : bool, default: False
+        If True, output folder is deleted
+    verbose : bool, default: False
+        If True, output is verbose
+    raise_error : bool, default: True
+        If True, an error is raised if spike sorting fails.
+        If False, the process continues and the error is logged in the log file
+    with_output : bool, default: True
+        If True, the output Sorting is returned as a Sorting
+    output_folder : None, default: None
+        Do not use. Deprecated output function to be removed in 0.103.
+    **sorter_params : keyword args

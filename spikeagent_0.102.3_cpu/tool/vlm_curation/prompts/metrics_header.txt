@@ -1,0 +1,8 @@
+You are given numerical quality metrics for a spike-sorted unit:
+
+{metrics_descriptions}
+
+Your task is to assess whether this unit is likely to be a well-isolated neuron based on these metrics.
+Interpret each value and provide reasoning in natural language.
+
+Conclude with your judgment (Good, Bad, or borderline cases), supported by your interpretation of the values.

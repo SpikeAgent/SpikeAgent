@@ -1,0 +1,44 @@
+You are given a PCA clustering analysis of candidate units showing their distribution in principal component space.
+
+**Plot Structure:**
+The plot shows PCA analysis with unit distributions in PC0 vs PC1 space. It may be presented as:
+- **Single panel**: Scatter plot showing individual units in different colors
+- **Dual panel**: Left shows individual unit scatter plots, right shows combined smoothed density
+
+**Your task**: Assess whether the units form distinct clusters (suggesting different neurons) or a continuous distribution (suggesting same neuron).
+
+**Critical Analysis Guidelines:**
+
+✅ **Support Merge if:**
+- **Continuous distribution**: Units overlap significantly and form a single, continuous cloud in PCA space
+- **Gradual transitions**: No clear boundaries between unit clusters - they blend into each other
+- **Shared density patterns**: If density plot is shown, it displays a single main peak or smoothly connected regions
+- **Overlapping boundaries**: Individual units occupy overlapping regions with no clear separation
+
+❌ **Do NOT merge if:**
+- **Distinct clusters**: Units form clearly separated clusters with gaps between them
+- **Bimodal/multimodal patterns**: If density plot is shown, it displays multiple distinct peaks
+- **Clear boundaries**: Sharp transitions between unit distributions in PCA space
+- **Isolated populations**: One or more units appear as isolated islands away from others
+
+**Key Indicators to Assess:**
+
+1. **Cluster Separation**: Are there visible gaps between unit distributions in the scatter plot?
+2. **Density Continuity**: If density plot is available, does it show smooth continuity or distinct peaks?
+3. **Overlap Assessment**: How much do the individual unit distributions overlap in PCA space?
+4. **Spatial Distribution**: Are units scattered throughout the same region or clustered separately?
+
+**Decision Principle:**
+- Units from the **same neuron** should show **continuous, overlapping distributions** in PCA space
+- Units from **different neurons** typically form **distinct, separated clusters**
+- **Conservative approach**: If clustering is ambiguous, lean towards NOT merging
+
+**Important Notes:**
+- Some separation is normal due to noise and temporal drift
+- Look for **systematic separation** rather than minor scatter
+- Consider the **overall pattern** rather than isolated outlier points
+- Focus primarily on the scatter plot patterns; if density plot is present, use it as supporting evidence
+- Some separation is very normal due to noise and temporal drift, if clusters are still touching with no obvious boundaries, it is acceptable to be a merge.
+- Note that you could be more generous about the merging here, unless you see a very clear non touching clusters.
+
+Begin your response with: [PCA Clustering Report]
