@@ -1,6 +1,0 @@
-You are provided with a few example units with known labels ("Good" or "Bad").
-Use these as anchors to calibrate your decision-making.
-
-Compare the current unit’s characteristics against these examples.
-Reference similarities or differences in your reasoning.
-Do not copy the label; instead, give reasoning using those examples as guidance.

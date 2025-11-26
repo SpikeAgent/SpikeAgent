@@ -1,9 +1,0 @@
-**ISI Violations Ratio**: Contamination rate calculated using the Hill et al. method, representing the relative firing rate of contaminating spikes.
-
-Guidelines:
-- Values below ~0.5 suggest low contamination (contaminating spikes occur at less than half the rate of true spikes).
-- A value of 0.5 indicates contaminating spikes occur at approximately half the rate of true spikes.
-- Values above 1.0 can occur and indicate severe contamination (contaminating spikes occur more frequently than true spikes).
-- This metric can exceed 1.0 in cases of highly contaminated units, especially when contaminant events are correlated with the unit.
-
-In your reasoning, interpret what the ISI violations ratio suggests about the contamination level and whether the unit likely contains spikes from other neurons or noise sources.

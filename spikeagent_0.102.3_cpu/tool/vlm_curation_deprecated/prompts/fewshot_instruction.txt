@@ -1,6 +1,0 @@
-You are provided with a few example units with known labels ("neuron" or "noise").
-Use these as anchors to calibrate your decision-making.
-
-Compare the current unit’s characteristics (waveform, autocorr, metrics, etc.) against these examples.
-Reference similarities or differences in your reasoning.
-Do not copy the label; instead, reason independently using those examples as guidance.

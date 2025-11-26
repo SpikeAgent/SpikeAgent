@@ -1,8 +1,0 @@
-**Amplitude Cutoff**: Estimate of the fraction of spikes missing due to amplitude-based thresholding.
-
-Guidelines:
-- Values below ~0.1 (10%) indicate minimal spike loss due to thresholding.
-- Higher values suggest significant missing spikes, potentially affecting unit completeness.
-- This metric assesses the completeness of spike detection for the unit.
-
-In your reasoning, interpret what the amplitude cutoff suggests about spike detection completeness and potential data loss.

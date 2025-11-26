@@ -1,0 +1,6 @@
+You are provided with a few example merge candidates with known decisions ("merge" or "not merge").
+Use these as anchors to calibrate your decision-making.
+
+Compare the current unit pair's characteristics against these examples.
+Reference similarities or differences in your reasoning.
+Do not copy the decision; instead, give reasoning using those examples as guidance.

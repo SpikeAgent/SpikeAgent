@@ -1,0 +1,17 @@
+You are given three numerical quality metrics for a spike-sorted unit:
+
+- **SNR**: Signal-to-noise ratio  
+- **ISI Violations Ratio**: Contamination rate (Hill et al. method) representing relative firing rate of contaminating spikes
+- **L-ratio**: A measure of how well-separated the unit is from other clusters in feature space  
+
+Your task is to assess whether this unit is likely to be a well-isolated neuron.  
+Interpret each value and provide reasoning in natural language.
+
+Guidelines:
+- SNR above ~4 generally indicates strong signal; values below 2 may suggest weak or noisy units.
+- ISI Violations Ratio below ~0.5 suggests low contamination; values above 1.0 indicate severe contamination (can exceed 1.0).
+- L-ratio below ~0.2 indicates good cluster separation; values above 0.3 suggest poor isolation.
+
+In your reasoning, infer what each metric value suggests — e.g., whether the signal is strong or weak, whether the unit shows clear temporal separation, and how distinct the cluster is.
+
+Conclude with your judgment Good or Bad or borderline cases, supported by your interpretation of the values.

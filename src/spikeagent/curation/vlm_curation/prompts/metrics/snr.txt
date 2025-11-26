@@ -1,0 +1,8 @@
+**SNR (Signal-to-Noise Ratio)**: A measure of signal strength relative to background noise.
+
+Guidelines:
+- SNR above ~4 generally indicates strong signal; values below 2 may suggest weak or noisy units.
+- Higher values indicate better signal quality and more reliable spike detection.
+- Very low SNR values (< 1.5) typically indicate poor unit isolation or excessive noise contamination.
+
+In your reasoning, interpret what the SNR value suggests about signal strength and reliability of the unit detection.

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="src/logo.png" alt="SpikeAgent Logo" width="300"/>
+  <img src="docs/img/spikeagent_logo.png" alt="SpikeAgent Logo" width="300"/>
 </div>
 
 # SpikeAgent
@@ -34,14 +34,24 @@ The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spik
 
 SpikeAgent provides two Docker image variants to suit different hardware configurations:
 
-- **CPU Version** (`spikeagent_0.102.3_cpu`): For systems without GPU support or when GPU acceleration is not required
-- **GPU Version** (`spikeagent_0.102.3_gpu`): For systems with NVIDIA GPUs for accelerated computation
+- **CPU Version**: For systems without GPU support or when GPU acceleration is not required
+- **GPU Version**: For systems with NVIDIA GPUs for accelerated computation
 
 > **Note**: Some spike sorters (e.g., Kilosort4) require GPU support. If you plan to use these sorters, you must use the GPU version.
 
-**For detailed setup, build, and run instructions**, see the individual README files:
-- [CPU Version README](spikeagent_0.102.3_cpu/README.md) - Complete setup guide for CPU version
-- [GPU Version README](spikeagent_0.102.3_gpu/README.md) - Complete setup guide for GPU version
+#### Building and Running
+
+**CPU Version:**
+```bash
+docker build -f docker_files/Dockerfile.cpu -t spikeagent:cpu .
+docker run --rm -p 8501:8501 --env-file .env spikeagent:cpu
+```
+
+**GPU Version:**
+```bash
+docker build -f docker_files/Dockerfile.gpu -t spikeagent:gpu .
+docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
+```
 
 Once the Docker container is running, access the application at `http://localhost:8501` in your web browser.
 
@@ -53,35 +63,57 @@ You can test SpikeAgent with open datasets such as [Neuropixels 2.0 chronic reco
 
 The repository includes Jupyter notebook tutorials to help you get started:
 
-- **`jupyter notebook tutorials/vlm_curation_tutorial.ipynb`**: Comprehensive tutorial on using Vision Language Models (VLM) for AI-assisted spike curation
+- **`notebook tutorials/vlm_noise_rejection_tutorial.ipynb`**: Tutorial on using Vision Language Models (VLM) for AI-assisted spike curation
+  - Classifying units as "Good" or "Bad" based on visual features
+  - Using waveforms, autocorrelograms, and spike locations for quality control
+  - Applying curation to filter out noise units
+
+- **`notebook tutorials/vlm_merge_simple_tutorial.ipynb`**: Tutorial on using VLM for merge analysis
   - Finding potential merge candidates automatically
-  - Analyzing visual features using AI (crosscorrelograms and amplitude plots)
+  - Analyzing visual features using AI (crosscorrelograms, amplitude plots, PCA clustering)
   - Making merge decisions based on AI analysis
-  - Saving and reviewing merge decision logs
+  - Applying merges to consolidate units from the same neuron
 
 ## Project Structure
 
 ```
 spikeagent/
-├── spikeagent_0.102.3_cpu/              # CPU Docker image configuration
-├── spikeagent_0.102.3_gpu/              # GPU Docker image configuration
-└── jupyter notebook tutorials/          # Jupyter notebook tutorials
-    └── vlm_curation_tutorial.ipynb      # Main VLM curation tutorial
+├── src/spikeagent/                      # Main source code package
+│   ├── app/                            # Application code
+│   └── curation/                       # Curation and VLM analysis tools
+├── docker_files/                       # Docker configuration files
+│   ├── Dockerfile.cpu                  # CPU Docker image
+│   └── Dockerfile.gpu                  # GPU Docker image
+├── docs/                               # Documentation
+│   └── img/                            # Documentation images
+├── notebook tutorials/                 # Jupyter notebook tutorials
+│   ├── vlm_merge_simple_tutorial.ipynb # VLM merge analysis tutorial
+│   └── vlm_noise_rejection_tutorial.ipynb # VLM curation tutorial
+└── tests/                              # Test suite
 ```
+
+## Documentation
+
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
+
+- **[Installation Guide](docs/installation.md)**: Detailed setup and installation instructions
+- **[User Guide](docs/user-guide.md)**: How to use SpikeAgent for spike sorting and curation
+- **[API Reference](docs/api-reference.md)**: Programmatic API documentation
 
 ## Getting Help
 
-For detailed setup instructions, troubleshooting, and usage information, refer to:
-- [CPU Version README](spikeagent_0.102.3_cpu/README.md)
-- [GPU Version README](spikeagent_0.102.3_gpu/README.md)
+For detailed setup instructions, troubleshooting, and usage information:
+- Review the [Installation Guide](docs/installation.md)
+- Check the [User Guide](docs/user-guide.md) for workflows
+- Explore the Jupyter notebook tutorials in `notebook tutorials/`
+- Ensure your `.env` file contains the required API keys
 
 ## Citation
 
 If you find SpikeAgent useful for your work, please cite:
 
 **SpikeAgent**:
-Zuwan Lin#, Arnau Marin-Llobet#, Jongmin Baek, Yichun He, Jaeyong Lee, Wenbo Wang, Xinhe Zhang, Ariel J. Lee, Ningyue Liang, Jin Du, Jie Ding, Na Li, Jia Liu*  
-Preprint at bioRxiv (2025): https://doi.org/10.1101/2025.02.11.637754
+Lin, Z., Marin-Llobet, A., Baek, J., He, Y., Lee, J., Wang, W., ... & Liu, J. (2025). Spike sorting AI agent. Preprint at bioRxiv: https://doi.org/10.1101/2025.02.11.637754
 
-**SpikeInterface** (if used):
-Buccino, Alessio Paolo, Hurwitz, Cole Lincoln, Garcia, Samuel, Magland, Jeremy, Siegle, Joshua H, Hurwitz, Roger, & Hennig, Matthias H. (2020). SpikeInterface, a unified framework for spike sorting. Elife, 9, e61834.
+**SpikeInterface**:
+Buccino, A. P., Hurwitz, C. L., Garcia, S., Magland, J., Siegle, J. H., Hurwitz, R., & Hennig, M. H. (2020). SpikeInterface, a unified framework for spike sorting. Elife, 9, e61834.

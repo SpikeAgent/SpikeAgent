@@ -1,0 +1,628 @@
+API for module: spikeinterface.postprocessing
+
+Class: AlignSortingExtractor
+  Docstring:
+    Class to shift a unit (generally to align the template on the peak) given
+    the shifts for each unit.
+    
+    Parameters
+    ----------
+    sorting : BaseSorting
+        The sorting to align.
+    unit_peak_shifts : dict
+        Dictionary mapping the unit_id to the unit's shift (in number of samples).
+        A positive shift means the spike train is shifted back in time, while
+        a negative shift means the spike train is shifted forward.
+    
+    Returns
+    -------
+    aligned_sorting : AlignSortingExtractor
+        The aligned sorting.
+  __init__(self, sorting, unit_peak_shifts)
+
+Class: ComputeAmplitudeScalings
+  Docstring:
+    Computes the amplitude scalings from a SortingAnalyzer.
+    
+    Amplitude scalings are the scaling factor to multiply the
+    unit template to best match the waveform. Each waveform
+    has an associated amplitude scaling.
+    
+    In the case where there are not spike collisions, the scaling is
+    the regression of the waveform onto the template, with intercept:
+        scaling * template + intercept = waveform
+    
+    When there are spike collisions, a different approach is taken.
+    Spike collisions are sets of temporally and spatially overlapping spikes.
+    Therefore, signal from other spikes can contribute to the amplitude
+    of the spike of interest. To address this, a multivariate linear
+    regression is used to regress the waveform (that contains multiple spikes,
+    the spike of interest and colliding spikes) onto a set of templates.
+    
+    Parameters
+    ----------
+    sorting_analyzer: SortingAnalyzer
+        A SortingAnalyzer object
+    sparsity: ChannelSparsity or None, default: None
+        If waveforms are not sparse, sparsity is required if the number of channels is greater than
+        `max_dense_channels`. If the waveform extractor is sparse, its sparsity is automatically used.
+    max_dense_channels: int, default: 16
+        Maximum number of channels to allow running without sparsity. To compute amplitude scaling using
+        dense waveforms, set this to None, sparsity to None, and pass dense waveforms as input.
+    ms_before : float or None, default: None
+        The cut out to apply before the spike peak to extract local waveforms.
+        If None, the SortingAnalyzer ms_before is used.
+    ms_after : float or None, default: None
+        The cut out to apply after the spike peak to extract local waveforms.
+        If None, the SortingAnalyzer ms_after is used.
+    handle_collisions: bool, default: True
+        Whether to handle collisions between spikes. If True, the amplitude scaling of colliding spikes
+        (defined as spikes within `delta_collision_ms` ms and with overlapping sparsity) is computed by fitting a
+        multi-linear regression model (with `sklearn.LinearRegression`). If False, each spike is fitted independently.
+    delta_collision_ms: float, default: 2
+        The maximum time difference in ms before and after a spike to gather colliding spikes.
+    load_if_exists : bool, default: False
+        Whether to load precomputed spike amplitudes, if they already exist.
+    outputs: "concatenated" | "by_unit", default: "concatenated"
+        How the output should be returned
+    {}
+    
+    Returns
+    -------
+    amplitude_scalings: np.array or list of dict
+        The amplitude scalings.
+            - If "concatenated" all amplitudes for all spikes and all units are concatenated
+            - If "by_unit", amplitudes are returned as a list (for segments) of dictionaries (for units)
+  __init__(self, sorting_analyzer)
+
+Class: ComputeCorrelograms
+  Docstring:
+    Compute auto and cross correlograms of unit spike times.
+    
+    Parameters
+    ----------
+    sorting_analyzer_or_sorting : SortingAnalyzer | Sorting
+        A SortingAnalyzer or Sorting object
+    window_ms : float, default: 50.0
+        The window around the spike to compute the correlation in ms. For example,
+         if 50 ms, the correlations will be computed at lags -25 ms ... 25 ms.
+    bin_ms : float, default: 1.0
+        The bin size in ms. This determines the bin size over which to
+        combine lags. For example, with a window size of -25 ms to 25 ms, and
+        bin size 1 ms, the correlation will be binned as -25 ms, -24 ms, ...
+    method : "auto" | "numpy" | "numba", default: "auto"
+         If "auto" and numba is installed, numba is used, otherwise numpy is used.
+    
+    Returns
+    -------
+    correlogram : np.array
+        Correlograms with shape (num_units, num_units, num_bins)
+        The diagonal of the correlogram (e.g. correlogram[A, A, :])
+        holds the unit auto correlograms. The off-diagonal elements
+        are the cross-correlograms between units, where correlogram[A, B, :]
+        and correlogram[B, A, :] represent cross-correlation between
+        the same pair of units, applied in opposite directions,
+        correlogram[A, B, :] = correlogram[B, A, ::-1].
+    bins :  np.array
+        The bin edges in ms
+    
+    Notes
+    -----
+    In the extracellular electrophysiology context, a correlogram
+    is a visualisation of the results of a cross-correlation
+    between two spike trains. The cross-correlation slides one spike train
+    along another sample-by-sample, taking the correlation at each 'lag'. This results
+    in a plot with 'lag' (i.e. time offset) on the x-axis and 'correlation'
+    (i.e. how similar to two spike trains are) on the y-axis. In this
+    implementation, the y-axis result is the 'counts' of spike matches per
+    time bin (rather than a computer correlation or covariance).
+    
+    In the present implementation, a 'window' around spikes is first
+    specified. For example, if a window of 100 ms is taken, we will
+    take the correlation at lags from -50 ms to +50 ms around the spike peak.
+    In theory, we can have as many lags as we have samples. Often, this
+    visualisation is too high resolution and instead the lags are binned
+    (e.g. -50 to -45 ms, ..., -5 to 0 ms, 0 to 5 ms, ...., 45 to 50 ms).
+    When using counts as output, binning the lags involves adding up all counts across
+    a range of lags.
+  __init__(self, sorting_analyzer)
+
+Class: ComputeISIHistograms
+  Docstring:
+    Compute ISI histograms.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object
+    window_ms : float, default: 50
+        The window in ms
+    bin_ms : float, default: 1
+        The bin size in ms
+    method : "auto" | "numpy" | "numba", default: "auto"
+        . If "auto" and numba is installed, numba is used, otherwise numpy is used
+    
+    Returns
+    -------
+    isi_histograms : np.array
+        IDI_histograms with shape (num_units, num_bins)
+    bins :  np.array
+        The bin edges in ms
+  __init__(self, sorting_analyzer)
+
+Class: ComputePrincipalComponents
+  Docstring:
+    Compute PC scores from waveform extractor. The PCA projections are pre-computed only
+    on the sampled waveforms available from the extensions "waveforms".
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object
+    n_components : int, default: 5
+        Number of components fo PCA
+    mode : "by_channel_local" | "by_channel_global" | "concatenated", default: "by_channel_local"
+        The PCA mode:
+            - "by_channel_local": a local PCA is fitted for each channel (projection by channel)
+            - "by_channel_global": a global PCA is fitted for all channels (projection by channel)
+            - "concatenated": channels are concatenated and a global PCA is fitted
+    sparsity : ChannelSparsity or None, default: None
+        The sparsity to apply to waveforms.
+        If sorting_analyzer is already sparse, the default sparsity will be used
+    whiten : bool, default: True
+        If True, waveforms are pre-whitened
+    dtype : dtype, default: "float32"
+        Dtype of the pc scores
+    {}
+    
+    Examples
+    --------
+    >>> sorting_analyzer = create_sorting_analyzer(sorting, recording)
+    >>> sorting_analyzer.compute("principal_components", n_components=3, mode='by_channel_local')
+    >>> ext_pca = sorting_analyzer.get_extension("principal_components")
+    >>> # get pre-computed projections for unit_id=1
+    >>> unit_projections = ext_pca.get_projections_one_unit(unit_id=1, sparse=False)
+    >>> # get pre-computed projections for some units on some channels
+    >>> some_projections, spike_unit_indices = ext_pca.get_some_projections(channel_ids=None, unit_ids=None)
+    >>> # retrieve fitted pca model(s)
+    >>> pca_model = ext_pca.get_pca_model()
+    >>> # compute projections on new waveforms
+    >>> proj_new = ext_pca.project_new(new_waveforms)
+    >>> # run for all spikes in the SortingExtractor
+    >>> pc.run_for_all_spikes(file_path="all_pca_projections.npy")
+  __init__(self, sorting_analyzer)
+  Method: get_pca_model(self)
+    Docstring:
+      Returns the scikit-learn PCA model objects.
+      
+      Returns
+      -------
+      pca_models: PCA object(s)
+          * if mode is "by_channel_local", "pca_model" is a list of PCA model by channel
+          * if mode is "by_channel_global" or "concatenated", "pca_model" is a single PCA model
+  Method: get_projections_one_unit(self, unit_id, sparse=False)
+    Docstring:
+      Returns the computed projections for the sampled waveforms of a unit id.
+      
+      Parameters
+      ----------
+      unit_id : int or str
+          The unit id to return PCA projections for
+      sparse: bool, default: False
+          If True, and SortingAnalyzer must be sparse then only projections on sparse channels are returned.
+          Channel indices are also returned.
+      
+      Returns
+      -------
+      projections: np.array
+          The PCA projections (num_waveforms, num_components, num_channels).
+          In case sparsity is used, only the projections on sparse channels are returned.
+      channel_indices: np.array
+  Method: get_some_projections(self, channel_ids=None, unit_ids=None)
+    Docstring:
+      Returns the computed projections for the sampled waveforms of some units and some channels.
+      
+      When internally sparse, this function realign  projection on given channel_ids set.
+      
+      Parameters
+      ----------
+      channel_ids : list, default: None
+          List of channel ids on which projections must aligned
+      unit_ids : list, default: None
+          List of unit ids to return projections for
+      
+      Returns
+      -------
+      some_projections: np.array
+          The PCA projections (num_spikes, num_components, num_sparse_channels)
+      spike_unit_indices: np.array
+          Array a copy of with some_spikes["unit_index"] of returned PCA projections of shape (num_spikes, )
+  Method: project_new(self, new_spikes, new_waveforms, progress_bar=True)
+    Docstring:
+      Projects new waveforms or traces snippets on the PC components.
+      
+      Parameters
+      ----------
+      new_spikes: np.array
+          The spikes vector associated to the waveforms buffer. This is need need to get the sparsity spike per spike.
+      new_waveforms: np.array
+          Array with new waveforms to project with shape (num_waveforms, num_samples, num_channels)
+      
+      Returns
+      -------
+      new_projections: np.array
+          Projections of new waveforms on PCA compoents
+  Method: run_for_all_spikes(self, file_path=None, verbose=False, **job_kwargs)
+    Docstring:
+      Project all spikes from the sorting on the PCA model.
+      This is a long computation because waveform need to be extracted from each spikes.
+      
+      Used mainly for `export_to_phy()`
+      
+      PCs are exported to a .npy single file.
+      
+      Parameters
+      ----------
+      file_path : str or Path or None
+          Path to npy file that will store the PCA projections.
+      {}
+
+Class: ComputeSpikeAmplitudes
+  Docstring:
+    AnalyzerExtension
+    Computes the spike amplitudes.
+    
+    Needs "templates" to be computed first.
+    Localize spikes in 2D or 3D with several methods given the template.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object
+    ms_before : float, default: 0.5
+        The left window, before a peak, in milliseconds
+    ms_after : float, default: 0.5
+        The right window, after a peak, in milliseconds
+    spike_retriver_kwargs : dict
+        A dictionary to control the behavior for getting the maximum channel for each spike
+        This dictionary contains:
+          * channel_from_template: bool, default: True
+              For each spike is the maximum channel computed from template or re estimated at every spikes
+              channel_from_template = True is old behavior but less acurate
+              channel_from_template = False is slower but more accurate
+          * radius_um: float, default: 50
+              In case channel_from_template=False, this is the radius to get the true peak
+          * peak_sign, default: "neg"
+              In case channel_from_template=False, this is the peak sign.
+    method : "center_of_mass" | "monopolar_triangulation" | "grid_convolution", default: "center_of_mass"
+        The localization method to use
+    **method_kwargs : dict, default: {}
+        Kwargs which are passed to the method function. These can be found in the docstrings of `compute_center_of_mass`, `compute_grid_convolution` and `compute_monopolar_triangulation`.
+    outputs : "numpy" | "by_unit", default: "numpy"
+        The output format, either concatenated as numpy array or separated on a per unit basis
+    
+    Returns
+    -------
+    spike_locations: np.array
+        All locations for all spikes and all units are concatenated
+  __init__(self, sorting_analyzer)
+
+Class: ComputeSpikeLocations
+  Docstring:
+    Localize spikes in 2D or 3D with several methods given the template.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object
+    ms_before : float, default: 0.5
+        The left window, before a peak, in milliseconds
+    ms_after : float, default: 0.5
+        The right window, after a peak, in milliseconds
+    spike_retriver_kwargs : dict
+        A dictionary to control the behavior for getting the maximum channel for each spike
+        This dictionary contains:
+    
+          * channel_from_template: bool, default: True
+              For each spike is the maximum channel computed from template or re estimated at every spikes
+              channel_from_template = True is old behavior but less acurate
+              channel_from_template = False is slower but more accurate
+          * radius_um: float, default: 50
+              In case channel_from_template=False, this is the radius to get the true peak
+          * peak_sign, default: "neg"
+              In case channel_from_template=False, this is the peak sign.
+    method : "center_of_mass" | "monopolar_triangulation" | "grid_convolution", default: "center_of_mass"
+        The localization method to use
+    method_kwargs : dict, default: dict()
+        Other kwargs depending on the method.
+    outputs : "concatenated" | "by_unit", default: "concatenated"
+        The output format
+    {}
+    
+    Returns
+    -------
+    spike_locations: np.array
+        All locations for all spikes
+  __init__(self, sorting_analyzer)
+
+Class: ComputeTemplateMetrics
+  Docstring:
+    Compute template metrics including:
+        * peak_to_valley
+        * peak_trough_ratio
+        * halfwidth
+        * repolarization_slope
+        * recovery_slope
+        * num_positive_peaks
+        * num_negative_peaks
+    
+    Optionally, the following multi-channel metrics can be computed (when include_multi_channel_metrics=True):
+        * velocity_above
+        * velocity_below
+        * exp_decay
+        * spread
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        The SortingAnalyzer object
+    metric_names : list or None, default: None
+        List of metrics to compute (see si.postprocessing.get_template_metric_names())
+    peak_sign : {"neg", "pos"}, default: "neg"
+        Whether to use the positive ("pos") or negative ("neg") peaks to estimate extremum channels.
+    upsampling_factor : int, default: 10
+        The upsampling factor to upsample the templates
+    sparsity : ChannelSparsity or None, default: None
+        If None, template metrics are computed on the extremum channel only.
+        If sparsity is given, template metrics are computed on all sparse channels of each unit.
+        For more on generating a ChannelSparsity, see the `~spikeinterface.compute_sparsity()` function.
+    include_multi_channel_metrics : bool, default: False
+        Whether to compute multi-channel metrics
+    delete_existing_metrics : bool, default: False
+        If True, any template metrics attached to the `sorting_analyzer` are deleted. If False, any metrics which were previously calculated but are not included in `metric_names` are kept, provided the `metric_params` are unchanged.
+    metric_params : dict of dicts or None, default: None
+        Dictionary with parameters for template metrics calculation.
+        Default parameters can be obtained with: `si.postprocessing.template_metrics.get_default_tm_params()`
+    
+    Returns
+    -------
+    template_metrics : pd.DataFrame
+        Dataframe with the computed template metrics.
+        If "sparsity" is None, the index is the unit_id.
+        If "sparsity" is given, the index is a multi-index (unit_id, channel_id)
+    
+    Notes
+    -----
+    If any multi-channel metric is in the metric_names or include_multi_channel_metrics is True, sparsity must be None,
+    so that one metric value will be computed per unit.
+    For multi-channel metrics, 3D channel locations are not supported. By default, the depth direction is "y".
+  __init__(self, sorting_analyzer)
+
+Class: ComputeTemplateSimilarity
+  Docstring:
+    Compute similarity between templates with several methods.
+    
+    Similarity is defined as 1 - distance(T_1, T_2) for two templates T_1, T_2
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        The SortingAnalyzer object
+    method : "cosine" | "l1" | "l2", default: "cosine"
+        The method to compute the similarity.
+        In case of "l1" or "l2", the formula used is:
+        - similarity = 1 - norm(T_1 - T_2)/(norm(T_1) + norm(T_2)).
+        In case of cosine it is:
+        - similarity = 1 - sum(T_1.T_2)/(norm(T_1)norm(T_2)).
+    max_lag_ms : float, default: 0
+        If specified, the best distance for all given lag within max_lag_ms is kept, for every template
+    support : "dense" | "union" | "intersection", default: "union"
+        Support that should be considered to compute the distances between the templates, given their sparsities.
+        Can be either ["dense", "union", "intersection"]
+    
+    Returns
+    -------
+    similarity: np.array
+        The similarity matrix
+  __init__(self, sorting_analyzer)
+
+Class: ComputeUnitLocations
+  Docstring:
+    Localize units in 2D or 3D with several methods given the template.
+    
+    Parameters
+    ----------
+    sorting_analyzer : SortingAnalyzer
+        A SortingAnalyzer object
+    method : "monopolar_triangulation" |  "center_of_mass" | "grid_convolution", default: "monopolar_triangulation"
+        The method to use for localization
+    **method_kwargs : dict, default: {}
+        Kwargs which are passed to the method function. These can be found in the docstrings of `compute_center_of_mass`, `compute_grid_convolution` and `compute_monopolar_triangulation`.
+    
+    Returns
+    -------
+    unit_locations : np.array
+        unit location with shape (num_unit, 2) or (num_unit, 3) or (num_unit, 3) (with alpha)
+  __init__(self, sorting_analyzer)
+  Method: get_data(self, outputs='numpy')
+    Docstring:
+      None
+
+Class: align_sorting
+  Docstring:
+    Class to shift a unit (generally to align the template on the peak) given
+    the shifts for each unit.
+    
+    Parameters
+    ----------
+    sorting : BaseSorting
+        The sorting to align.
+    unit_peak_shifts : dict
+        Dictionary mapping the unit_id to the unit's shift (in number of samples).
+        A positive shift means the spike train is shifted back in time, while
+        a negative shift means the spike train is shifted forward.
+    
+    Returns
+    -------
+    aligned_sorting : AlignSortingExtractor
+        The aligned sorting.
+  __init__(self, sorting, unit_peak_shifts)
+
+Function: check_equal_template_with_distribution_overlap(waveforms0, waveforms1, template0=None, template1=None, num_shift=2, quantile_limit=0.8, return_shift=False)
+  Docstring:
+    Given 2 waveforms sets, check if they come from the same distribution.
+    
+    This is computed with a simple trick:
+    It project all waveforms from each cluster on the normed vector going from
+    one template to another, if the cluster are well separate enought we should
+    have one distribution around 0 and one distribution around .
+    If the distribution overlap too much then then come from the same distribution.
+    
+    Done by samuel Garcia with an idea of Crhistophe Pouzat.
+    This is used internally by tridesclous for auto merge step.
+    
+    Can be also used as a distance metrics between 2 clusters.
+    
+    waveforms0 and waveforms1 have to be spasifyed outside this function.
+    
+    This is done with a combinaison of shift bewteen the 2 cluster to also check
+    if cluster are similar with a sample shift.
+    
+    Parameters
+    ----------
+    waveforms0, waveforms1: numpy array
+        Shape (num_spikes, num_samples, num_chans)
+        num_spikes are not necessarly the same for custer.
+    template0 , template1=None or numpy array
+        The average of each cluster.
+        If None, then computed.
+    num_shift: int default: 2
+        number of shift on each side to perform.
+    quantile_limit: float in [0 1]
+        The quantile overlap limit.
+    
+    Returns
+    -------
+    equal: bool
+        equal or not
+
+Function: compute_correlograms(sorting_analyzer_or_sorting, window_ms: 'float' = 50.0, bin_ms: 'float' = 1.0, method: 'str' = 'auto')
+  Docstring:
+    Compute auto and cross correlograms of unit spike times.
+    
+    Parameters
+    ----------
+    sorting_analyzer_or_sorting : SortingAnalyzer | Sorting
+        A SortingAnalyzer or Sorting object
+    window_ms : float, default: 50.0
+        The window around the spike to compute the correlation in ms. For example,
+         if 50 ms, the correlations will be computed at lags -25 ms ... 25 ms.
+    bin_ms : float, default: 1.0
+        The bin size in ms. This determines the bin size over which to
+        combine lags. For example, with a window size of -25 ms to 25 ms, and
+        bin size 1 ms, the correlation will be binned as -25 ms, -24 ms, ...
+    method : "auto" | "numpy" | "numba", default: "auto"
+         If "auto" and numba is installed, numba is used, otherwise numpy is used.
+    
+    Returns
+    -------
+    correlogram : np.array
+        Correlograms with shape (num_units, num_units, num_bins)
+        The diagonal of the correlogram (e.g. correlogram[A, A, :])
+        holds the unit auto correlograms. The off-diagonal elements
+        are the cross-correlograms between units, where correlogram[A, B, :]
+        and correlogram[B, A, :] represent cross-correlation between
+        the same pair of units, applied in opposite directions,
+        correlogram[A, B, :] = correlogram[B, A, ::-1].
+    bins :  np.array
+        The bin edges in ms
+    
+    Notes
+    -----
+    In the extracellular electrophysiology context, a correlogram
+    is a visualisation of the results of a cross-correlation
+    between two spike trains. The cross-correlation slides one spike train
+    along another sample-by-sample, taking the correlation at each 'lag'. This results
+    in a plot with 'lag' (i.e. time offset) on the x-axis and 'correlation'
+    (i.e. how similar to two spike trains are) on the y-axis. In this
+    implementation, the y-axis result is the 'counts' of spike matches per
+    time bin (rather than a computer correlation or covariance).
+    
+    In the present implementation, a 'window' around spikes is first
+    specified. For example, if a window of 100 ms is taken, we will
+    take the correlation at lags from -50 ms to +50 ms around the spike peak.
+    In theory, we can have as many lags as we have samples. Often, this
+    visualisation is too high resolution and instead the lags are binned
+    (e.g. -50 to -45 ms, ..., -5 to 0 ms, 0 to 5 ms, ...., 45 to 50 ms).
+    When using counts as output, binning the lags involves adding up all counts across
+    a range of lags.
+
+Function: compute_isi_histograms_numba(sorting, window_ms: 'float' = 50.0, bin_ms: 'float' = 1.0)
+  Docstring:
+    Computes the Inter-Spike Intervals histogram for all
+    the units inside the given sorting.
+    
+    This is a "brute force" method using compiled code (numba)
+    to accelerate the computation.
+    
+    Implementation: Aurélien Wyngaard
+
+Function: compute_isi_histograms_numpy(sorting, window_ms: 'float' = 50.0, bin_ms: 'float' = 1.0)
+  Docstring:
+    Computes the Inter-Spike Intervals histogram for all
+    the units inside the given sorting.
+    
+    This is a very standard numpy implementation, nothing fancy.
+    
+    Implementation: Aurélien Wyngaard
+
+Function: compute_template_similarity_by_pair(sorting_analyzer_1, sorting_analyzer_2, method='cosine', support='union', num_shifts=0)
+  Docstring:
+    None
+
+Function: correlogram_for_one_segment(spike_times, spike_unit_indices, window_size, bin_size)
+  Docstring:
+    A very well optimized algorithm for the cross-correlation of
+    spike trains, copied from the Phy package, written by Cyrille Rossant.
+    
+    Parameters
+    ----------
+    spike_times : np.ndarray
+        An array of spike times (in samples, not seconds).
+        This contains spikes from all units.
+    spike_unit_indices : np.ndarray
+        An array of labels indicating the unit of the corresponding
+        spike in `spike_times`.
+    window_size : int
+        The window size over which to perform the cross-correlation, in samples
+    bin_size : int
+        The size of which to bin lags, in samples.
+    
+    Returns
+    -------
+    correlograms : np.array
+        A (num_units, num_units, num_bins) array of correlograms
+        between all units at each lag time bin.
+    
+    Notes
+    -----
+    For all spikes, time difference between this spike and
+    every other spike within the window is directly computed
+    and stored as a count in the relevant lag time bin.
+    
+    Initially, the spike_times array is shifted by 1 position, and the difference
+    computed. This gives the time differences between the closest spikes
+    (skipping the zero-lag case). Next, the differences between
+    spikes times in samples are converted into units relative to
+    bin_size ('binarized'). Spikes in which the binarized difference to
+    their closest neighbouring spike is greater than half the bin-size are
+    masked.
+    
+    Finally, the indices of the (num_units, num_units, num_bins) correlogram
+    that need incrementing are done so with `ravel_multi_index()`. This repeats
+    for all shifts along the spike_train until no spikes have a corresponding
+    match within the window size.
+
+Function: get_template_metric_names()
+  Docstring:
+    None
