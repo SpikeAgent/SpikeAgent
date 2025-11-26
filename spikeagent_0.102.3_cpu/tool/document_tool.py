@@ -48,7 +48,11 @@ def ask_spikeinterface_doc(question):
     
     # Try to use available API keys in priority order: OpenAI > Anthropic > Google
     if os.getenv("OPENAI_API_KEY"):
-        llm = ChatOpenAI(model="gpt-4.1", temperature=0)
+        openai_base_url = os.getenv("OPENAI_API_BASE")
+        kwargs = {"model": "gpt-4.1", "temperature": 0}
+        if openai_base_url:
+            kwargs["base_url"] = openai_base_url
+        llm = ChatOpenAI(**kwargs)
     elif os.getenv("HARVARD_API_KEY"):
         llm = ChatAnthropic_H(model="claude-3-5-sonnet-20240620-v1", temperature=0)
     elif os.getenv("ANTHROPIC_API_KEY"):
