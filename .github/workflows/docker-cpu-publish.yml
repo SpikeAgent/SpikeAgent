@@ -1,5 +1,12 @@
 name: Build and Publish CPU Docker Image
 
+# IMPORTANT: If you get "permission_denied: write_package" error:
+# 1. Go to https://github.com/arnaumarin/SpikeAgent/pkgs/container/spikeagent-cpu
+# 2. Click "Package settings" → "Manage Actions access"
+# 3. Add your repository and grant "Write" role
+# 4. Also check: Repository Settings → Actions → General → Workflow permissions → 
+#    Ensure "Read and write permissions" is enabled
+
 on:
   push:
     branches:
@@ -25,6 +32,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -39,6 +47,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          logout: false
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta

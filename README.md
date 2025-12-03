@@ -24,48 +24,100 @@ SpikeAgent automates and streamlines the spike sorting pipeline, from raw neural
 
 The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spikeinterface), a unified framework for spike sorting, providing a seamless experience for analyzing neural data from various recording systems.
 
-## Setup for Your Lab
+## Quick Start (5 Minutes)
 
-### Prerequisites
+### What You Need
 
-- **Docker** installed and running on your system
-- **API Keys** for at least one AI provider:
-  - [OpenAI API Key](https://platform.openai.com/api-keys)
-  - [Anthropic API Key](https://console.anthropic.com/)
-  - [Google API Key](https://makersuite.google.com/app/apikey)
-- **For GPU version**: NVIDIA GPU with CUDA support and appropriate drivers
+1. **Docker** - Make sure Docker Desktop is installed and running
+2. **One API Key** - Choose one of these:
+   - [OpenAI API Key](https://platform.openai.com/api-keys) - OR -
+   - [Anthropic API Key](https://console.anthropic.com/) - OR -
+   - [Google API Key](https://makersuite.google.com/app/apikey)
 
-### Docker Images
+That's it! You only need one API key to get started.
 
-SpikeAgent provides two Docker image variants to suit different hardware configurations:
+### Installation Options
 
-- **CPU Version**: For systems without GPU support or when GPU acceleration is not required
-- **GPU Version**: For systems with NVIDIA GPUs for accelerated computation
+SpikeAgent offers two ways to run:
 
-> **Note**: Some spike sorters (e.g., Kilosort4) require GPU support. If you plan to use these sorters, you must use the GPU version.
+- **CPU Version** - Works on any computer, easiest to set up
+- **GPU Version** - For systems with NVIDIA GPUs (needed for some spike sorters like Kilosort4)
 
-#### Using Pre-built Images
+#### Using Pre-built CPU Image (Easiest Method)
 
-**CPU Version (Pre-built Package Available):**
+**Step 1: Create a `.env` file**
 
-A pre-built CPU Docker image is available on GitHub Container Registry. You can pull and run it directly:
+Create a file named `.env` in your working directory with your API keys. You need **at least one** of these:
+
+```bash
+# Create the .env file
+touch .env
+```
+
+Then add your API keys to the `.env` file. Here are examples:
+
+**Example 1: Using OpenAI (Standard)**
+```bash
+OPENAI_API_KEY=sk-your-actual-key-here
+```
+
+**Example 2: Using OpenAI (Harvard Endpoint)**
+```bash
+OPENAI_API_KEY=your_harvard_key_here
+OPENAI_API_BASE=https://go.apis.huit.harvard.edu/ais-openai-direct/v1
+```
+
+**Example 3: Using Anthropic**
+```bash
+ANTHROPIC_API_KEY=sk-ant-your-actual-key-here
+```
+
+**Example 4: Using Google/Gemini**
+```bash
+GOOGLE_API_KEY=your-google-api-key-here
+```
+
+**You only need ONE of these options** - choose the provider you prefer!
+
+**Important Notes:**
+- You only need **one** API key (OpenAI, Anthropic, or Google) - choose whichever you prefer
+- If using Harvard OpenAI endpoint, include both `OPENAI_API_KEY` and `OPENAI_API_BASE`
+- If using standard OpenAI, you only need `OPENAI_API_KEY` (no `OPENAI_API_BASE` needed)
+- The `.env` file should be in the same directory where you run the Docker commands
+
+**Step 2: Run SpikeAgent**
+
+**Option A: Using the automated script (Easiest):**
+
+```bash
+# Run the script - it handles everything automatically
+./run-spikeagent.sh
+```
+
+The script will:
+- Pull the latest image from GitHub
+- Start the container
+- Wait for the application to be ready
+- Open your browser automatically
+
+**Option B: Manual Docker commands:**
 
 ```bash
 # Pull the latest CPU image
 docker pull ghcr.io/arnaumarin/spikeagent-cpu:latest
 
-# Create a .env file with your API keys (see Prerequisites section)
-# Then run the container
+# Run the container
 docker run --rm -p 8501:8501 --env-file .env ghcr.io/arnaumarin/spikeagent-cpu:latest
 ```
 
-> **Important**: You must create a `.env` file in your working directory with at least one API key before running the container. The `.env` file should contain:
-> ```
-> OPENAI_API_KEY=your_openai_key_here
-> ANTHROPIC_API_KEY=your_anthropic_key_here
-> GOOGLE_API_KEY=your_google_key_here
-> ```
-> You need at least one of these keys for the application to work.
+**Step 3: Access the application**
+
+Once the container is running, open your browser and go to:
+```
+http://localhost:8501
+```
+
+That's it! You're ready to use SpikeAgent.
 
 **GPU Version (Build Locally):**
 
@@ -79,12 +131,11 @@ docker build -f docker_files/Dockerfile.gpu -t spikeagent:gpu .
 docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
 ```
 
-> **Note**: The first time you pull from GitHub Container Registry, you may need to authenticate. You can create a [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` permission and login using:
-> ```bash
-> echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
-> ```
+**Troubleshooting:**
 
-Once the Docker container is running, access the application at `http://localhost:8501` in your web browser.
+- **Port already in use?** Make sure port 8501 is free, or stop any existing containers: `docker stop spikeagent`
+- **Can't pull image?** The image is public, so no authentication needed. If you have issues, make sure Docker is running.
+- **API connection errors?** Double-check your `.env` file has the correct API keys and is in the same directory as your Docker command.
 
 ## Open Source Neural Data
 
