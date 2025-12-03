@@ -39,19 +39,39 @@ SpikeAgent provides two Docker image variants to suit different hardware configu
 
 > **Note**: Some spike sorters (e.g., Kilosort4) require GPU support. If you plan to use these sorters, you must use the GPU version.
 
-#### Building and Running
+#### Using Pre-built Images
+
+Pre-built Docker images are available on GitHub Container Registry. Pull and run them directly:
 
 **CPU Version:**
 ```bash
-docker build -f docker_files/Dockerfile.cpu -t spikeagent:cpu .
-docker run --rm -p 8501:8501 --env-file .env spikeagent:cpu
+# Pull the latest CPU image
+# Replace OWNER/REPO with your GitHub username/organization and repository name
+docker pull ghcr.io/OWNER/REPO-cpu:latest
+
+# Run the container
+docker run --rm -p 8501:8501 --env-file .env ghcr.io/OWNER/REPO-cpu:latest
 ```
 
 **GPU Version:**
 ```bash
-docker build -f docker_files/Dockerfile.gpu -t spikeagent:gpu .
-docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
+# Pull the latest GPU image
+docker pull ghcr.io/OWNER/REPO-gpu:latest
+
+# Run the container
+docker run --rm --gpus all -p 8501:8501 --env-file .env ghcr.io/OWNER/REPO-gpu:latest
 ```
+
+For example, if your repository is `username/spikeagent`, the image paths would be:
+- CPU: `ghcr.io/username/spikeagent-cpu:latest`
+- GPU: `ghcr.io/username/spikeagent-gpu:latest`
+
+You can find the exact image paths in your repository's **Packages** section on GitHub.
+
+> **Note**: The first time you pull from GitHub Container Registry, you may need to authenticate. You can create a [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` permission and login using:
+> ```bash
+> echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+> ```
 
 Once the Docker container is running, access the application at `http://localhost:8501` in your web browser.
 
