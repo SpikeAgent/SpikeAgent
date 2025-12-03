@@ -46,32 +46,38 @@ SpikeAgent provides two Docker image variants to suit different hardware configu
 
 #### Using Pre-built Images
 
-Pre-built Docker images are available on GitHub Container Registry. Pull and run them directly:
+**CPU Version (Pre-built Package Available):**
 
-**CPU Version:**
+A pre-built CPU Docker image is available on GitHub Container Registry. You can pull and run it directly:
+
 ```bash
 # Pull the latest CPU image
-# Replace OWNER/REPO with your GitHub username/organization and repository name
-docker pull ghcr.io/OWNER/REPO-cpu:latest
+docker pull ghcr.io/arnaumarin/spikeagent-cpu:latest
 
-# Run the container
-docker run --rm -p 8501:8501 --env-file .env ghcr.io/OWNER/REPO-cpu:latest
+# Create a .env file with your API keys (see Prerequisites section)
+# Then run the container
+docker run --rm -p 8501:8501 --env-file .env ghcr.io/arnaumarin/spikeagent-cpu:latest
 ```
 
-**GPU Version:**
+> **Important**: You must create a `.env` file in your working directory with at least one API key before running the container. The `.env` file should contain:
+> ```
+> OPENAI_API_KEY=your_openai_key_here
+> ANTHROPIC_API_KEY=your_anthropic_key_here
+> GOOGLE_API_KEY=your_google_key_here
+> ```
+> You need at least one of these keys for the application to work.
+
+**GPU Version (Build Locally):**
+
+The GPU version is not yet available as a pre-built package. You need to build it locally:
+
 ```bash
-# Pull the latest GPU image
-docker pull ghcr.io/OWNER/REPO-gpu:latest
+# Build the GPU image
+docker build -f docker_files/Dockerfile.gpu -t spikeagent:gpu .
 
-# Run the container
-docker run --rm --gpus all -p 8501:8501 --env-file .env ghcr.io/OWNER/REPO-gpu:latest
+# Create a .env file with your API keys, then run the container
+docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
 ```
-
-For example, if your repository is `username/spikeagent`, the image paths would be:
-- CPU: `ghcr.io/username/spikeagent-cpu:latest`
-- GPU: `ghcr.io/username/spikeagent-gpu:latest`
-
-You can find the exact image paths in your repository's **Packages** section on GitHub.
 
 > **Note**: The first time you pull from GitHub Container Registry, you may need to authenticate. You can create a [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with `read:packages` permission and login using:
 > ```bash
