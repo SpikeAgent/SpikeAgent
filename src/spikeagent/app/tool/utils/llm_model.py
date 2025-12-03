@@ -9,44 +9,30 @@ def get_model(model_name, temperature=0):
     # Check for Harvard API keys - use Harvard endpoints if available, otherwise use standard APIs
     has_harvard_anthropic = bool(os.getenv("HARVARD_API_KEY"))
     has_harvard_google = bool(os.getenv("HARVARD_API_KEY_GOOGLE")) and bool(os.getenv("GOOGLE_BASE_URL_HARVARD"))
-    has_harvard_openai = bool(os.getenv("OPENAI_API_BASE"))
+    
+    # Prepare OpenAI kwargs - explicitly pass api_key and base_url if available
     openai_base_url = os.getenv("OPENAI_API_BASE")
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    openai_kwargs = {}
+    if openai_base_url:
+        openai_kwargs["base_url"] = openai_base_url
+    if openai_api_key:
+        openai_kwargs["api_key"] = openai_api_key
     
     # OpenAI models - only create when requested
     if model_name in ["gpt-4o", "gpt-4o-mini", "gpt-4.1", "o1", "gpt-4-turbo", "gpt-3.5-turbo"]:
-        # Use Harvard base URL if available, otherwise use default OpenAI endpoint
-        base_url = openai_base_url if has_harvard_openai and openai_base_url else None
-        
         if model_name == "gpt-4o":
-            kwargs = {"model_name": "gpt-4o", "temperature": temperature}
-            if base_url:
-                kwargs["base_url"] = base_url
-            return ChatOpenAI(**kwargs)
+            return ChatOpenAI(model_name="gpt-4o", temperature=temperature, **openai_kwargs)
         elif model_name == "gpt-4o-mini":
-            kwargs = {"model_name": "gpt-4o-mini", "temperature": temperature}
-            if base_url:
-                kwargs["base_url"] = base_url
-            return ChatOpenAI(**kwargs)
+            return ChatOpenAI(model_name="gpt-4o-mini", temperature=temperature, **openai_kwargs)
         elif model_name == "gpt-4.1":
-            kwargs = {"model_name": "gpt-4.1", "temperature": temperature}
-            if base_url:
-                kwargs["base_url"] = base_url
-            return ChatOpenAI(**kwargs)
+            return ChatOpenAI(model_name="gpt-4.1", temperature=temperature, **openai_kwargs)
         elif model_name == "o1":
-            kwargs = {"model_name": "o1"}
-            if base_url:
-                kwargs["base_url"] = base_url
-            return ChatOpenAI(**kwargs)
+            return ChatOpenAI(model_name="o1", **openai_kwargs)
         elif model_name == "gpt-4-turbo":
-            kwargs = {"model_name": "gpt-4-turbo", "temperature": temperature}
-            if base_url:
-                kwargs["base_url"] = base_url
-            return ChatOpenAI(**kwargs)
+            return ChatOpenAI(model_name="gpt-4-turbo", temperature=temperature, **openai_kwargs)
         elif model_name == "gpt-3.5-turbo":
-            kwargs = {"model_name": "gpt-3.5-turbo", "temperature": temperature}
-            if base_url:
-                kwargs["base_url"] = base_url
-            return ChatOpenAI(**kwargs)
+            return ChatOpenAI(model_name="gpt-3.5-turbo", temperature=temperature, **openai_kwargs)
     
     # Anthropic models - use Harvard endpoint if available, otherwise use standard Anthropic API
     if model_name in ['claude_4_sonnet', 'claude_4_opus', 'claude_3_7_sonnet', 'claude_3_5_sonnet', 'claude_3_opus', 'claude_3_haiku', 'claude_3_sonnet']:
