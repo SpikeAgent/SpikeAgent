@@ -1,6 +1,4 @@
-<div align="center">
-  <img src="docs/img/spikeagent_logo.png" alt="SpikeAgent Logo" width="300"/>
-</div>
+[![GitHub stars](https://img.shields.io/github/stars/SpikeAgent/SpikeAgent)](https://github.com/LiuLab-Bioelectronics-Harvard/SpikeAgent/stargazers)
 
 # SpikeAgent
 
