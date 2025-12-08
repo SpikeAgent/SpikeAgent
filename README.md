@@ -1,11 +1,13 @@
 <p align="center">
-  <img src="docs/spikeagent_logo.png" alt="SpikeAgent Logo" width="300" style="display:block; margin:auto; background:#fff; box-shadow:0 2px 12px rgba(0,0,0,0.15); border-radius:10px;">
+  <img src="docs/spikeagent_logo.png" alt="SpikeAgent Logo" width="300" style="display:block; margin:auto; background:#fff; box-shadow:0 2px 12px rgba(0,0,0,0.1)">
 </p>
 
-<!-- 
+<!--
 If the logo image does not appear above this line, make sure the file exists at:
 docs/img/spikeagent_logo.png
 -->
+
+[![GitHub stars](https://img.shields.io/github/stars/SpikeAgent/SpikeAgent)](https://github.com/LiuLab-Bioelectronics-Harvard/SpikeAgent/stargazers)
 
 # SpikeAgent
 
