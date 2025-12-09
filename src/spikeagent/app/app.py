@@ -293,18 +293,9 @@ def delete_history(filename):
 with st.sidebar.expander("#### Pipeline Settings", expanded=False, icon="⚙️"):
     autonomous_run = st.button("🚀 Run End to End", use_container_width=True)
 
-    default = 'select file'
-    _app_dir = os.path.dirname(os.path.abspath(__file__))
-    autorun_dir = os.path.join(_app_dir, 'autorun_parameters')
-    file_list = [default]+os.listdir(autorun_dir) if os.path.exists(autorun_dir) else [default]
-    file = st.selectbox("Select file", file_list, key='selected_p',index=0,label_visibility='collapsed')
-    _app_dir = os.path.dirname(os.path.abspath(__file__))
-    autorun_dir = os.path.join(_app_dir, 'autorun_parameters')
-    default_params = read_config(file, autorun_dir)
-
     # Raw Data Path
     st.markdown("**📂 Raw Data Path**")
-    raw_path_value = st.session_state.get("raw_path_input", default_params[0])
+    raw_path_value = st.session_state.get("raw_path_input", "")
     raw_path = st.text_input(
         "Raw data path", 
         value=raw_path_value,
@@ -349,7 +340,7 @@ with st.sidebar.expander("#### Pipeline Settings", expanded=False, icon="⚙️"
     
     # Save Path with validation
     st.markdown("**📁 Save Path**")
-    save_path = st.text_input("Save_path", value=default_params[1], key="save_path_input")
+    save_path = st.text_input("Save_path", value="", key="save_path_input")
     
     if save_path:
         if os.path.exists(save_path):
@@ -376,8 +367,8 @@ with st.sidebar.expander("#### Pipeline Settings", expanded=False, icon="⚙️"
                     escaped_path = parent_dir.replace(" ", "\\ ") if " " in parent_dir else parent_dir
                     st.code(f"./restart-spikeagent-with-mounts.sh {escaped_path}", language="bash")
     
-    is_npix = st.checkbox("Is it neuropixel data?", value=default_params[2], key="ch1")
-    commands = st.text_area("⚙️ Additional inputs", value=default_params[3], height=150)
+    is_npix = st.checkbox("Is it neuropixel data?", value=False, key="ch1")
+    commands = st.text_area("⚙️ Additional inputs", value="", height=150)
 
     at_prompt = f"""You will now execute the entire pipeline autonomously.
         You are not allowed to request any additional inputs during execution — simply clarify your actions and proceed.
