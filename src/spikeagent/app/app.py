@@ -325,8 +325,8 @@ with st.sidebar.expander("#### Pipeline Settings", expanded=False, icon="⚙️"
                 st.markdown("**Option 2: Add to existing mounts (preserves current mounts)**")
                 # Escape the path for shell if it contains spaces
                 escaped_path = raw_path.replace(" ", "\\ ") if " " in raw_path else raw_path
-                st.code(f"./restart-spikeagent-with-mounts.sh {escaped_path}", language="bash")
-                st.caption("Use the helper script to add this path to existing mounts without losing current ones.")
+                st.code(f"./run-spikeagent.sh --add {escaped_path}", language="bash")
+                st.caption("Use --add to add this path to existing mounts without losing current ones.")
                 
                 # Try to detect existing mounts and suggest adding to them
                 try:
@@ -365,7 +365,7 @@ with st.sidebar.expander("#### Pipeline Settings", expanded=False, icon="⚙️"
                     
                     st.markdown("**Option 2: Add to existing mounts (preserves current mounts)**")
                     escaped_path = parent_dir.replace(" ", "\\ ") if " " in parent_dir else parent_dir
-                    st.code(f"./restart-spikeagent-with-mounts.sh {escaped_path}", language="bash")
+                    st.code(f"./run-spikeagent.sh --add {escaped_path}", language="bash")
     
     is_npix = st.checkbox("Is it neuropixel data?", value=False, key="ch1")
     commands = st.text_area("⚙️ Additional inputs", value="", height=150)

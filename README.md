@@ -173,14 +173,17 @@ docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
 If you need to access a data path that wasn't mounted when you started the container:
 
 ```bash
-# Restart with additional mounts (preserves existing mounts)
-./restart-spikeagent-with-mounts.sh /path/to/new/data
+# Add mounts to existing container (preserves existing mounts)
+./run-spikeagent.sh --add /path/to/new/data
 
 # You can add multiple paths at once
-./restart-spikeagent-with-mounts.sh /path/to/data1 /path/to/data2
+./run-spikeagent.sh --add /path/to/data1 /path/to/data2
+
+# Or restart with new mounts only (replaces existing mounts)
+./run-spikeagent.sh --restart /path/to/data
 ```
 
-The helper script will:
+The `--add` option will:
 - Stop the current container
 - Preserve all existing volume mounts
 - Add your new paths

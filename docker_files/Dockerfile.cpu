@@ -14,14 +14,24 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     curl \
+    gfortran \
+    libblas-dev \
+    liblapack-dev \
+    libhdf5-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
 COPY src/spikeagent/requirements-docker.txt /app/requirements.txt
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Upgrade pip first, then install requirements with retries for better ARM64 compatibility
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt || \
+    (echo "First install attempt failed, retrying..." && \
+     pip install --no-cache-dir -r requirements.txt || \
+     (echo "Second install attempt failed, retrying with verbose output..." && \
+      pip install --no-cache-dir --verbose -r requirements.txt))
 
 # Copy application code
 COPY src /app/src

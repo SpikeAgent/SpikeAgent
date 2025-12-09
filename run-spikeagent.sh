@@ -1,19 +1,24 @@
 #!/bin/bash
 
-# Script to run SpikeAgent CPU Docker container and open browser automatically
+# Unified script to run SpikeAgent CPU Docker container
+# Can start fresh or add mounts to existing container
 # Uses the published image from GitHub Container Registry
 #
 # Usage:
 #   ./run-spikeagent.sh [volume_path1] [volume_path2] ...
+#   ./run-spikeagent.sh --add [volume_path1] [volume_path2] ...  # Add mounts to existing container
+#   ./run-spikeagent.sh --restart [volume_path1] [volume_path2] ...  # Restart with new mounts
 #
 # Examples:
-#   ./run-spikeagent.sh
-#   ./run-spikeagent.sh /path/to/data
-#   ./run-spikeagent.sh /path/to/data1 /path/to/data2 /path/to/results
+#   ./run-spikeagent.sh                                    # Start fresh without mounts
+#   ./run-spikeagent.sh /path/to/data                     # Start fresh with mounts
+#   ./run-spikeagent.sh --add /path/to/new/data           # Add mounts to existing container
+#   ./run-spikeagent.sh --restart /path/to/data           # Restart with new mounts (replaces existing)
 #
 # Volume mounts:
-#   Each argument will be mounted as: -v {path}:{path}
-#   This allows the container to access your local data directories
+#   Each path argument will be mounted as: -v {absolute_path}:{absolute_path}
+#   This allows the container to access your local data directories.
+#   Paths are automatically converted to absolute paths.
 
 set -e
 
@@ -37,16 +42,19 @@ kill_port_8501() {
 
 # Check for help flag
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: $0 [volume_path1] [volume_path2] ..."
+    echo "Usage: $0 [options] [volume_path1] [volume_path2] ..."
     echo ""
     echo "Options:"
-    echo "  -h, --help    Show this help message"
+    echo "  -h, --help       Show this help message"
+    echo "  --add            Add mounts to existing container (preserves current mounts)"
+    echo "  --restart        Restart container with new mounts (replaces existing mounts)"
     echo ""
     echo "Examples:"
-    echo "  $0                                    # Run without volume mounts"
-    echo "  $0 /path/to/data                     # Mount a single directory"
+    echo "  $0                                    # Start fresh without volume mounts"
+    echo "  $0 /path/to/data                     # Start fresh with mounts"
+    echo "  $0 --add /path/to/new/data           # Add mounts to existing container"
+    echo "  $0 --restart /path/to/data           # Restart with new mounts only"
     echo "  $0 /path/to/data1 /path/to/data2     # Mount multiple directories"
-    echo "  $0 ./data ./results                  # Mount relative paths"
     echo ""
     echo "Volume mounts:"
     echo "  Each path argument will be mounted as: -v {absolute_path}:{absolute_path}"
@@ -55,24 +63,181 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     exit 0
 fi
 
-# Parse volume mount arguments
-VOLUME_MOUNTS=()
-for path in "$@"; do
-    # Check if path exists (warn if it doesn't, but still add it)
-    if [ ! -e "$path" ]; then
-        echo "⚠️  Warning: Path does not exist: $path"
-        echo "   It will still be mounted, but may not be accessible."
-    fi
-    # Convert to absolute path
-    if [[ "$path" = /* ]]; then
-        # Already absolute path
-        abs_path="$path"
-    else
-        # Relative path - convert to absolute
-        abs_path="$(cd "$(dirname "$path")" 2>/dev/null && pwd)/$(basename "$path")" || abs_path="$(pwd)/$path"
-    fi
-    VOLUME_MOUNTS+=("-v" "$abs_path:$abs_path")
+# Parse options
+MODE="fresh"  # fresh, add, or restart
+PATHS=()
+
+for arg in "$@"; do
+    case "$arg" in
+        --add)
+            MODE="add"
+            ;;
+        --restart)
+            MODE="restart"
+            ;;
+        -*)
+            echo "⚠️  Unknown option: $arg"
+            echo "   Use --help for usage information"
+            exit 1
+            ;;
+        *)
+            PATHS+=("$arg")
+            ;;
+    esac
 done
+
+# Function to parse and convert paths to volume mounts
+parse_paths_to_mounts() {
+    local paths=("$@")
+    local mounts=()
+    
+    for path in "${paths[@]}"; do
+        # Check if path exists (warn if it doesn't, but still add it)
+        if [ ! -e "$path" ]; then
+            echo "⚠️  Warning: Path does not exist: $path"
+            echo "   It will still be mounted, but may not be accessible."
+        fi
+        # Convert to absolute path
+        if [[ "$path" = /* ]]; then
+            # Already absolute path
+            abs_path="$path"
+        else
+            # Relative path - convert to absolute
+            abs_path="$(cd "$(dirname "$path")" 2>/dev/null && pwd)/$(basename "$path")" || abs_path="$(pwd)/$path"
+        fi
+        mounts+=("-v" "$abs_path:$abs_path")
+    done
+    
+    echo "${mounts[@]}"
+}
+
+# Parse volume mount arguments
+VOLUME_MOUNTS_STR=$(parse_paths_to_mounts "${PATHS[@]}")
+read -ra VOLUME_MOUNTS <<< "$VOLUME_MOUNTS_STR"
+
+# Check if container exists and determine mode
+CONTAINER_EXISTS=false
+if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+    CONTAINER_EXISTS=true
+    if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        CONTAINER_RUNNING=true
+    else
+        CONTAINER_RUNNING=false
+    fi
+else
+    CONTAINER_RUNNING=false
+fi
+
+# Auto-detect mode if not explicitly set
+if [ "$MODE" == "fresh" ] && [ "$CONTAINER_EXISTS" == true ] && [ ${#PATHS[@]} -gt 0 ]; then
+    if [ "$CONTAINER_RUNNING" == true ]; then
+        echo "ℹ️  Container is already running."
+        echo "   Use --add to add mounts to existing container, or --restart to replace mounts."
+        echo "   Proceeding with --add mode..."
+        MODE="add"
+    fi
+fi
+
+if [ "$MODE" == "add" ] || [ "$MODE" == "restart" ]; then
+    if [ "$CONTAINER_EXISTS" != true ]; then
+        echo "❌ Container '${CONTAINER_NAME}' not found."
+        echo "   Starting fresh instead..."
+        MODE="fresh"
+    elif [ ${#PATHS[@]} -eq 0 ]; then
+        echo "❌ No paths provided for $MODE mode."
+        echo "   Please provide at least one path to mount."
+        exit 1
+    fi
+fi
+
+if [ "$MODE" == "add" ] || [ "$MODE" == "restart" ]; then
+    echo "🔄 Restarting SpikeAgent with additional mounts..."
+    echo "=========================================="
+    echo ""
+    
+    # Get existing volume mounts from the running container
+    if [ "$MODE" == "add" ]; then
+        echo "🔍 Checking existing volume mounts..."
+        EXISTING_MOUNTS=()
+        while IFS= read -r mount; do
+            if [[ -n "$mount" ]]; then
+                # Extract source path from mount (format: /host/path:/container/path)
+                source_path=$(echo "$mount" | cut -d':' -f1)
+                if [[ "$source_path" == /* ]]; then
+                    EXISTING_MOUNTS+=("$mount")
+                fi
+            fi
+        done < <(docker inspect ${CONTAINER_NAME} --format='{{range .Mounts}}{{.Source}}:{{.Destination}} {{end}}' 2>/dev/null || true)
+        
+        # Combine existing and new mounts
+        ALL_MOUNTS=()
+        for mount in "${EXISTING_MOUNTS[@]}"; do
+            source_path=$(echo "$mount" | cut -d':' -f1)
+            dest_path=$(echo "$mount" | cut -d':' -f2)
+            ALL_MOUNTS+=("-v" "$source_path:$dest_path")
+        done
+        ALL_MOUNTS+=("${VOLUME_MOUNTS[@]}")
+        
+        echo "   Existing mounts: ${#EXISTING_MOUNTS[@]}"
+        echo "   New mounts: ${#PATHS[@]}"
+        echo ""
+        
+        # Get the image name from the current container
+        IMAGE=$(docker inspect ${CONTAINER_NAME} --format='{{.Config.Image}}' 2>/dev/null || echo "ghcr.io/arnaumarin/spikeagent-cpu:latest")
+        
+        # Stop and remove existing container
+        echo "🛑 Stopping existing container..."
+        docker stop ${CONTAINER_NAME} > /dev/null 2>&1 || true
+        docker rm ${CONTAINER_NAME} > /dev/null 2>&1 || true
+        
+        # Start new container with all mounts
+        echo "🚀 Starting container with all mounts..."
+        if [ ${#ALL_MOUNTS[@]} -gt 0 ]; then
+            echo "   Mounting volumes:"
+            for ((i=0; i<${#ALL_MOUNTS[@]}; i+=2)); do
+                echo "     - ${ALL_MOUNTS[i+1]}"
+            done
+        fi
+        
+        if ! docker run --rm -d \
+            -p 8501:8501 \
+            --name ${CONTAINER_NAME} \
+            --env-file .env \
+            "${ALL_MOUNTS[@]}" \
+            ${IMAGE} > /dev/null 2>&1; then
+            echo "   ❌ Failed to start container"
+            exit 1
+        fi
+        
+        echo "   ✓ Container restarted successfully!"
+        echo ""
+        echo "📍 Access the application at: ${URL}"
+        echo ""
+        echo "📝 Useful commands:"
+        echo "   View logs:        docker logs -f ${CONTAINER_NAME}"
+        echo "   Stop container:   docker stop ${CONTAINER_NAME}"
+        echo ""
+        exit 0
+    else
+        # --restart mode: replace all mounts
+        echo "🔄 Restarting with new mounts (replacing existing)..."
+        echo "   New mounts: ${#PATHS[@]}"
+        echo ""
+        
+        # Get the image name from the current container
+        IMAGE=$(docker inspect ${CONTAINER_NAME} --format='{{.Config.Image}}' 2>/dev/null || echo "ghcr.io/arnaumarin/spikeagent-cpu:latest")
+        
+        # Stop and remove existing container
+        echo "🛑 Stopping existing container..."
+        docker stop ${CONTAINER_NAME} > /dev/null 2>&1 || true
+        docker rm ${CONTAINER_NAME} > /dev/null 2>&1 || true
+        
+        # Continue with fresh start flow below (MODE is already "fresh" from earlier)
+    fi
+fi
+
+# Fresh start mode (default or after --restart)
+if [ "$MODE" == "fresh" ]; then
 
 echo "🚀 Starting SpikeAgent..."
 echo "=========================================="
@@ -358,4 +523,5 @@ fi
 echo "🔗 Package information:"
 echo "   https://github.com/arnaumarin/SpikeAgent/pkgs/container/spikeagent-cpu"
 echo ""
+fi  # End of fresh start mode
 
