@@ -1,8 +1,0 @@
-**NN Hit Rate**: The rate at which nearest neighbor classification correctly identifies the unit among its neighboring units.
-
-Guidelines:
-- Values above ~0.5 (50%) generally indicate good unit distinctiveness from neighbors.
-- Higher values suggest better separation from surrounding units in feature space.
-- Values below 0.3 may indicate poor unit isolation or overlap with neighboring clusters.
-
-In your reasoning, interpret what the NN hit rate suggests about the unit's distinctiveness and separability from neighboring units.

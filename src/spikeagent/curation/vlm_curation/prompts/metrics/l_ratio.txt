@@ -1,8 +1,0 @@
-**L-ratio**: A measure of how well-separated the unit is from other clusters in feature space.
-
-Guidelines:
-- L-ratio below ~0.4 indicates good cluster separation; values above 0.7 suggest poor isolation.
-- Lower values indicate better separation from neighboring clusters.
-- This metric evaluates the spatial distinctness of the unit in the feature space.
-
-In your reasoning, interpret what the L-ratio value suggests about cluster separation and unit isolation quality.
