@@ -30,7 +30,8 @@ The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spik
 
 ### What You Need
 
-1. **Docker** - Make sure Docker Desktop is installed and running
+1. **Docker** - Make sure Docker Desktop is installed and running (for Docker installation)
+   - OR **Python 3.11+** (for pip installation)
 2. **One API Key** - Choose one of these:
    - [OpenAI API Key](https://platform.openai.com/api-keys) - OR -
    - [Anthropic API Key](https://console.anthropic.com/) - OR -
@@ -40,7 +41,28 @@ That's it! You only need one API key to get started.
 
 ### Installation Options
 
-SpikeAgent offers two ways to run:
+SpikeAgent offers three ways to install and run:
+
+#### Option 1: Pip Installation (Recommended for Development)
+
+```bash
+# Install from PyPI
+pip install spikeagent
+
+# Or install from source
+git clone https://github.com/arnaumarin/SpikeAgent.git
+cd SpikeAgent
+pip install -e .
+
+# Run the application
+spikeagent
+# or
+python -m spikeagent.app.main
+```
+
+#### Option 2: Docker (Recommended for Production)
+
+SpikeAgent offers two ways to run with Docker:
 
 - **CPU Version** - Works on any computer, easiest to set up
 - **GPU Version** - For systems with NVIDIA GPUs (needed for some spike sorters like Kilosort4)
@@ -162,7 +184,7 @@ The GPU version is not yet available as a pre-built package. You need to build i
 
 ```bash
 # Build the GPU image
-docker build -f docker_files/Dockerfile.gpu -t spikeagent:gpu .
+docker build -f dockerfiles/Dockerfile.gpu -t spikeagent:gpu .
 
 # Create a .env file with your API keys, then run the container
 docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
@@ -207,12 +229,12 @@ You can test SpikeAgent with open datasets such as [Neuropixels 2.0 chronic reco
 
 The repository includes Jupyter notebook tutorials to help you get started:
 
-- **`notebook tutorials/vlm_noise_rejection_tutorial.ipynb`**: Tutorial on using Vision Language Models (VLM) for AI-assisted spike curation
+- **`tutorials/vlm_noise_rejection_tutorial.ipynb`**: Tutorial on using Vision Language Models (VLM) for AI-assisted spike curation
   - Classifying units as "Good" or "Bad" based on visual features
   - Using waveforms, autocorrelograms, and spike locations for quality control
   - Applying curation to filter out noise units
 
-- **`notebook tutorials/vlm_merge_simple_tutorial.ipynb`**: Tutorial on using VLM for merge analysis
+- **`tutorials/vlm_merge_simple_tutorial.ipynb`**: Tutorial on using VLM for merge analysis
   - Finding potential merge candidates automatically
   - Analyzing visual features using AI (crosscorrelograms, amplitude plots, PCA clustering)
   - Making merge decisions based on AI analysis
@@ -225,12 +247,12 @@ spikeagent/
 ├── src/spikeagent/                      # Main source code package
 │   ├── app/                            # Application code
 │   └── curation/                       # Curation and VLM analysis tools
-├── docker_files/                       # Docker configuration files
+├── dockerfiles/                        # Docker configuration files
 │   ├── Dockerfile.cpu                  # CPU Docker image
 │   └── Dockerfile.gpu                  # GPU Docker image
 ├── docs/                               # Documentation
 │   └── img/                            # Documentation images
-├── notebook tutorials/                 # Jupyter notebook tutorials
+├── tutorials/                         # Jupyter notebook tutorials
 │   ├── vlm_merge_simple_tutorial.ipynb # VLM merge analysis tutorial
 │   └── vlm_noise_rejection_tutorial.ipynb # VLM curation tutorial
 └── tests/                              # Test suite
@@ -249,7 +271,7 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 For detailed setup instructions, troubleshooting, and usage information:
 - Review the [Installation Guide](docs/installation.md)
 - Check the [User Guide](docs/user-guide.md) for workflows
-- Explore the Jupyter notebook tutorials in `notebook tutorials/`
+- Explore the Jupyter notebook tutorials in `tutorials/`
 - Ensure your `.env` file contains the required API keys
 
 ## Citation

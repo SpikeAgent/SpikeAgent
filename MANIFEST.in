@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include pyproject.toml
+recursive-include src/spikeagent/app/autorun_parameters *.yaml
+recursive-include src/spikeagent/app/spikeinterface_api_docs *.txt
+include src/spikeagent/app/prompt.txt
+include src/spikeagent/app/style.css
+recursive-include tutorials *.ipynb

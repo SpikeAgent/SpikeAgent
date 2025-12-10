@@ -188,7 +188,7 @@ curated_analyzer = sorting_analyzer.select_units(good_units)
 
 ## See Also
 
-- [Jupyter Notebook Tutorials](../notebook%20tutorials/) for complete examples
+- [Jupyter Notebook Tutorials](../tutorials/) for complete examples
 - [User Guide](user-guide.md) for workflow guidance
 - [SpikeInterface Documentation](https://spikeinterface.readthedocs.io/) for underlying framework
 

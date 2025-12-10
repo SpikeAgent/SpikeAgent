@@ -51,13 +51,13 @@ Choose the appropriate version for your system:
 #### CPU Version
 
 ```bash
-docker build -f docker_files/Dockerfile.cpu -t spikeagent:cpu .
+docker build -f dockerfiles/Dockerfile.cpu -t spikeagent:cpu .
 ```
 
 #### GPU Version
 
 ```bash
-docker build -f docker_files/Dockerfile.gpu -t spikeagent:gpu .
+docker build -f dockerfiles/Dockerfile.gpu -t spikeagent:gpu .
 ```
 
 **Note**: The first build may take 10-20 minutes as it downloads and installs all dependencies.
@@ -119,7 +119,7 @@ To verify the installation is working:
 After successful installation:
 
 1. Read the [User Guide](user-guide.md) to learn how to use SpikeAgent
-2. Try the [Jupyter notebook tutorials](../notebook%20tutorials/) for hands-on examples
+2. Try the [Jupyter notebook tutorials](../tutorials/) for hands-on examples
 3. Explore the [API Reference](api-reference.md) for detailed function documentation
 
 ## Uninstallation

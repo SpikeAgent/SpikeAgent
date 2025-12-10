@@ -1,0 +1,148 @@
+name: PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.102.4)'
+        required: true
+        type: string
+      test_pypi:
+        description: 'Publish to TestPyPI first?'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  build-and-publish:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for PyPI trusted publishing
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for version detection
+
+      - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: 🏷️ Extract version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            # Remove 'v' prefix if present (e.g., v0.102.3 -> 0.102.3)
+            VERSION=${VERSION#v}
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          
+          # Validate version format (basic check)
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            echo "Expected format: MAJOR.MINOR.PATCH (e.g., 0.102.3)"
+            exit 1
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "✅ Extracted version: $VERSION"
+
+      - name: 🔄 Update version in project files
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Update pyproject.toml
+          if grep -q '^version = ' pyproject.toml; then
+            sed -i "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+            echo "✅ Updated pyproject.toml"
+          else
+            echo "❌ Could not find version in pyproject.toml"
+            exit 1
+          fi
+          
+          # Update __init__.py
+          if grep -q '^__version__ = ' src/spikeagent/__init__.py; then
+            sed -i "s/^__version__ = \".*\"/__version__ = \"$VERSION\"/" src/spikeagent/__init__.py
+            echo "✅ Updated src/spikeagent/__init__.py"
+          else
+            echo "⚠️  Could not find __version__ in __init__.py"
+          fi
+          
+          echo "📝 Version updated to: $VERSION"
+
+      - name: 🔨 Build package
+        run: |
+          python -m build
+          echo "✅ Package built successfully"
+
+      - name: ✅ Validate package
+        run: |
+          echo "🔍 Checking package..."
+          twine check dist/*
+          echo "✅ Package validation passed"
+
+      - name: 📤 Publish to TestPyPI (if requested)
+        if: github.event.inputs.test_pypi == 'true'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        run: |
+          echo "🧪 Publishing to TestPyPI..."
+          twine upload --repository testpypi dist/*
+          echo "✅ Published to TestPyPI: https://test.pypi.org/project/spikeagent/"
+
+      - name: 📤 Publish to PyPI
+        if: github.event.inputs.test_pypi != 'true'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          echo "🚀 Publishing to PyPI..."
+          twine upload dist/*
+          echo "✅ Published to PyPI: https://pypi.org/project/spikeagent/"
+
+      - name: 📎 Upload build artifacts
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-packages
+          path: dist/*
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: 📊 Summary
+        if: always()
+        run: |
+          echo "## 📦 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: spikeagent" >> $GITHUB_STEP_SUMMARY
+          echo "- **Python**: ${{ env.PYTHON_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            if [ "${{ github.event.inputs.test_pypi }}" == "true" ]; then
+              echo "- **Status**: ✅ Published to TestPyPI" >> $GITHUB_STEP_SUMMARY
+              echo "- **Link**: https://test.pypi.org/project/spikeagent/" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- **Status**: ✅ Published to PyPI" >> $GITHUB_STEP_SUMMARY
+              echo "- **Link**: https://pypi.org/project/spikeagent/" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "- **Status**: ❌ Build failed" >> $GITHUB_STEP_SUMMARY
+          fi

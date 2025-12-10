@@ -357,15 +357,15 @@ if docker pull "$IMAGE" 2>&1 | grep -q "no matching manifest"; then
         echo ""
         
         # Check if Dockerfile exists
-        if [ ! -f "docker_files/Dockerfile.cpu" ]; then
-            echo "   ❌ Dockerfile not found at docker_files/Dockerfile.cpu"
+        if [ ! -f "dockerfiles/Dockerfile.cpu" ]; then
+            echo "   ❌ Dockerfile not found at dockerfiles/Dockerfile.cpu"
             echo "   Please ensure you're in the repository root directory."
             exit 1
         fi
         
         # Build locally
         echo "   🔨 Building Docker image locally (this may take 10-20 minutes)..."
-        docker build -f docker_files/Dockerfile.cpu -t ${IMAGE} . || {
+        docker build -f dockerfiles/Dockerfile.cpu -t ${IMAGE} . || {
             echo "   ❌ Failed to build image locally"
             echo "   Please check the error messages above."
             exit 1

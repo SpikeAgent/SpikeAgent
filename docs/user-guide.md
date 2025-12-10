@@ -139,7 +139,7 @@ AI can determine if units should be merged by analyzing:
 
 ## Next Steps
 
-- Explore the [Jupyter notebook tutorials](../notebook%20tutorials/) for detailed examples
+- Explore the [Jupyter notebook tutorials](../tutorials/) for detailed examples
 - Read the [API Reference](api-reference.md) for programmatic usage
 - Check the [FAQ](faq.md) for common questions
 

@@ -1,4 +1,4 @@
-name: Build and Publish CPU Docker Image
+name: Docker CPU
 
 # IMPORTANT: If you get "permission_denied: write_package" error:
 # 1. Go to https://github.com/arnaumarin/SpikeAgent/pkgs/container/spikeagent-cpu
@@ -12,7 +12,7 @@ on:
     branches:
       - main
     paths:
-      - 'docker_files/Dockerfile.cpu'
+      - 'dockerfiles/Dockerfile.cpu'
       - 'src/spikeagent/requirements-docker.txt'
       - 'src/**'
   pull_request:
@@ -66,7 +66,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./docker_files/Dockerfile.cpu
+          file: ./dockerfiles/Dockerfile.cpu
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
@@ -118,7 +118,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./docker_files/Dockerfile.cpu
+          file: ./dockerfiles/Dockerfile.cpu
           platforms: linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
