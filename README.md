@@ -50,7 +50,7 @@ SpikeAgent offers three ways to install and run:
 pip install spikeagent
 
 # Or install from source
-git clone https://github.com/arnaumarin/SpikeAgent.git
+git clone https://github.com/SpikeAgent/SpikeAgent.git
 cd SpikeAgent
 pip install -e .
 
