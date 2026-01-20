@@ -15,7 +15,7 @@ from pathlib import Path
 from spikeinterface.core import ChannelSparsity, get_template_extremum_channel
 
 UNIT_FEATURES = ["waveform_single","waveform_multi","autocorr", "spike_locations","amplitude_plot"]
-MERGE_FEATURES = ["waveform_single", "amplitude_plot","crosscorrelograms", "pca_clustering"]
+MERGE_FEATURES = ["waveform_single", "amplitude_plot","crosscorrelograms"]
 default_colors = plt.get_cmap('tab10').colors
 
 def create_unit_img_df(
