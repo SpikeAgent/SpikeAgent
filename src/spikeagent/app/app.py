@@ -181,9 +181,9 @@ elif st.session_state.current_provider != page:
 
 os.makedirs('history', exist_ok=True)
 MODEL_CONFIG = {
-    "OpenAI":     ("./history/conversation_histories_gpt", ["gpt-4o", "gpt-4o-mini", "gpt-4.1", "o1", "gpt-4-turbo", "gpt-3.5-turbo"]),
-    "Gemini":     ("./history/conversation_histories_gemini", ["gemini-2.5-pro","gemini-2.0-flash-exp", "gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-pro"]),
-    "Anthropic":  ("./history/conversation_histories_anthropic", ["claude_4_sonnet", "claude_4_opus", "claude_3_5_sonnet", "claude_3_7_sonnet", "claude_3_opus", "claude_3_haiku", "claude_3_sonnet"]),
+    "OpenAI":     ("./history/conversation_histories_gpt", ["gpt-4.1", "gpt-4o"]),
+    "Gemini":     ("./history/conversation_histories_gemini", ["gemini-2.5-pro"]),
+    "Anthropic":  ("./history/conversation_histories_anthropic", ["claude_4_sonnet", "claude_4_opus", "claude_3_7_sonnet"]),
 }
 HISTORY_DIR, available_models = MODEL_CONFIG[page]
 os.makedirs(HISTORY_DIR, exist_ok=True)
@@ -213,8 +213,19 @@ if "graph_runnable" not in st.session_state or selected_model != st.session_stat
         st.session_state.graph_runnable = Graph_generator(selected_model, tools)
         st.session_state.selected_model = selected_model
     except Exception as e:
-        st.error(f"Error initializing model: {e}")
-        st.stop()
+        error_message = str(e)
+        
+        # Handle specific API key errors more gracefully
+        if "api_key required" in error_message.lower() or "google_api_key" in error_message.lower():
+            st.warning(f"⚠️ Please enter your {page} API Key in the API Keys Configuration section at the top or in the sidebar.")
+            # Don't stop the app, let it continue to show the API key input
+        elif "anthropic_api_key" in error_message.lower():
+            st.warning(f"⚠️ Please enter your {page} API Key in the API Keys Configuration section at the top or in the sidebar.")
+            # Don't stop the app, let it continue to show the API key input
+        else:
+            # For other errors, show the full error and stop
+            st.error(f"Error initializing model: {e}")
+            st.stop()
 
 # Clear & Reset Conversation
 def clear_conversation():
@@ -371,8 +382,8 @@ with st.sidebar.expander("#### Pipeline Settings", expanded=False, icon="⚙️"
     commands = st.text_area("⚙️ Additional inputs", value="", height=150)
 
     at_prompt = f"""You will now execute the entire pipeline autonomously.
-        You are not allowed to request any additional inputs during execution — simply clarify your actions and proceed.
-        Run the pipeline from start to finish without interruption. Determine the most appropriate parameters based on the data yourself.
+        While you should strive for autonomy and make data-driven decisions for most parameters, you ARE encouraged to ask the user for clarification if you encounter critical ambiguities or missing information (such as probe maps, channel configurations, or unclear data structures).
+        Run the pipeline from start to finish. Determine the most appropriate parameters based on the data yourself whenever possible.
 
         The following parameters are provided:
         ------------------------------
@@ -381,7 +392,7 @@ with st.sidebar.expander("#### Pipeline Settings", expanded=False, icon="⚙️"
         is neuropixel: {is_npix}
         additional commands: {commands}
         ------------------------------
-        Use these inputs as given. For all other parameters not listed above, you must make your own decisions.
+        Use these inputs as given. For all other parameters not listed above, you must make your own decisions or ask for clarification if unsure.
         Execute the entire pipeline end-to-end."""
     
 
@@ -403,11 +414,11 @@ with tab1:
                 delete_history(h["filename"])
 
     msg_count = len(st.session_state.final_state["messages"])
-    if msg_count > 30 and (msg_count - 5) % 50 == 0 and msg_count != st.session_state.last_summary_point:
-        title, summary = get_conversation_summary(st.session_state.final_state["messages"], selected_model)
-        st.session_state.last_summary_title = title
-        st.session_state.last_summary_summary = summary
-        st.session_state.last_summary_point = msg_count
+    # if msg_count > 30 and (msg_count - 5) % 50 == 0 and msg_count != st.session_state.last_summary_point:
+    #     title, summary = get_conversation_summary(st.session_state.final_state["messages"], selected_model)
+    #     st.session_state.last_summary_title = title
+    #     st.session_state.last_summary_summary = summary
+    #     st.session_state.last_summary_point = msg_count
 
     title = st.text_input("Conversation Title", value=st.session_state.last_summary_title)
     summary = st.text_area("Conversation Summary", value=st.session_state.last_summary_summary)
@@ -425,8 +436,8 @@ with tab2:
                 st.session_state.audio_transcription = input_from_mic()
 
     use_voice_response = st.checkbox("Enable Voice Response", value=False)
-    if use_voice_response:
-        st.write("Long responses will be summarized.")
+    # if use_voice_response:
+    #     st.write("Long responses will be summarized.")
 
 # Image Tab
 with tab3:
