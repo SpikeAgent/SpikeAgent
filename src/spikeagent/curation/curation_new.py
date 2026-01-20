@@ -16,7 +16,7 @@ def get_guidance_on_vlm_curation(
     Parameters
     ----------
     model_name : str
-        Name of the VLM to use (e.g., "gpt-4o", "claude_3_7_sonnet").
+        Name of the VLM to use (e.g., "gpt-4o").
     features : list[str]
         List of image features to include in the prompt, available options are: ("waveform_single", "waveform_multi", "autocorr", "spike_locations", "amplitude_plot").
     good_ids : list[int]
@@ -68,7 +68,7 @@ def get_guidance_on_vlm_curation(
     print("All required extensions are available. Proceeding with VLM curation.")
     # --- Task 2: Run VLM Curation ---
 
-    model = get_model(model_name='YOUR_MODEL_NAME_STRING') # available options are: "gpt-4o" or "claude_3_7_sonnet"
+    model = get_model(model_name='YOUR_MODEL_NAME_STRING') # available options are: "gpt-4o" or "claude_3_7_sonnet", please use "gpt-4o" for default
     
     # The `sorting_folder` should be defined from a previous step, but we fall back gracefully.
     if 'sorting_folder' not in globals() or sorting_folder is None:
@@ -211,7 +211,7 @@ def get_guidance_on_vlm_merge_analysis(
     Parameters
     ----------
     model_name : str
-        Name of the VLM to use, available options are "gpt-4o" or "claude_3_7_sonnet".
+        Name of the VLM to use, available options are "gpt-4o" or "claude_3_7_sonnet". default is "gpt-4o".
     features : list[str]
         Image features for the VLM's decision, available options are: ["crosscorrelograms", "amplitude_plot"].
     template_diff_thresh : float (default: 0.2)
