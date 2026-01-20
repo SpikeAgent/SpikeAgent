@@ -20,22 +20,18 @@ def get_model(model_name, temperature=0):
         openai_kwargs["api_key"] = openai_api_key
     
     # OpenAI models - only create when requested
-    if model_name in ["gpt-4o", "gpt-4o-mini", "gpt-4.1", "o1", "gpt-4-turbo", "gpt-3.5-turbo"]:
+    if model_name in ["gpt-4o", "gpt-4.1"]:
+        # Check if OpenAI API key is available
+        if not openai_api_key:
+            raise ValueError("API key required for OpenAI API. Provide api_key parameter or set OPENAI_API_KEY environment variable.")
+        
         if model_name == "gpt-4o":
             return ChatOpenAI(model="gpt-4o", temperature=temperature, **openai_kwargs)
-        elif model_name == "gpt-4o-mini":
-            return ChatOpenAI(model="gpt-4o-mini", temperature=temperature, **openai_kwargs)
         elif model_name == "gpt-4.1":
             return ChatOpenAI(model="gpt-4.1", temperature=temperature, **openai_kwargs)
-        elif model_name == "o1":
-            return ChatOpenAI(model="o1", **openai_kwargs)
-        elif model_name == "gpt-4-turbo":
-            return ChatOpenAI(model="gpt-4-turbo", temperature=temperature, **openai_kwargs)
-        elif model_name == "gpt-3.5-turbo":
-            return ChatOpenAI(model="gpt-3.5-turbo", temperature=temperature, **openai_kwargs)
     
     # Anthropic models - use Harvard endpoint if available, otherwise use standard Anthropic API
-    if model_name in ['claude_4_sonnet', 'claude_4_opus', 'claude_3_7_sonnet', 'claude_3_5_sonnet', 'claude_3_opus', 'claude_3_haiku', 'claude_3_sonnet']:
+    if model_name in ['claude_4_sonnet', 'claude_4_opus', 'claude_3_7_sonnet']:
         if has_harvard_anthropic:
             if model_name == 'claude_4_sonnet':
                 return ChatAnthropic_H(model='claude-sonnet-4-20250514-v1', temperature=temperature)
@@ -43,30 +39,18 @@ def get_model(model_name, temperature=0):
                 return ChatAnthropic_H(model='claude-opus-4-20250514-v1', temperature=temperature)
             elif model_name == 'claude_3_7_sonnet':
                 return ChatAnthropic_H(model='claude-3-7-sonnet-20250219-v1', temperature=temperature)
-            elif model_name == 'claude_3_5_sonnet':
-                return ChatAnthropic_H(model_name="claude-3-5-sonnet-20240620-v1", temperature=temperature)
-            elif model_name == 'claude_3_opus':
-                return ChatAnthropic_H(model_name="claude-3-opus-20240229-v1", temperature=temperature)
-            elif model_name == 'claude_3_haiku':
-                return ChatAnthropic_H(model_name="claude-3-haiku-20240307-v1", temperature=temperature)
-            elif model_name == 'claude_3_sonnet':
-                return ChatAnthropic_H(model_name="claude-3-sonnet-20240229-v1", temperature=temperature)
         else:
             # Use standard Anthropic API with ANTHROPIC_API_KEY
+            anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
+            if not anthropic_api_key:
+                raise ValueError("API key required for Anthropic API. Provide api_key parameter or set ANTHROPIC_API_KEY environment variable.")
+            
             if model_name == 'claude_4_sonnet':
-                return ChatAnthropic(model='claude-sonnet-4-20250514', temperature=temperature)
+                return ChatAnthropic(model='claude-sonnet-4-20250514', temperature=temperature, api_key=anthropic_api_key)
             elif model_name == 'claude_4_opus':
-                return ChatAnthropic(model='claude-opus-4-20250514', temperature=temperature)
+                return ChatAnthropic(model='claude-opus-4-20250514', temperature=temperature, api_key=anthropic_api_key)
             elif model_name == 'claude_3_7_sonnet':
-                return ChatAnthropic(model='claude-3-7-sonnet-20250219', temperature=temperature)
-            elif model_name == 'claude_3_5_sonnet':
-                return ChatAnthropic(model="claude-3-5-sonnet-20240620", temperature=temperature)
-            elif model_name == 'claude_3_opus':
-                return ChatAnthropic(model="claude-3-opus-20240229", temperature=temperature)
-            elif model_name == 'claude_3_haiku':
-                return ChatAnthropic(model="claude-3-haiku-20240307", temperature=temperature)
-            elif model_name == 'claude_3_sonnet':
-                return ChatAnthropic(model="claude-3-sonnet-20240229", temperature=temperature)
+                return ChatAnthropic(model='claude-3-7-sonnet-20250219', temperature=temperature, api_key=anthropic_api_key)
     
     # Google/Gemini models
     if model_name == "gemini-2.5-pro":
@@ -79,14 +63,10 @@ def get_model(model_name, temperature=0):
                 thinking_budget=200
             )
         else:
-            return ChatGoogleGenerativeAI(model="gemini-2.5-pro", temperature=temperature)
-    elif model_name == "gemini-2.0-flash-exp":
-        return ChatGoogleGenerativeAI(model="gemini-2.0-flash-exp", temperature=temperature)
-    elif model_name == "gemini-1.5-flash":
-        return ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=temperature)
-    elif model_name == "gemini-1.5-flash-8b":
-        return ChatGoogleGenerativeAI(model="gemini-1.5-flash-8b", temperature=temperature)
-    elif model_name == "gemini-1.5-pro":
-        return ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=temperature)
+            # Check if Google API key is available
+            google_api_key = os.getenv("GOOGLE_API_KEY")
+            if not google_api_key:
+                raise ValueError("API key required for Gemini Developer API. Provide api_key parameter or set GOOGLE_API_KEY/GEMINI_API_KEY environment variable.")
+            return ChatGoogleGenerativeAI(model="gemini-2.5-pro", temperature=temperature, google_api_key=google_api_key)
     
     raise ValueError(f"Unknown model name: {model_name}")
