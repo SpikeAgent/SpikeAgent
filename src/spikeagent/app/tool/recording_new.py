@@ -129,7 +129,7 @@ def get_guidance_on_loading_raw_data(
     </Guidance for Loading Raw Data: Intan RHD>
 
     <Guidance for Loading Raw Data: nwb file>
-    **Goal**: Load raw Intan RHD data.
+    **Goal**: Load nwb file.
     **Instructions**: Review file list and use the following code. fs is set to 24414.0625 by default.
     <Code Snippet for loading raw intan data>
     from spikeagent.app.tool.utils.read_file import read_nwb_to_recording
@@ -204,13 +204,6 @@ def get_guidance_on_saving_recording(
     """
     This function formats the `detailed_reasoning` and `code` for saving a recording.
 
-    Parameters
-    ----------
-    block_channels : list
-        List of channel IDs to exclude. Can be an empty list.
-    probe_path : str | None
-        Path to a probe file (.json), required only if a probe is not already attached.
-
     Your task is to:
     1.  **Generate Reasoning**: Create a `detailed_reasoning` string explaining your plan.
     2.  **Construct Code**: Use the template below to create the `code` string. You MUST replace `YOUR_BLOCK_CHANNELS_LIST` and `YOUR_PROBE_PATH_STRING` with the actual values for `block_channels` and `probe_path` respectively. Remember that `probe_path` should be a string literal in the code (e.g., `'path/to/probe.json'` or `None`).
@@ -231,7 +224,8 @@ def get_guidance_on_saving_recording(
     # --- ROBUST VERSION (for initial save or when changing channels/probe) ---
     from probeinterface import read_probeinterface
     import os
-
+    import spikeinterface.full as si
+    import spikeinterface.widgets as sw
     # Inject user-provided parameters so they exist inside the runtime namespace
     block_channels = YOUR_BLOCK_CHANNELS_LIST  # e.g., [20, 21] or ['CH1', 'CH2']
     probe_path = YOUR_PROBE_PATH_STRING    # e.g., "None" or "'/path/to/probe.json'"
