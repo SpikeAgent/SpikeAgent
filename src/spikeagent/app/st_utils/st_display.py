@@ -6,7 +6,9 @@ import streamlit as st
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
 # Directory for temporary plot images
-plot_dir = "./tmp/plots"
+_st_utils_dir = os.path.dirname(os.path.abspath(__file__))
+_app_dir = os.path.dirname(_st_utils_dir)
+plot_dir = os.path.join(_app_dir, "tmp", "plots")
 os.makedirs(plot_dir, exist_ok=True)
 
 def display_message(content, sender="assistant"):
@@ -145,8 +147,8 @@ def display_tool_message(entry, tool_input_map):
             for rel_path in artifacts:
                 if rel_path.endswith(".png"):
                     # Convert relative path to absolute
-                    abs_path = os.path.join(os.getcwd(), rel_path)
+                    abs_path = os.path.join(_app_dir, rel_path)
                     if os.path.exists(abs_path):
                         st.image(abs_path, caption="Generated Plot")
                     else:
-                        st.write(f"Error: Plot file not found at {rel_path}")
+                        st.write(f"Error: Plot file not found at {abs_path}")
