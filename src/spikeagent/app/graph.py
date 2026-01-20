@@ -33,8 +33,9 @@ load_dotenv()
 from spikeagent.app.tool.utils import get_model
 
 # Directory Setup
+_app_dir = os.path.dirname(os.path.abspath(__file__))
 tmp_folder = "tmp/plots"
-os.makedirs(tmp_folder, exist_ok=True)
+os.makedirs(os.path.join(_app_dir, tmp_folder), exist_ok=True)
 
 class GraphsState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages]
@@ -67,6 +68,7 @@ class Graph_generator():
 
 def make_call_node(llm):
     def _call_model(state: GraphsState, config: RunnableConfig) -> Command[Literal["tools", "__end__"]]:
+        import os # Force local import to avoid UnboundLocalError
         model_name = config["configurable"].get("model_name", "gpt-4o")
 
         st.session_state["final_state"]["messages"] = state["messages"]
@@ -96,7 +98,7 @@ def make_call_node(llm):
             if hasattr(last_message, 'artifact') and last_message.artifact and model_name != "gpt-3.5-turbo":
                 for rel_path in last_message.artifact:
                     if rel_path.endswith(".png"):
-                        abs_path = os.path.join(os.path.dirname(__file__), rel_path)
+                        abs_path = os.path.join(_app_dir, rel_path)
                         if os.path.exists(abs_path):
                             with open(abs_path, "rb") as image_file:
                                 image_data = compress_and_encode(image_file)
@@ -108,9 +110,12 @@ def make_call_node(llm):
                 if hasattr(last_message, 'content') and "$_$" in last_message.content:
                     if "Recording Comparison" in last_message.content: 
                         print('--------------------------------------------')
-                        import os
-                        _app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                        filter_ref_path = os.path.join(_app_dir, "app", "st_utils", "filter_ref.png")
+                        # _app_dir is already defined globally as os.path.dirname(os.path.abspath(__file__))
+                        # Here we want os.path.dirname(_app_dir) if we need the parent, but looking at line 114:
+                        # filter_ref_path = os.path.join(_app_dir, "app", "st_utils", "filter_ref.png")
+                        # If _app_dir is src/spikeagent/app, then _app_dir/st_utils/filter_ref.png should work.
+                        
+                        filter_ref_path = os.path.join(_app_dir, "st_utils", "filter_ref.png")
                         with open(filter_ref_path, "rb") as image_file:
                             image_data = compress_and_encode(image_file)
                         content_list.append({
@@ -234,7 +239,7 @@ def python_repl_tool(query: str) -> Tuple[str, List[str]]:
                 # Create relative path
                 rel_path = os.path.join(tmp_folder, plot_filename)
                 # Convert to absolute path for saving
-                abs_path = os.path.join(os.path.dirname(__file__), rel_path)
+                abs_path = os.path.join(_app_dir, rel_path)
                 
                 fig.savefig(abs_path)
                 plot_paths.append(rel_path)  # Store relative path
