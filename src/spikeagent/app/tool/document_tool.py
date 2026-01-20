@@ -5,8 +5,6 @@ import os
 load_dotenv(override=True)
 from spikeagent.app.tool.utils.custom_class_gemini import ChatGoogleGenerativeAI_H
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_anthropic import ChatAnthropic
-from spikeagent.app.tool.utils.custom_class import ChatAnthropic_H
 # Use a relative path to locate the documentation file
 import pathlib
 doc_path = pathlib.Path(__file__).parent.parent.parent / "app" / "spikeinterface_api_docs" / "merged_api.txt"
@@ -14,7 +12,7 @@ doc_path = pathlib.Path(__file__).parent.parent.parent / "app" / "spikeinterface
 with open(doc_path, "r") as f:
     spikeinterface_api_doc = f.read()
 
-def ask_spikeinterface_doc(question):
+def ask_spikeinterface_doc(question: str):
     """
     Query the LLM about the spikeinterface package using the provided API documentation.
     When user ask about the spikeinterface package, you should use this tool to answer the question.
@@ -46,17 +44,13 @@ def ask_spikeinterface_doc(question):
         f"Question: {question}\n"
     )
     
-    # Try to use available API keys in priority order: OpenAI > Anthropic > Google
+    # Try to use available API keys in priority order: OpenAI > Google
     if os.getenv("OPENAI_API_KEY"):
         openai_base_url = os.getenv("OPENAI_API_BASE")
         kwargs = {"model": "gpt-4.1", "temperature": 0}
         if openai_base_url:
             kwargs["base_url"] = openai_base_url
         llm = ChatOpenAI(**kwargs)
-    elif os.getenv("HARVARD_API_KEY"):
-        llm = ChatAnthropic_H(model="claude-3-5-sonnet-20240620-v1", temperature=0)
-    elif os.getenv("ANTHROPIC_API_KEY"):
-        llm = ChatAnthropic(model="claude-3-5-sonnet-20240620", temperature=0)
     elif os.getenv("HARVARD_API_KEY_GOOGLE") and os.getenv("GOOGLE_BASE_URL_HARVARD"):
         llm = ChatGoogleGenerativeAI_H(
             model="gemini-2.5-pro",
@@ -66,9 +60,9 @@ def ask_spikeinterface_doc(question):
             thinking_budget=200
         )
     elif os.getenv("GOOGLE_API_KEY"):
-        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0)
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", temperature=0)
     else:
-        raise ValueError("No API key found. Please set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GOOGLE_API_KEY in your .env file.")
+        return "ERROR: No API key found. Please set OPENAI_API_KEY or GOOGLE_API_KEY in your environment/settings to use this tool. Note: This tool requires a long context window and is limited to GPT-4.1 and Gemini-2.5-pro."
     
     response = llm.invoke(prompt)
 
