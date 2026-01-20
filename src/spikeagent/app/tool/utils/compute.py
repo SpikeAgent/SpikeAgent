@@ -269,8 +269,7 @@ def inspect_recording_for_preprocessing(
         fig.suptitle("Recording Quality Diagnostic Report", fontsize=18, fontweight="bold")
 
         # traces
-        start_t = recording.get_time_info()["t_start"]
-        sw.plot_traces(recording, time_range=(start_t, start_t+min(2, recording.get_duration())), ax=axes[0, 0])
+        sw.plot_traces(recording, time_range=(0, min(2, recording.get_duration())), ax=axes[0, 0])
         axes[0, 0].set_title("Sample Traces (first 2 s)")
 
         # PSD
