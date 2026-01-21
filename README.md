@@ -189,8 +189,16 @@ The GPU version is not yet available as a pre-built package. You need to build i
 # Build the GPU image
 docker build -f dockerfiles/Dockerfile.gpu -t spikeagent:gpu .
 
-# Create a .env file with your API keys, then run the container
+# Quick start (no data mounts)
+# Runs the app, but it can’t access files on your computer unless you mount them.
 docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
+
+# With data mounts (recommended)
+# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
+docker run --rm --gpus all -p 8501:8501 --env-file .env \
+  -v /path/to/your/data:/path/to/your/data \
+  -v /path/to/results:/path/to/results \
+  spikeagent:gpu
 ```
 
 **Adding Volume Mounts After Startup:**
