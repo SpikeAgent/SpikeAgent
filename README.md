@@ -227,7 +227,6 @@ The `--add` option will:
 - **Port already in use?** Make sure port 8501 is free, or stop any existing containers: `docker stop spikeagent`
 - **Can't pull image?** The image is public, so no authentication needed. If you have issues, make sure Docker is running.
 - **ARM64/Apple Silicon (M1/M2/M3 Mac)?** If you get "no matching manifest for linux/arm64" error, the run script will automatically detect this and build the image locally for you. The first build may take 10-20 minutes. Once multi-arch images are available, this will no longer be necessary.
-- **Path not accessible in app?** If you see a warning about a path not being found, use `./restart-spikeagent-with-mounts.sh /path/to/data` to add it. The app will show you the exact command to use.
 - **API connection errors?** Double-check your `.env` file has the correct API keys and is in the same directory as your Docker command.
 
 ## Open Source Neural Data
