@@ -162,20 +162,18 @@ The script will:
 # Pull the latest CPU image
 docker pull ghcr.io/arnaumarin/spikeagent-cpu:latest
 
-# Run without volume mounts
+# Quick start (no data mounts)
+# Runs the app, but it can’t access files on your computer unless you mount them.
 docker run --rm -p 8501:8501 --env-file .env ghcr.io/arnaumarin/spikeagent-cpu:latest
 
-# Run with volume mounts (to access your data)
+# With data mounts (recommended)
+# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
 docker run --rm -p 8501:8501 --env-file .env \
   -v /path/to/your/data:/path/to/your/data \
   -v /path/to/results:/path/to/results \
   ghcr.io/arnaumarin/spikeagent-cpu:latest
-```
-
-**Step 3: Access the application**
 
 Once the container is running, open your browser and go to:
-```
 http://localhost:8501
 ```
 
