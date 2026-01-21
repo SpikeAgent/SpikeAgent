@@ -46,13 +46,15 @@ SpikeAgent offers three ways to install and run:
 #### Option 1: Pip Installation (Recommended for Development)
 
 ```bash
-# Install from PyPI
-pip install spikeagent
-
-# Or install from source
+Install from source
 git clone https://github.com/SpikeAgent/SpikeAgent.git
 cd SpikeAgent
 pip install -e .
+
+Create an .env file under the SpikeAgent folder and add ONE API key:
+OPENAI_API_KEY=... (required for VLM curation)
+ANTHROPIC_API_KEY=...
+GOOGLE_API_KEY=...
 
 # Run the application
 spikeagent
@@ -82,7 +84,7 @@ Then add your API keys to the `.env` file. Here are examples:
 
 **Example 1: Using OpenAI (Standard)**
 ```bash
-OPENAI_API_KEY=sk-your-actual-key-here
+OPENAI_API_KEY=sk-your-actual-key-here (required for VLM curation)
 ```
 
 **Example 2: Using OpenAI (Custom/Institutional Endpoint)**
@@ -104,10 +106,11 @@ GOOGLE_API_KEY=your-google-api-key-here
 **You only need ONE of these options** - choose the provider you prefer!
 
 **Important Notes:**
-- You only need **one** API key (OpenAI, Anthropic, or Google) - choose whichever you prefer
+VLM curation currently requires OpenAI (OPENAI_API_KEY). Anthropic/Google can be used for other LLM features
 - If using a custom or institutional OpenAI endpoint, include both `OPENAI_API_KEY` and `OPENAI_API_BASE`
 - If using standard OpenAI, you only need `OPENAI_API_KEY` (no `OPENAI_API_BASE` needed)
 - The `.env` file should be in the same directory where you run the Docker commands
+
 
 **Step 2: Run SpikeAgent**
 
