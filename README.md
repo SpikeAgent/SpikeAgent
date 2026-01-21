@@ -33,11 +33,11 @@ The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spik
 1. **Docker** - Make sure Docker Desktop is installed and running (for Docker installation)
    - OR **Python 3.11+** (for pip installation)
 2. **One API Key** - Choose one of these:
-   - [OpenAI API Key](https://platform.openai.com/api-keys) - OR -
+   - [OpenAI API Key](https://platform.openai.com/api-keys) (required for VLM curation) - OR -
    - [Anthropic API Key](https://console.anthropic.com/) - OR -
    - [Google API Key](https://makersuite.google.com/app/apikey)
 
-That's it! You only need one API key to get started.
+**Tested on:** Linux (Ubuntu) and macOS (Intel/Apple Silicon). 
 
 ### Installation Options
 
