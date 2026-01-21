@@ -124,7 +124,7 @@ VLM curation currently requires OpenAI (OPENAI_API_KEY). Anthropic/Google can be
 ./run-spikeagent.sh /path/to/your/data /path/to/results
 ```
 
-**Volume Mounts (Optional but Recommended):**
+**Volume Mounts (Recommended):**
 
 If you need SpikeAgent to access your local data files, you should mount your data directories when running the script:
 
@@ -220,7 +220,7 @@ The `--add` option will:
 - Add your new paths
 - Restart the container
 
-**Note:** Docker containers cannot mount new volumes at runtime - a restart is required. The app UI will show you the exact command to run if it detects an unmounted path.
+**Note:** Docker containers cannot mount new volumes at runtime - a restart is required. 
 
 **Troubleshooting:**
 
@@ -235,18 +235,10 @@ You can test SpikeAgent with open datasets such as [Neuropixels 2.0 chronic reco
 
 ## Tutorials
 
-The repository includes Jupyter notebook tutorials to help you get started:
-
-- **`tutorials/vlm_noise_rejection_tutorial.ipynb`**: Tutorial on using Vision Language Models (VLM) for AI-assisted spike curation
-  - Classifying units as "Good" or "Bad" based on visual features
-  - Using waveforms, autocorrelograms, and spike locations for quality control
-  - Applying curation to filter out noise units
-
-- **`tutorials/vlm_merge_simple_tutorial.ipynb`**: Tutorial on using VLM for merge analysis
-  - Finding potential merge candidates automatically
-  - Analyzing visual features using AI (crosscorrelograms, amplitude plots, PCA clustering)
-  - Making merge decisions based on AI analysis
-  - Applying merges to consolidate units from the same neuron
+tutorials/VLM_curation_tutorial.ipynb: A programmatic example for users who want to use only the VLM curation and merge analysis modules of the agent.
+Demonstrates how to classify units as "Good" or "Noise" using Vision-Language Models.
+Shows how to identify and resolve oversplit units through AI-driven merge analysis.
+Ideal for users who want to integrate SpikeAgent's AI curation directly into their existing Python workflows without using the full chat interface.
 
 ## Project Structure
 
