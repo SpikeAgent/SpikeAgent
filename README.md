@@ -41,7 +41,7 @@ The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spik
 
 ### Installation Options
 
-SpikeAgent offers three ways to install and run:
+SpikeAgent offers two ways to install and run:
 
 #### Option 1: Pip Installation (Recommended for Development)
 
