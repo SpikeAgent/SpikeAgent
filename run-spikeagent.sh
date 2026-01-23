@@ -521,7 +521,7 @@ if [ ${#VOLUME_MOUNTS[@]} -gt 0 ]; then
     echo ""
 fi
 echo "🔗 Package information:"
-echo "   https://github.com/arnaumarin/SpikeAgent/pkgs/container/spikeagent-cpu"
+echo "   https://github.com/spikeagent/SpikeAgent/pkgs/container/spikeagent-cpu"
 echo ""
 fi  # End of fresh start mode
 
