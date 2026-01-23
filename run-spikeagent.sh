@@ -22,7 +22,7 @@
 
 set -e
 
-IMAGE="ghcr.io/arnaumarin/spikeagent-cpu:latest"
+IMAGE="ghcr.io/spikeagent/spikeagent-cpu:latest"
 URL="http://localhost:8501"
 CONTAINER_NAME="spikeagent"
 MAX_WAIT=60  # Maximum seconds to wait for app to be ready
