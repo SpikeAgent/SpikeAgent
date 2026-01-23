@@ -253,8 +253,7 @@ spikeagent/
 ├── docs/                               # Documentation
 │   └── img/                            # Documentation images
 ├── tutorials/                         # Jupyter notebook tutorials
-│   ├── vlm_merge_simple_tutorial.ipynb # VLM merge analysis tutorial
-│   └── vlm_noise_rejection_tutorial.ipynb # VLM curation tutorial
+│   ├── vlm_curation_and_merging_tutorial.ipynb # VLM curation and merge analysis tutorial
 └── tests/                              # Test suite
 ```
 
