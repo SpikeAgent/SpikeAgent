@@ -24,7 +24,7 @@ Before installing SpikeAgent, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/spikeagent.git
+git clone https://github.com/SpikeAgent/spikeagent.git
 cd spikeagent
 ```
 
