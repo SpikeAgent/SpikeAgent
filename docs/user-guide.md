@@ -19,7 +19,7 @@ After installation, start the Docker container and open `http://localhost:8501` 
 ### 2. Select an AI Provider
 
 In the left sidebar, choose one of the available AI providers:
-- **OpenAI** (GPT-4o)
+- **OpenAI** (GPT) (Could use gpt-4.1 as a starting test)
 - **Anthropic** (Claude)
 - **Google** (Gemini)
 
