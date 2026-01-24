@@ -191,6 +191,7 @@ docker run --rm -p 8501:8501 --env-file .env ghcr.io/spikeagent/spikeagent-cpu:l
 
 # With data mounts (recommended)
 # Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
+# The `.env` file should be in the same directory where you run the Docker commands
 docker run --rm -p 8501:8501 --env-file .env \
   -v /path/to/your/data:/path/to/your/data \
   -v /path/to/results:/path/to/results \
@@ -214,7 +215,7 @@ docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
 
 # With data mounts (recommended)
 # Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
-The `.env` file should be in the same directory where you run the Docker commands
+# The `.env` file should be in the same directory where you run the Docker commands
 docker run --rm --gpus all -p 8501:8501 --env-file .env \
   -v /path/to/your/data:/path/to/your/data \
   -v /path/to/results:/path/to/results \
