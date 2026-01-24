@@ -62,7 +62,7 @@ spikeagent
 python -m spikeagent.app.main
 ```
 
-#### Option 2: Docker (Recommended for Production)
+#### Option 2: Docker 
 
 SpikeAgent offers two ways to run with Docker:
 
