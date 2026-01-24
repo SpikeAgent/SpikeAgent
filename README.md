@@ -26,7 +26,7 @@ SpikeAgent automates and streamlines the spike sorting pipeline, from raw neural
 
 The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spikeinterface), a unified framework for spike sorting, providing a seamless experience for analyzing neural data from various recording systems.
 
-## Quick Start (5 Minutes)
+## Quick Start 
 
 ### What You Need
 
