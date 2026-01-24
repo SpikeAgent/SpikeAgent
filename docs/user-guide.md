@@ -14,7 +14,7 @@ SpikeAgent is a web-based AI assistant that helps you:
 
 ### 1. Launch SpikeAgent
 
-After installation, start the Docker container and open `http://localhost:8501` in your browser.
+After installation with pip, start the app with command `spikeagent` and open `http://localhost:8501` in your browser.
 
 ### 2. Select an AI Provider
 
