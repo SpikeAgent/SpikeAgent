@@ -268,7 +268,6 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 ## Getting Help
 
 For detailed setup instructions, troubleshooting, and usage information:
-- Review the [Installation Guide](docs/installation.md)
 - Check the [User Guide](docs/user-guide.md) for workflows
 - Explore the Jupyter notebook tutorials in `tutorials/`
 - Ensure your `.env` file contains the required API keys
