@@ -105,7 +105,6 @@ AI can determine if units should be merged by analyzing:
 - Cross-correlograms
 - Waveform similarity
 - Spatial locations
-- PCA clustering
 - Amplitude distributions
 
 ## Tips and Best Practices
