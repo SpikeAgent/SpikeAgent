@@ -26,7 +26,7 @@ SpikeAgent automates and streamlines the spike sorting pipeline, from raw neural
 
 The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spikeinterface), a unified framework for spike sorting, providing a seamless experience for analyzing neural data from various recording systems.
 
-## Quick Start 
+## Quick Start (5 Minutes)
 
 ### What You Need
 
@@ -62,14 +62,14 @@ spikeagent
 python -m spikeagent.app.main
 ```
 
-#### Option 2: Docker 
+#### Option 2: Docker (Recommended for Production)
 
 SpikeAgent offers two ways to run with Docker:
 
 - **CPU Version** - Works on any computer, easiest to set up
 - **GPU Version** - For systems with NVIDIA GPUs (needed for some spike sorters like Kilosort4)
 
-#### Using Pre-built CPU Image
+#### Using Pre-built CPU Image (Easiest Method)
 
 **Step 1: Create a `.env` file**
 
@@ -105,7 +105,7 @@ GOOGLE_API_KEY=your-google-api-key-here
 
 **You only need ONE of these options** - choose the provider you prefer!
 
-**Notes:**
+**Important Notes:**
 VLM curation currently requires OpenAI (OPENAI_API_KEY). Anthropic/Google can be used for other LLM features
 - If using a custom or institutional OpenAI endpoint, include both `OPENAI_API_KEY` and `OPENAI_API_BASE`
 - If using standard OpenAI, you only need `OPENAI_API_KEY` (no `OPENAI_API_BASE` needed)
@@ -156,6 +156,49 @@ The script will:
 - Wait for the application to be ready
 - Open your browser automatically
 
+**Option B: Manual Docker commands:**
+
+```bash
+# Pull the latest CPU image
+docker pull ghcr.io/spikeagent/spikeagent-cpu:latest
+
+# Quick start (no data mounts)
+# Runs the app, but it can’t access files on your computer unless you mount them.
+docker run --rm -p 8501:8501 --env-file .env ghcr.io/spikeagent/spikeagent-cpu:latest
+
+# With data mounts (recommended)
+# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
+docker run --rm -p 8501:8501 --env-file .env \
+  -v /path/to/your/data:/path/to/your/data \
+  -v /path/to/results:/path/to/results \
+  ghcr.io/spikeagent/spikeagent-cpu:latest
+
+Once the container is running, open your browser and go to:
+http://localhost:8501
+```
+
+That's it! You're ready to use SpikeAgent.
+
+**GPU Version (Build Locally):**
+
+The GPU version is not yet available as a pre-built package. You need to build it locally:
+
+```bash
+# Build the GPU image
+docker build -f dockerfiles/Dockerfile.gpu -t spikeagent:gpu .
+
+# Quick start (no data mounts)
+# Runs the app, but it can’t access files on your computer unless you mount them.
+docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
+
+# With data mounts (recommended)
+# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
+docker run --rm --gpus all -p 8501:8501 --env-file .env \
+  -v /path/to/your/data:/path/to/your/data \
+  -v /path/to/results:/path/to/results \
+  spikeagent:gpu
+```
+
 **Adding Volume Mounts After Startup:**
 
 If you need to access a data path that wasn't mounted when you started the container:
@@ -178,49 +221,6 @@ The `--add` option will:
 - Restart the container
 
 **Note:** Docker containers cannot mount new volumes at runtime - a restart is required. 
-
-**Option B: Manual Docker commands:**
-
-```bash
-# Pull the latest CPU image
-docker pull ghcr.io/spikeagent/spikeagent-cpu:latest
-
-# Quick start (no data mounts)
-# Runs the app, but it can’t access files on your computer unless you mount them.
-docker run --rm -p 8501:8501 --env-file .env ghcr.io/spikeagent/spikeagent-cpu:latest
-
-# With data mounts (recommended)
-# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
-# The `.env` file should be in the same directory where you run the Docker commands
-docker run --rm -p 8501:8501 --env-file .env \
-  -v /path/to/your/data:/path/to/your/data \
-  -v /path/to/results:/path/to/results \
-  ghcr.io/spikeagent/spikeagent-cpu:latest
-
-Once the container is running, open your browser and go to:
-http://localhost:8501
-```
-
-**GPU Version (Build Locally):**
-
-The GPU version is not yet available as a pre-built package. You need to build it locally:
-
-```bash
-# Build the GPU image
-docker build -f dockerfiles/Dockerfile.gpu -t spikeagent:gpu .
-
-# Quick start (no data mounts)
-# Runs the app, but it can’t access files on your computer unless you mount them.
-docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
-
-# With data mounts (recommended)
-# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
-# The `.env` file should be in the same directory where you run the Docker commands
-docker run --rm --gpus all -p 8501:8501 --env-file .env \
-  -v /path/to/your/data:/path/to/your/data \
-  -v /path/to/results:/path/to/results \
-  spikeagent:gpu
-```
 
 **Troubleshooting:**
 
@@ -261,14 +261,16 @@ spikeagent/
 
 Comprehensive documentation is available in the [`docs/`](docs/) directory:
 
-- **[Installation Guide](docs/installation.md)**: Detailed setup and installation instructions
 - **[User Guide](docs/user-guide.md)**: How to use SpikeAgent for spike sorting and curation
-- **[API Reference](docs/api-reference.md)**: Programmatic API documentation
+- **[API Reference](docs/api-reference.md)**: Programmatic API documentation for custom workflows
+- **[VLM Guide](docs/vlm-guide.md)**: In-depth guide to VLM curation and prompt customization
 
 ## Getting Help
 
-For detailed setup instructions, troubleshooting, and usage information:
-- Check the [User Guide](docs/user-guide.md) for workflows
+For detailed information and troubleshooting:
+- Review the [Quick Start](#quick-start-5-minutes) section above for installation
+- Check the [User Guide](docs/user-guide.md) for workflows and common tasks
+- See the [VLM Guide](docs/vlm-guide.md) for AI curation details and prompt customization
 - Explore the Jupyter notebook tutorials in `tutorials/`
 - Ensure your `.env` file contains the required API keys
 
