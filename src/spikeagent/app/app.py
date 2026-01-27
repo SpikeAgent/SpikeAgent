@@ -181,9 +181,9 @@ elif st.session_state.current_provider != page:
 
 os.makedirs('history', exist_ok=True)
 MODEL_CONFIG = {
-    "OpenAI":     ("./history/conversation_histories_gpt", ["gpt-4.1", "gpt-4o"]),
-    "Gemini":     ("./history/conversation_histories_gemini", ["gemini-2.5-pro"]),
-    "Anthropic":  ("./history/conversation_histories_anthropic", ["claude_4_sonnet", "claude_4_opus", "claude_3_7_sonnet"]),
+    "OpenAI":     ("./history/conversation_histories_gpt", ["gpt-5.2", "gpt-4.1", "gpt-5-mini", "gpt-4o"]),
+    "Gemini":     ("./history/conversation_histories_gemini", ["gemini-2.5-pro", "gemini-3-pro-preview", "gemini-3-flash-preview", "gemini-2.5-flash"]),
+    "Anthropic":  ("./history/conversation_histories_anthropic", ["claude_4_5_sonnet", "claude_4_5_haiku", "claude_4_5_opus","claude_4_sonnet", "claude_4_opus"]),
 }
 HISTORY_DIR, available_models = MODEL_CONFIG[page]
 os.makedirs(HISTORY_DIR, exist_ok=True)
@@ -242,18 +242,28 @@ if st.sidebar.button("🔄 Start New Chat"):
     clear_conversation()
     st.rerun()
 
-# API Key Handling - Check if key is set (from top section or environment)
-api_keys = {"OpenAI": "OPENAI_API_KEY", "Gemini": "GOOGLE_API_KEY", "Anthropic": "ANTHROPIC_API_KEY"}
-api_key = os.getenv(api_keys[page])
-if not api_key:
-    # Fallback to sidebar if not set in top section
+# API Key Handling - Check if key is set (considering fallbacks like Harvard endpoints)
+has_key = False
+if page == "OpenAI":
+    has_key = bool(os.getenv("OPENAI_API_KEY"))
+elif page == "Anthropic":
+    has_key = bool(os.getenv("ANTHROPIC_API_KEY")) or bool(os.getenv("HARVARD_API_KEY"))
+elif page == "Gemini":
+    has_key = bool(os.getenv("GOOGLE_API_KEY")) or (bool(os.getenv("HARVARD_API_KEY_GOOGLE")) and bool(os.getenv("GOOGLE_BASE_URL_HARVARD")))
+
+if not has_key:
+    # Fallback to sidebar if not set in environment or fallbacks
     st.sidebar.markdown(f"""<div class="api-key-setup"><h3>🔑 {page} API Key Setup</h3></div>""", unsafe_allow_html=True)
-    api_key = st.sidebar.text_input(f"{page} API Key", type="password", label_visibility="collapsed")
-    if api_key:
-        os.environ[api_keys[page]] = api_key
+    std_key_name = "OPENAI_API_KEY" if page == "OpenAI" else ("ANTHROPIC_API_KEY" if page == "Anthropic" else "GOOGLE_API_KEY")
+    api_key_input = st.sidebar.text_input(f"{page} API Key", type="password", label_visibility="collapsed", key="sidebar_api_key")
+    if api_key_input:
+        os.environ[std_key_name] = api_key_input
+        st.session_state[std_key_name] = api_key_input
+        st.rerun()
     else:
-        st.warning(f"⚠️ Please enter your {page} API Key in the API Keys Configuration section at the top or in the sidebar.")
-        st.stop()
+        st.warning(f"⚠️ Please enter your {page} API Key in the sidebar to proceed.")
+        # Note: We continue rendering the sidebar so settings are visible, 
+        # but we will stop before the main chat interaction.
 
 # Helper Functions
 def save_history(title, summary):
@@ -480,6 +490,9 @@ def generate_response(human_input, render=True):
             st.audio(audio)
 
 # Main Prompt Interaction
+if not has_key:
+    st.stop()
+
 st.markdown(f"""
     <div class="chat-title">
         <span class="robot-icon">🤖</span>
