@@ -13,7 +13,7 @@ def pretty_print_messages(messages: list[BaseMessage]):
         else:
             print("(No content)")
 
-def run_vlm_curation(model, sorting_analyzer, img_df, features: list[str]=MODALITY, good_ids=[], bad_ids=[], with_metrics=False, metrics_list: list[str]=None, unit_ids=None,num_workers=50):
+def run_vlm_curation(model, sorting_analyzer, img_df, features: list[str]=MODALITY, good_ids=[], bad_ids=[], with_metrics=False, metrics_list: list[str]=None, unit_ids=None,num_workers=50, num_reviewers=1):
     unit_ids_ = list(sorting_analyzer.unit_ids) if unit_ids is None else unit_ids
 
     metrics = None
@@ -49,7 +49,8 @@ def run_vlm_curation(model, sorting_analyzer, img_df, features: list[str]=MODALI
         good_ids,
         bad_ids,
         metrics,
-        num_workers=num_workers
+        num_workers=num_workers,
+        num_reviewers=num_reviewers
     )
 
     return results_df
