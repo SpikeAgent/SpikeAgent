@@ -7,7 +7,7 @@ If the logo image does not appear above this line, make sure the file exists at:
 docs/img/spikeagent_logo.png
 -->
 
-[![GitHub stars](https://img.shields.io/github/stars/SpikeAgent/SpikeAgent)](https://github.com/SpikeAgent/SpikeAgent/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/SpikeAgent/SpikeAgent)](https://github.com/LiuLab-Bioelectronics-Harvard/SpikeAgent/stargazers)
 
 # SpikeAgent
 
@@ -33,26 +33,28 @@ The tool integrates with [SpikeInterface](https://github.com/SpikeInterface/spik
 1. **Docker** - Make sure Docker Desktop is installed and running (for Docker installation)
    - OR **Python 3.11+** (for pip installation)
 2. **One API Key** - Choose one of these:
-   - [OpenAI API Key](https://platform.openai.com/api-keys) - OR -
+   - [OpenAI API Key](https://platform.openai.com/api-keys) (required for VLM curation) - OR -
    - [Anthropic API Key](https://console.anthropic.com/) - OR -
    - [Google API Key](https://makersuite.google.com/app/apikey)
 
-That's it! You only need one API key to get started.
+**Tested on:** Linux (Ubuntu) and macOS (Intel/Apple Silicon). 
 
 ### Installation Options
 
-SpikeAgent offers three ways to install and run:
+SpikeAgent offers two ways to install and run:
 
 #### Option 1: Pip Installation (Recommended for Development)
 
 ```bash
-# Install from PyPI
-pip install spikeagent
-
-# Or install from source
-git clone https://github.com/arnaumarin/SpikeAgent.git
+Install from source
+git clone https://github.com/SpikeAgent/SpikeAgent.git
 cd SpikeAgent
 pip install -e .
+
+Create an .env file under the SpikeAgent folder and add ONE API key:
+OPENAI_API_KEY=... (required for VLM curation)
+ANTHROPIC_API_KEY=...
+GOOGLE_API_KEY=...
 
 # Run the application
 spikeagent
@@ -82,7 +84,7 @@ Then add your API keys to the `.env` file. Here are examples:
 
 **Example 1: Using OpenAI (Standard)**
 ```bash
-OPENAI_API_KEY=sk-your-actual-key-here
+OPENAI_API_KEY=sk-your-actual-key-here (required for VLM curation)
 ```
 
 **Example 2: Using OpenAI (Custom/Institutional Endpoint)**
@@ -104,10 +106,11 @@ GOOGLE_API_KEY=your-google-api-key-here
 **You only need ONE of these options** - choose the provider you prefer!
 
 **Important Notes:**
-- You only need **one** API key (OpenAI, Anthropic, or Google) - choose whichever you prefer
+VLM curation currently requires OpenAI (OPENAI_API_KEY). Anthropic/Google can be used for other LLM features
 - If using a custom or institutional OpenAI endpoint, include both `OPENAI_API_KEY` and `OPENAI_API_BASE`
 - If using standard OpenAI, you only need `OPENAI_API_KEY` (no `OPENAI_API_BASE` needed)
 - The `.env` file should be in the same directory where you run the Docker commands
+
 
 **Step 2: Run SpikeAgent**
 
@@ -121,7 +124,7 @@ GOOGLE_API_KEY=your-google-api-key-here
 ./run-spikeagent.sh /path/to/your/data /path/to/results
 ```
 
-**Volume Mounts (Optional but Recommended):**
+**Volume Mounts (Recommended):**
 
 If you need SpikeAgent to access your local data files, you should mount your data directories when running the script:
 
@@ -157,22 +160,20 @@ The script will:
 
 ```bash
 # Pull the latest CPU image
-docker pull ghcr.io/arnaumarin/spikeagent-cpu:latest
+docker pull ghcr.io/spikeagent/spikeagent-cpu:latest
 
-# Run without volume mounts
-docker run --rm -p 8501:8501 --env-file .env ghcr.io/arnaumarin/spikeagent-cpu:latest
+# Quick start (no data mounts)
+# Runs the app, but it can’t access files on your computer unless you mount them.
+docker run --rm -p 8501:8501 --env-file .env ghcr.io/spikeagent/spikeagent-cpu:latest
 
-# Run with volume mounts (to access your data)
+# With data mounts (recommended)
+# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
 docker run --rm -p 8501:8501 --env-file .env \
   -v /path/to/your/data:/path/to/your/data \
   -v /path/to/results:/path/to/results \
-  ghcr.io/arnaumarin/spikeagent-cpu:latest
-```
-
-**Step 3: Access the application**
+  ghcr.io/spikeagent/spikeagent-cpu:latest
 
 Once the container is running, open your browser and go to:
-```
 http://localhost:8501
 ```
 
@@ -186,8 +187,16 @@ The GPU version is not yet available as a pre-built package. You need to build i
 # Build the GPU image
 docker build -f dockerfiles/Dockerfile.gpu -t spikeagent:gpu .
 
-# Create a .env file with your API keys, then run the container
+# Quick start (no data mounts)
+# Runs the app, but it can’t access files on your computer unless you mount them.
 docker run --rm --gpus all -p 8501:8501 --env-file .env spikeagent:gpu
+
+# With data mounts (recommended)
+# Mount your local data/results folders so SpikeAgent can read inputs and save outputs on your machine.
+docker run --rm --gpus all -p 8501:8501 --env-file .env \
+  -v /path/to/your/data:/path/to/your/data \
+  -v /path/to/results:/path/to/results \
+  spikeagent:gpu
 ```
 
 **Adding Volume Mounts After Startup:**
@@ -211,14 +220,13 @@ The `--add` option will:
 - Add your new paths
 - Restart the container
 
-**Note:** Docker containers cannot mount new volumes at runtime - a restart is required. The app UI will show you the exact command to run if it detects an unmounted path.
+**Note:** Docker containers cannot mount new volumes at runtime - a restart is required. 
 
 **Troubleshooting:**
 
 - **Port already in use?** Make sure port 8501 is free, or stop any existing containers: `docker stop spikeagent`
 - **Can't pull image?** The image is public, so no authentication needed. If you have issues, make sure Docker is running.
 - **ARM64/Apple Silicon (M1/M2/M3 Mac)?** If you get "no matching manifest for linux/arm64" error, the run script will automatically detect this and build the image locally for you. The first build may take 10-20 minutes. Once multi-arch images are available, this will no longer be necessary.
-- **Path not accessible in app?** If you see a warning about a path not being found, use `./restart-spikeagent-with-mounts.sh /path/to/data` to add it. The app will show you the exact command to use.
 - **API connection errors?** Double-check your `.env` file has the correct API keys and is in the same directory as your Docker command.
 
 ## Open Source Neural Data
@@ -227,18 +235,10 @@ You can test SpikeAgent with open datasets such as [Neuropixels 2.0 chronic reco
 
 ## Tutorials
 
-The repository includes Jupyter notebook tutorials to help you get started:
-
-- **`tutorials/vlm_noise_rejection_tutorial.ipynb`**: Tutorial on using Vision Language Models (VLM) for AI-assisted spike curation
-  - Classifying units as "Good" or "Bad" based on visual features
-  - Using waveforms, autocorrelograms, and spike locations for quality control
-  - Applying curation to filter out noise units
-
-- **`tutorials/vlm_merge_simple_tutorial.ipynb`**: Tutorial on using VLM for merge analysis
-  - Finding potential merge candidates automatically
-  - Analyzing visual features using AI (crosscorrelograms, amplitude plots, PCA clustering)
-  - Making merge decisions based on AI analysis
-  - Applying merges to consolidate units from the same neuron
+tutorials/VLM_curation_tutorial.ipynb: A programmatic example for users who want to use only the VLM curation and merge analysis modules of the agent.
+Demonstrates how to classify units as "Good" or "Noise" using Vision-Language Models.
+Shows how to identify and resolve oversplit units through AI-driven merge analysis.
+Ideal for users who want to integrate SpikeAgent's AI curation directly into their existing Python workflows without using the full chat interface.
 
 ## Project Structure
 
@@ -253,8 +253,7 @@ spikeagent/
 ├── docs/                               # Documentation
 │   └── img/                            # Documentation images
 ├── tutorials/                         # Jupyter notebook tutorials
-│   ├── vlm_merge_simple_tutorial.ipynb # VLM merge analysis tutorial
-│   └── vlm_noise_rejection_tutorial.ipynb # VLM curation tutorial
+│   ├── vlm_curation_and_merging_tutorial.ipynb # VLM curation and merge analysis tutorial
 └── tests/                              # Test suite
 ```
 
@@ -262,15 +261,16 @@ spikeagent/
 
 Comprehensive documentation is available in the [`docs/`](docs/) directory:
 
-- **[Installation Guide](docs/installation.md)**: Detailed setup and installation instructions
 - **[User Guide](docs/user-guide.md)**: How to use SpikeAgent for spike sorting and curation
-- **[API Reference](docs/api-reference.md)**: Programmatic API documentation
+- **[API Reference](docs/api-reference.md)**: Programmatic API documentation for custom workflows
+- **[VLM Guide](docs/vlm-guide.md)**: In-depth guide to VLM curation and prompt customization
 
 ## Getting Help
 
-For detailed setup instructions, troubleshooting, and usage information:
-- Review the [Installation Guide](docs/installation.md)
-- Check the [User Guide](docs/user-guide.md) for workflows
+For detailed information and troubleshooting:
+- Review the [Quick Start](#quick-start-5-minutes) section above for installation
+- Check the [User Guide](docs/user-guide.md) for workflows and common tasks
+- See the [VLM Guide](docs/vlm-guide.md) for AI curation details and prompt customization
 - Explore the Jupyter notebook tutorials in `tutorials/`
 - Ensure your `.env` file contains the required API keys
 
