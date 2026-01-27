@@ -229,23 +229,28 @@ def get_guidance_on_preprocessing(
     # -------------------------------------------------
 
     # --- Template for CMR Experiment (Preprocessing Task 3) ---
-    # The agent generates this block if its initial visual analysis indicated CMR is needed.
-    # This is triggered by seeing "blocky" patterns in the correlation matrix, even if correlation values aren't very high.
-    # print("\\n--- Starting CMR Experiment ---")
-    # cmr_strategies = {'global': {'reference': 'global', 'groups': None},
-    #                   'local_proximity': {'reference': 'local', 'groups': None}}
+    # If the recording is very long (> 10 minutes), skip the experiment and apply global CMR directly.
+    # Otherwise, run the experiment to compare strategies.
+    # if recording.get_total_duration() > 600: # > 10 minutes
+    #     print("\\n--- Long recording detected (> 10 min). Skipping CMR experiment and applying GLOBAL CMR for efficiency. ---")
+    #     recording_processed = spre.common_reference(recording_processed, operator='median', reference='global')
+    #     recording = recording_processed
+    # else:
+    #     print("\\n--- Starting CMR Experiment ---")
+    #     cmr_strategies = {'global': {'reference': 'global', 'groups': None},
+    #                       'local_proximity': {'reference': 'local', 'groups': None}}
     #
-    # if summary.get('recording_by_group'):
-    #     print("Probe has groups, will also test CMR by group.")
-    #     groups = get_groups_from_recording(recording_processed)
-    #     cmr_strategies['grouped_global'] = {'reference': 'global', 'groups': groups}
+    #     if summary.get('recording_by_group'):
+    #         print("Probe has groups, will also test CMR by group.")
+    #         groups = get_groups_from_recording(recording_processed)
+    #         cmr_strategies['grouped_global'] = {'reference': 'global', 'groups': groups}
     #
-    # cmr_results = {}
-    # for name, params in cmr_strategies.items():
-    #     print(f"\\n--- Testing {name.upper()} CMR ---")
-    #     rec_test = spre.common_reference(recording_processed, operator='median', **params)
-    #     summary_test, _ = inspect_recording_for_preprocessing(rec_test, plot=True)
-    #     cmr_results[name] = {'summary': summary_test, 'recording': rec_test}
+    #     cmr_results = {}
+    #     for name, params in cmr_strategies.items():
+    #         print(f"\\n--- Testing {name.upper()} CMR ---")
+    #         rec_test = spre.common_reference(recording_processed, operator='median', **params)
+    #         summary_test, _ = inspect_recording_for_preprocessing(rec_test, plot=True)
+    #         cmr_results[name] = {'summary': summary_test, 'recording': rec_test}
     # ----------------------------------------------------
 
     # --- STOP POINT: END OF TURN ---
@@ -296,14 +301,15 @@ def get_guidance_on_preprocessing(
         - **3. Line-noise filtering**: Check `line_noise_detected`. If `True`, add a `spre.notch_filter`, choosing the frequency based on the `prominence` values.
         - **4. Band-pass filtering**: Always add a `spre.bandpass_filter` or `spre.highpass_filter` after the initial cleanup steps.
         - **5. Common Reference (CMR) Experiment**: 
-            - **Visual Trigger**: IMPORTANT: If the correlation matrix heatmap contains noticeable contiguous square or rectangular regions (typically symmetric across the diagonal) where many adjacent channels have similar strong correlation values 
-                      — appearing as uniform-colored blocks rather than scattered fine-grained patterns — this indicates shared-noise structure. This condition should trigger a CMR experiment even if the overall correlation values are modest. 
-                      LOOK AT THE HEATMAP TOO OVER THE CORRELATION VALUES. HEATMAP IS MORE IMPORTANT THAN THE CORRELATION VALUES.
-            - **Run Full Experiment**: If the experiment is needed, test all applicable strategies by generating and inspecting plots:
+            - **Recommendation**: CMR is generally recommended for most recordings to remove shared artifacts.
+            - **Visual Trigger**: If the correlation matrix heatmap contains noticeable contiguous square or rectangular regions (typically symmetric across the diagonal) where many adjacent channels have similar strong correlation values 
+                      — appearing as uniform-colored blocks rather than scattered fine-grained patterns — this indicates shared-noise structure.
+            - **Duration Optimization**: If the recording is very long (> 10 minutes), **SKIP the experiment** and directly apply `reference='global'` to save time and memory. Justify this choice to the user.
+            - **Run Full Experiment**: If the recording is short (< 10 minutes) and CMR is needed, test all applicable strategies:
                 - **Strategy 1: Global CMR**: `reference='global'`.
                 - **Strategy 2: Local CMR**: `reference='local'` (uses proximity).
-                - **Strategy 3: Grouped CMR**: If `summary.get('recording_by_group')` is `True`, you MUST also test `reference='global'` with `groups=...` to perform CMR within each shank/group.
-            - **Visually Decide**: Autonomously inspect all generated heatmaps. Announce your reasoning and then choose the strategy that yields the cleanest correlation matrix.
+                - **Strategy 3: Grouped CMR**: If `summary.get('recording_by_group')` is `True`, test `reference='global'` with `groups=...`.
+            - **Visually Decide**: (For short recordings) Autonomously inspect all generated heatmaps. Announce your reasoning and then choose the strategy that yields the cleanest correlation matrix.
         - **6. Remember to reassign the `recording_processed` object to the `recording` object at the end preprocessing.**
 
         ---
@@ -316,9 +322,9 @@ def get_guidance_on_preprocessing(
             - **If a CMR experiment is not needed**: Announce completion, execute `recording = recording_processed`, and **STOP**.
             - **If a CMR experiment is needed**: Announce you will now proceed to the experiment, using the `recording_processed` object as input.
 
-        2.  **Run CMR Experiment (if needed)**:
-            - Announce you are starting the experiment and run the "Template for CMR Experiment".
-            - **STOP your turn** to await the plots.
+        2.  **Run CMR Experiment or Apply CMR directly**:
+            - **If skip experiment (> 10 min)**: Announce you are applying Global CMR directly due to duration, execute the code, and skip to step 4.
+            - **If run experiment (< 10 min)**: Announce you are starting the experiment and run the "Template for CMR Experiment". **STOP your turn** to await the plots.
 
         3.  **Apply CMR Decision (New Turn)**:
             - After inspecting the plots, announce your chosen CMR strategy and your reasoning.
