@@ -10,7 +10,6 @@ This guide provides an in-depth explanation of how Vision-Language Models (VLMs)
 - [Prompt System](#prompt-system)
 - [Customizing Prompts](#customizing-prompts)
 - [Best Practices](#best-practices)
-- [Advanced Topics](#advanced-topics)
 
 ---
 
