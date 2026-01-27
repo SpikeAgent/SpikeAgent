@@ -155,7 +155,10 @@ def aggregate_results(reviews, unit_id):
 
     # Majority vote for classification
     good_count = Counter(classifications)["Good"]
-    if good_count > 1:
+    total_reviews = len(reviews)
+    
+    # Majority is more than half. For 1 reviewer, > 0.5 (1). For 3, > 1.5 (2 or 3).
+    if good_count > (total_reviews / 2.0):
         majority_classification = "Good"
     else:
         majority_classification = "Bad"
@@ -177,9 +180,9 @@ def aggregate_results(reviews, unit_id):
     }
     
 # Asynchronous function to process a single unit_id with ensemble reviewers
-async def async_run_with_reviewers(model, unit_id, encoded_images, **kwargs):
+async def async_run_with_reviewers(model, unit_id, encoded_images, num_reviewers=1, **kwargs):
     #await asyncio.sleep(1)
-    reviewers = [1, 2, 3]
+    reviewers = list(range(1, num_reviewers + 1))
     tasks = [process_unit(model, unit_id, encoded_images, reviewer_id, **kwargs) for reviewer_id in reviewers]
     reviews = await asyncio.gather(*tasks)
 
@@ -187,16 +190,17 @@ async def async_run_with_reviewers(model, unit_id, encoded_images, **kwargs):
     aggregated_result = aggregate_results(reviews, unit_id)
     return aggregated_result
 
-async def run_in_batch(model, unit_ids, encoded_img_df, num_workers, **kwargs):
+async def run_in_batch(model, unit_ids, encoded_img_df, num_workers, num_reviewers=1, **kwargs):
     results = []
     semaphore = asyncio.Semaphore(num_workers)
     len_feature = len(kwargs.get('features',[0]))
-    batch_size = num_workers//(3*len_feature)
+    batch_size = num_workers//(num_reviewers*len_feature)
+    if batch_size == 0: batch_size = 1
         
     async def limited_task(unit_id, progress_bar):
         async with semaphore:
             encoded_images = encoded_img_df.loc[unit_id]
-            result = await async_run_with_reviewers(model, unit_id, encoded_images, **kwargs)
+            result = await async_run_with_reviewers(model, unit_id, encoded_images, num_reviewers=num_reviewers, **kwargs)
             progress_bar.update(1) 
             return result
 
@@ -216,7 +220,8 @@ def async_run(
     good_ids=[],
     bad_ids=[],
     metrics:pd.DataFrame|None=None,
-    num_workers=50
+    num_workers=50,
+    num_reviewers=1
 ):
     if metrics is not None:
         assert (len(encoded_img_df) == len(metrics))
@@ -229,6 +234,7 @@ def async_run(
         unit_ids = unit_ids,
         encoded_img_df=encoded_img_df, 
         num_workers=num_workers, 
+        num_reviewers=num_reviewers,
         features=features,
         system_messages=system_messages, 
         fewshot_messages=fewshot_messages, 
