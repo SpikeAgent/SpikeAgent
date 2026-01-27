@@ -27,6 +27,9 @@ def get_guidance_on_vlm_curation(
         If True, include quantitative quality metrics in the prompt.
     unit_ids : list[int] | None
         List of unit IDs to curate. If None, all units will be curated.
+    num_reviewers : int
+        Number of independent VLM reviewers to use for each unit (default is 3). 
+        Use 1 for faster processing, or 3 for more robust consensus voting.
 
     Your task is to:
     1.  **Generate Reasoning**: Create a `detailed_reasoning` string explaining your plan.
@@ -68,7 +71,7 @@ def get_guidance_on_vlm_curation(
     print("All required extensions are available. Proceeding with VLM curation.")
     # --- Task 2: Run VLM Curation ---
 
-    model = get_model(model_name='YOUR_MODEL_NAME_STRING') # available options are: "gpt-4o" or "claude_3_7_sonnet", please use "gpt-4o" for default
+    model = get_model(model_name='YOUR_MODEL_NAME_STRING') # available options are: "gpt-4o", please use "gpt-4o" for default
     
     # The `sorting_folder` should be defined from a previous step, but we fall back gracefully.
     if 'sorting_folder' not in globals() or sorting_folder is None:
@@ -94,7 +97,8 @@ def get_guidance_on_vlm_curation(
         bad_ids=YOUR_BAD_IDS_LIST,
         with_metrics=YOUR_WITH_METRICS_BOOL,
         unit_ids=YOUR_UNIT_IDS,
-        num_workers=45
+        num_workers=45,
+        num_reviewers=YOUR_NUM_REVIEWERS # Default is 1 (fast), use 3 for robust consensus
     )
 
     plot_spike_images_with_result(results_df, unit_img_df, feature="waveform_single")
@@ -211,7 +215,7 @@ def get_guidance_on_vlm_merge_analysis(
     Parameters
     ----------
     model_name : str
-        Name of the VLM to use, available options are "gpt-4o" or "claude_3_7_sonnet". default is "gpt-4o".
+        Name of the VLM to use, available options are "gpt-4o". default is "gpt-4o".
     features : list[str]
         Image features for the VLM's decision, available options are: ["crosscorrelograms", "amplitude_plot"].
     template_diff_thresh : float (default: 0.2)
