@@ -46,20 +46,36 @@ SpikeAgent offers two ways to install and run:
 #### Option 1: Pip Installation (Recommended for Development)
 
 ```bash
-Install from source
+# Install from source
 git clone https://github.com/SpikeAgent/SpikeAgent.git
 cd SpikeAgent
-pip install -e .
+pip install -e ".[app]"
+```
 
-Create an .env file under the SpikeAgent folder and add ONE API key:
-OPENAI_API_KEY=... (required for VLM curation)
-ANTHROPIC_API_KEY=...
+Create a `.env` file in the SpikeAgent folder with at least one API key:
+
+```bash
+OPENAI_API_KEY=sk-...       # required for VLM curation
+ANTHROPIC_API_KEY=sk-ant-...
 GOOGLE_API_KEY=...
+```
 
-# Run the application
+Run the application:
+
+```bash
 spikeagent
 # or
 python -m spikeagent.app.main
+```
+
+**Optional:** Spike sorters and other tools are not bundled by default.
+Install only what you need:
+
+```bash
+pip install kilosort          # Kilosort4 (requires GPU)
+pip install mountainsort5     # MountainSort5
+pip install herdingspikes     # HerdingSpikes
+pip install MEArec            # Synthetic data generation
 ```
 
 #### Option 2: Docker (Recommended for Production)
@@ -279,7 +295,7 @@ For detailed information and troubleshooting:
 If you find SpikeAgent useful for your work, please cite:
 
 **SpikeAgent**:
-Lin, Z., Marin-Llobet, A., Baek, J., He, Y., Lee, J., Wang, W., ... & Liu, J. (2025). Spike sorting AI agent. Preprint at bioRxiv: https://doi.org/10.1101/2025.02.11.637754
+Lin, Z., Marin-Llobet, A. et al. Spike sorting AI agent (2025). Preprint at bioRxiv: https://doi.org/10.1101/2025.02.11.637754
 
 **SpikeInterface**:
 Buccino, A. P., Hurwitz, C. L., Garcia, S., Magland, J., Siegle, J. H., Hurwitz, R., & Hennig, M. H. (2020). SpikeInterface, a unified framework for spike sorting. Elife, 9, e61834.
