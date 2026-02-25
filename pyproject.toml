@@ -180,10 +180,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/arnaumarin/SpikeAgent"
-Documentation = "https://github.com/arnaumarin/SpikeAgent/tree/main/docs"
-Repository = "https://github.com/arnaumarin/SpikeAgent"
-Issues = "https://github.com/arnaumarin/SpikeAgent/issues"
+Homepage = "https://github.com/SpikeAgent/SpikeAgent"
+Documentation = "https://github.com/SpikeAgent/SpikeAgent/tree/main/docs"
+Repository = "https://github.com/SpikeAgent/SpikeAgent"
+Issues = "https://github.com/SpikeAgent/SpikeAgent/issues"
 
 [project.scripts]
 spikeagent = "spikeagent.app.main:main"
