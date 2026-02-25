@@ -7,7 +7,7 @@ If the logo image does not appear above this line, make sure the file exists at:
 docs/img/spikeagent_logo.png
 -->
 
-[![GitHub stars](https://img.shields.io/github/stars/SpikeAgent/SpikeAgent)](https://github.com/LiuLab-Bioelectronics-Harvard/SpikeAgent/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/SpikeAgent/SpikeAgent)](https://github.com/SpikeAgent/SpikeAgent/stargazers)
 
 # SpikeAgent
 
