@@ -1,0 +1,7 @@
+dataset_or_artifact	manuscript_use	source_or_repository	doi_or_url	public_status	local_or_deposit_path	notes
+Public Neuropixels 2.0 recordings	Neuropixels analyses and few-shot generalizability experiments	UCL Research Data Repository	https://doi.org/10.5522/04/24411841	public		existing public dataset; includes AL031 and AL036
+Flexible-probe recording	Flexible-probe validation and VLM/human curation comparison	Public repository TBD	FLEXIBLE_PROBE_DATA_DOI_OR_URL	planned		authors intend public deposition; final repository/DOI pending
+Figure and table source data	Plotted values, labels, matrices, timing, token/cost, and statistical source data	Public repository or Nature source-data files TBD	SOURCE_DATA_DOI_OR_URL	planned		coordinate with Bradley on contents and deposit route
+MEArec 1-hour simulated ground-truth dataset	Ground-truth curation accuracy and sorter comparison	Manuscript Methods	See manuscript Methods	reproducible from Methods		authors plan Methods description rather than generated-data deposit
+MEArec 20-minute simulated drift dataset	Drift and merge benchmark	Manuscript Methods	See manuscript Methods	reproducible from Methods		authors plan Methods description rather than generated-data deposit
+SpikeAgent source code	Custom code developed for the study	GitHub	https://github.com/SpikeAgent/SpikeAgent	public		current GitHub repository considered sufficient by authors

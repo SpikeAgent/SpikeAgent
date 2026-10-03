@@ -1,0 +1,73 @@
+site_name: SpikeAgent
+site_description: AI-powered assistant for spike sorting and neural data analysis
+site_url: https://spikeagent.github.io/SpikeAgent/
+repo_url: https://github.com/SpikeAgent/SpikeAgent
+repo_name: SpikeAgent/SpikeAgent
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  logo: spikeagent_logo.png
+  favicon: spikeagent_logo.png
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+    - search.suggest
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: teal
+      accent: deep orange
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths:
+            - src
+          options:
+            docstring_style: numpy
+            show_source: false
+            show_root_heading: true
+            show_signature_annotations: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - API Keys: getting-started/api-keys.md
+      - Docker: getting-started/docker.md
+  - User Guide: user-guide.md
+  - Workflows:
+      - Spike Sorting: workflows/spike-sorting.md
+      - VLM Curation: workflows/vlm-curation.md
+      - VLM Merge Analysis: workflows/vlm-merge.md
+  - Tutorials:
+      - VLM Curation and Merging: tutorials/vlm-curation-and-merging.md
+  - API Reference:
+      - Overview: api/index.md
+      - Manual Reference: api-reference.md
+      - Curation: api/curation.md
+      - Plotting: api/plotting.md
+      - Models: api/models.md
+  - VLM Guide: vlm-guide.md
+  - Reproducibility: reproducibility.md
+  - Data Availability: data-availability.md
+  - Citation: citation.md

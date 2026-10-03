@@ -275,11 +275,24 @@ spikeagent/
 
 ## Documentation
 
-Comprehensive documentation is available in the [`docs/`](docs/) directory:
+Comprehensive documentation is available in the [`docs/`](docs/) directory and can be built as a MkDocs site:
 
 - **[User Guide](docs/user-guide.md)**: How to use SpikeAgent for spike sorting and curation
 - **[API Reference](docs/api-reference.md)**: Programmatic API documentation for custom workflows
 - **[VLM Guide](docs/vlm-guide.md)**: In-depth guide to VLM curation and prompt customization
+
+Build or preview the documentation locally:
+
+```bash
+pip install -r docs/requirements.txt
+mkdocs serve
+```
+
+For a strict production build:
+
+```bash
+mkdocs build --strict
+```
 
 ## Getting Help
 
