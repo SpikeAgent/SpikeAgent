@@ -61,7 +61,12 @@ nav:
       - VLM Merge Analysis: workflows/vlm-merge.md
   - Tutorials:
       - VLM Curation and Merging: tutorials/vlm-curation-and-merging.md
-  - API Reference: api-reference.md
+  - API Reference:
+      - Overview: api/index.md
+      - Manual Reference: api-reference.md
+      - Curation: api/curation.md
+      - Plotting: api/plotting.md
+      - Models: api/models.md
   - VLM Guide: vlm-guide.md
   - Reproducibility: reproducibility.md
   - Data Availability: data-availability.md
