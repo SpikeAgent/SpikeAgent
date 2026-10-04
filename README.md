@@ -251,6 +251,10 @@ The `--add` option will:
 
 You can test SpikeAgent with open datasets such as [Neuropixels 2.0 chronic recordings in mice](https://doi.org/10.5522/04/24411841.v1) and [AutoSort flexible electrode recordings](https://github.com/LiuLab-Bioelectronics-Harvard/AutoSort).
 
+The flexible-probe recordings generated for the SpikeAgent study are available
+on [Zenodo](https://doi.org/10.5281/zenodo.22180105). See the
+[data-availability inventory](DATA_AVAILABILITY.md) for the study datasets.
+
 ## Tutorials
 
 tutorials/VLM_curation_tutorial.ipynb: A programmatic example for users who want to use only the VLM curation and merge analysis modules of the agent.
@@ -277,13 +281,33 @@ spikeagent/
 
 ## Documentation
 
-Comprehensive documentation is available in the [`docs/`](docs/) directory:
+Comprehensive documentation is available in the [`docs/`](docs/) directory and can be built as a MkDocs site:
+
+**[Documenation Website](https://ada-ggf25.github.io/SpikeAgent/)**
 
 **[Documenation Website](https://ada-ggf25.github.io/SpikeAgent/)**
 
 - **[User Guide](docs/user-guide.md)**: How to use SpikeAgent for spike sorting and curation
 - **[API Reference](docs/api-reference.md)**: Programmatic API documentation for custom workflows
 - **[VLM Guide](docs/vlm-guide.md)**: In-depth guide to VLM curation and prompt customization
+
+Build or preview the documentation locally:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r docs/requirements.txt
+python -m mkdocs serve
+```
+
+Open `http://127.0.0.1:8000/SpikeAgent/`. If port 8000 is already in use,
+run `python -m mkdocs serve --dev-addr 127.0.0.1:8001` instead.
+
+For a strict production build:
+
+```bash
+python -m mkdocs build --strict
+```
 
 ## Getting Help
 

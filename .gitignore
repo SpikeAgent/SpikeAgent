@@ -25,6 +25,7 @@ wheels/
 *.ipynb_checkpoints/
 
 # Virtual environments
+.venv/
 venv/
 env/
 ENV/
@@ -41,6 +42,7 @@ ENV/
 Thumbs.db
 
 # Results and outputs
+site/
 *.json
 *.png
 *.pdf
