@@ -2,7 +2,7 @@ name: Docs
 
 on:
   push:
-    branches: [main]
+    branches: [main, docs-reorganized]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: docs-${{ github.ref }}
+  group: docs-${{ github.event_name == 'pull_request' && github.ref || 'github-pages' }}
   cancel-in-progress: false
 
 jobs:
@@ -33,13 +33,17 @@ jobs:
         run: mkdocs build --strict
 
       - name: Upload artifact
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        if: >-
+          github.event_name != 'pull_request' &&
+          (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/docs-reorganized')
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/docs-reorganized')
     needs: build
     runs-on: ubuntu-latest
     permissions:
