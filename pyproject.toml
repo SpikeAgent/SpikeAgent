@@ -84,7 +84,7 @@ docs = [
 
 [project.urls]
 Homepage = "https://github.com/SpikeAgent/SpikeAgent"
-Documentation = "https://github.com/SpikeAgent/SpikeAgent/tree/main/docs"
+Documentation = "https://spikeagent.github.io/SpikeAgent/"
 Repository = "https://github.com/SpikeAgent/SpikeAgent"
 Issues = "https://github.com/SpikeAgent/SpikeAgent/issues"
 
