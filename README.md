@@ -13,7 +13,7 @@ docs/img/spikeagent_logo.png
 
 **An AI-powered assistant for spike sorting and neural data analysis**
 
-[Documentation](https://ada-ggf25.github.io/SpikeAgent/)
+**[Website](https://ada-ggf25.github.io/SpikeAgent/)**
 
 SpikeAgent is a web-based AI assistant designed to help neuroscience laboratories analyze neural electrophysiology data. It provides an intuitive interface for spike sorting workflows, data curation, and neural data analysis, powered by state-of-the-art language models (OpenAI, Anthropic, and Google's Gemini).
 
@@ -282,6 +282,8 @@ spikeagent/
 ## Documentation
 
 Comprehensive documentation is available in the [`docs/`](docs/) directory and can be built as a MkDocs site:
+
+**[Documenation Website](https://ada-ggf25.github.io/SpikeAgent/)**
 
 - **[User Guide](docs/user-guide.md)**: How to use SpikeAgent for spike sorting and curation
 - **[API Reference](docs/api-reference.md)**: Programmatic API documentation for custom workflows
