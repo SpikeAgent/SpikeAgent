@@ -77,6 +77,10 @@ dev = [
     "ruff>=0.1.0",
     "mypy>=1.0.0",
 ]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.25",
+]
 
 [project.urls]
 Homepage = "https://github.com/SpikeAgent/SpikeAgent"

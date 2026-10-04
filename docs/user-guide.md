@@ -138,7 +138,5 @@ AI can determine if units should be merged by analyzing:
 
 ## Next Steps
 
-- Explore the [Jupyter notebook tutorials](../tutorials/) for detailed examples
+- Explore the [VLM curation and merging notebook](https://github.com/SpikeAgent/SpikeAgent/blob/main/tutorials/VLM_curation_and_merging_tutorial.ipynb) for a detailed example
 - Read the [API Reference](api-reference.md) for programmatic usage
-
-

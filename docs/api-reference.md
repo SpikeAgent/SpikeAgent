@@ -20,8 +20,8 @@ This section covers installing SpikeAgent for **programmatic API usage** in your
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/SpikeInterface/spikeagent.git
-   cd spikeagent
+   git clone https://github.com/SpikeAgent/SpikeAgent.git
+   cd SpikeAgent
    ```
 
 2. **Install in editable mode**:
@@ -329,6 +329,6 @@ Available for use in `run_vlm_curation(metrics_list=...)`:
 ## See Also
 
 - [VLM Guide](vlm-guide.md) for in-depth VLM architecture and prompt customization.
-- [Jupyter Notebook Tutorials](../tutorials/) for complete end-to-end examples.
+- [VLM curation and merging notebook](https://github.com/SpikeAgent/SpikeAgent/blob/main/tutorials/VLM_curation_and_merging_tutorial.ipynb) for a complete end-to-end example.
 - [User Guide](user-guide.md) for workflow guidance.
 - [SpikeInterface Documentation](https://spikeinterface.readthedocs.io/) for the underlying framework.

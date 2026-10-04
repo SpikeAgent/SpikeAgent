@@ -275,11 +275,29 @@ spikeagent/
 
 ## Documentation
 
-Comprehensive documentation is available in the [`docs/`](docs/) directory:
+Comprehensive documentation is available in the [`docs/`](docs/) directory and can be built as a MkDocs site:
 
 - **[User Guide](docs/user-guide.md)**: How to use SpikeAgent for spike sorting and curation
 - **[API Reference](docs/api-reference.md)**: Programmatic API documentation for custom workflows
 - **[VLM Guide](docs/vlm-guide.md)**: In-depth guide to VLM curation and prompt customization
+
+Build or preview the documentation locally:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r docs/requirements.txt
+python -m mkdocs serve
+```
+
+Open `http://127.0.0.1:8000/SpikeAgent/`. If port 8000 is already in use,
+run `python -m mkdocs serve --dev-addr 127.0.0.1:8001` instead.
+
+For a strict production build:
+
+```bash
+python -m mkdocs build --strict
+```
 
 ## Getting Help
 

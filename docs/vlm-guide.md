@@ -10,7 +10,6 @@ This guide provides an in-depth explanation of how Vision-Language Models (VLMs)
 - [Prompt System](#prompt-system)
 - [Customizing Prompts](#customizing-prompts)
 - [Best Practices](#best-practices)
-- [Advanced Topics](#advanced-topics)
 
 ---
 
@@ -302,7 +301,7 @@ results = run_vlm_curation(
 
 - [API Reference](api-reference.md) - Function signatures and parameters
 - [User Guide](user-guide.md) - General usage workflows
-- [Tutorials](../tutorials/) - End-to-end notebook examples
+- [Tutorials](https://github.com/SpikeAgent/SpikeAgent/blob/main/tutorials/VLM_curation_and_merging_tutorial.ipynb) - End-to-end notebook example
 - [SpikeInterface Documentation](https://spikeinterface.readthedocs.io/) - Underlying spike sorting framework
 
 ---
