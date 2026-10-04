@@ -301,7 +301,7 @@ results = run_vlm_curation(
 
 - [API Reference](api-reference.md) - Function signatures and parameters
 - [User Guide](user-guide.md) - General usage workflows
-- [Tutorials](https://github.com/SpikeAgent/SpikeAgent/blob/main/tutorials/VLM_curation_and_merging_tutorial.ipynb) - End-to-end notebook example
+- [Tutorials](tutorials/vlm-curation-and-merging.md) - End-to-end notebook example
 - [SpikeInterface Documentation](https://spikeinterface.readthedocs.io/) - Underlying spike sorting framework
 
 ---

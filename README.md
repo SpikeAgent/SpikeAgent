@@ -249,6 +249,10 @@ The `--add` option will:
 
 You can test SpikeAgent with open datasets such as [Neuropixels 2.0 chronic recordings in mice](https://doi.org/10.5522/04/24411841.v1) and [AutoSort flexible electrode recordings](https://github.com/LiuLab-Bioelectronics-Harvard/AutoSort).
 
+The flexible-probe recordings generated for the SpikeAgent study are available
+on [Zenodo](https://doi.org/10.5281/zenodo.22180105). See the
+[data-availability inventory](DATA_AVAILABILITY.md) for the study datasets.
+
 ## Tutorials
 
 tutorials/VLM_curation_tutorial.ipynb: A programmatic example for users who want to use only the VLM curation and merge analysis modules of the agent.

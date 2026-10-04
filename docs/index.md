@@ -9,10 +9,11 @@ The project provides two main ways to work:
 
 ## Start Here
 
+- [Install SpikeAgent](getting-started/installation.md)
+- [Configure model provider API keys](getting-started/api-keys.md)
+- [Run with Docker](getting-started/docker.md)
 - [Use the interactive app](user-guide.md)
-- [Explore the Python API](api-reference.md)
-- [Read the VLM guide](vlm-guide.md)
-- [Installation and Docker setup](https://github.com/SpikeAgent/SpikeAgent#installation-options)
+- [Run VLM curation programmatically](tutorials/vlm-curation-and-merging.md)
 
 ## Core Capabilities
 
@@ -27,3 +28,4 @@ The project provides two main ways to work:
 
 - [GitHub repository](https://github.com/SpikeAgent/SpikeAgent)
 - [SpikeInterface documentation](https://spikeinterface.readthedocs.io/)
+- [Citation](citation.md)

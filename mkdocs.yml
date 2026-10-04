@@ -50,6 +50,19 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - API Keys: getting-started/api-keys.md
+      - Docker: getting-started/docker.md
   - User Guide: user-guide.md
+  - Workflows:
+      - Spike Sorting: workflows/spike-sorting.md
+      - VLM Curation: workflows/vlm-curation.md
+      - VLM Merge Analysis: workflows/vlm-merge.md
+  - Tutorials:
+      - VLM Curation and Merging: tutorials/vlm-curation-and-merging.md
   - API Reference: api-reference.md
   - VLM Guide: vlm-guide.md
+  - Reproducibility: reproducibility.md
+  - Data Availability: data-availability.md
+  - Citation: citation.md
